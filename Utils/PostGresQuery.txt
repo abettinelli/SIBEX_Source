@@ -1,0 +1,3 @@
+host=pinnacle-research dbname=clinical user=lpuser password=launchpad
+DECLARE myportal CURSOR FOR SELECT lastname, firstname, middlename, medicalrecordnumber, radiationoncologist, patient.institutionid, name, patientpath FROM patient, institution where patient.institutionid = institution.institutionid AND  medicalrecordnumber ILIKE '%123%' ORDER BY lastname LIMIT 100
+Y:\Work\Matlab\ImageFeatureOutcomeAnalysis\Utils\PostGresStatus.txt

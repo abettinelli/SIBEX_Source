@@ -1,0 +1,29 @@
+ 1. Interpolation algorithms translate image intensities from the original image grid to an interpolation grid.
+ 
+ -Parameters:
+ 1. XPixDim: Pixel size in X dimension. 
+ 2. YPixDim: Pixel size in Y dimension.
+ 3. ZPixDim: Pixel size in Z dimension.
+ 4. Method:
+       'linear':, Bilinear/trilinear interpolation.
+       'nearest': Nearest neighborhood interpolation.
+       'cubic': Bicubic/tricubic interpolation.
+       'spline': Spline interpolation using not-a-knot end conditions. 
+       'makima': Modified Akima cubic Hermite interpolation.
+ 5. NoZDim:
+       0: Resample the ZPixSize as requested (3D interpolation).
+       1: Keep the original ZPixSize (slice by slice interpolation). 
+ 6. AlignCornerCentre:
+       0: alignment of the centers of the interpolation and originalgrids.
+       1: alignment of the origins of the interpolation and originalgrids.
+ 7. Alpha: Threshold to binarise intesnity fractions of the ROI mask.
+ 
+ -References:
+ 1. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+    December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
+
+ -Revision:
+ 2019-07-10: The method is implemented.
+ 
+ -Authors:
+ Andrea Bettinelli

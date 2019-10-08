@@ -1,0 +1,11 @@
+-Description: 
+This method is to enhance image by applying 2D unsharp contrast enhancement filter in slice-by-slice. 
+
+-Parameters:
+1. Alpha: Alpha controls the shape of the Laplacian.
+
+-Revision:
+2013-10-12: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

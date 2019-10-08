@@ -1,0 +1,100 @@
+(1) To reformat the contours, call function ReformatContours in Matlab:
+
+ReformatContours('plan.roi', 'ImageSet_0.header', 'newplan.roi', 0.1, [10 10 10]);
+
+Input parameters:
+'plan.roi' - file name of the pinnacle roi
+'ImageSet_0.header' - image header with image size, spacing information
+'newplan.roi' - output pinnacle roi file name
+0.1  - new slice spacing value, double
+[10 10 10] - rotation angle centered at x, y, z axes, double
+
+Reformatting the contours has been integrated into IGRT Utilities. The matlab interface is in
+file CTRotation_Joy.m. Please refer to that file for example of usage.
+
+
+
+(2) To warp the contours, call function WarpContours in Matlab:
+
+WarpContours('plan.roi', 'ImageSet_0.header', 'field.header', 'newplan.roi', DailyTablePos, true);
+
+Input parameters:
+'plan.roi' - file name of the pinnacle roi
+'ImageSet_0.header' - image header with image size, spacing information
+'field.header'- header file for the deformation field
+'newplan.roi' - output pinnacle roi file name
+DailyTablePos - daily table position, a vector storing the slice positions of daily image,
+                used to guide the cut position of the surface 
+true - a logical variable to define smoothing the cutted 2d contours or not
+
+Warping contours has been integrated into CAT. The matlab interface is in file UtilsMeshDeformROI.m
+and AlignmentSmall.m (Alignment.m). Please refer to that file for example of usage.
+ 
+
+ 
+(3) To compute contours in Sagittal (X-plane) and Coronal (Y-plane) planes, call function ComputeXYCurves 
+    in Matlab:
+
+ComputeXYCurves('axialIn.roi', 'ImageSet_0.header', 'sagittalOut.roi', 'coronalOut.roi', false); or
+ComputeXYCurves('axialIn.roi', 'ImageSet_0.header', 'sagittalOut.roi', 'coronalOut.roi');
+
+Input parameters:
+'axialIn.roi' - filename of the pinnacle roi curves in axial planes (Z-plane)
+'ImageSet_0.header' - image header with image size, spacing information
+'sagittalOut.roi' - filename of output roi curves in sagittal planes
+'coronalOut.roi' - filename of output roi curves in coronal planes
+false - a logical variable to define smoothing 3d mesh or not, default false.
+
+
+
+(4) To load ROI data and store them in Matlab structure, call function LoadROIStructs in Matlab:
+
+[AxialROIStruct] = LoadROIStructs('axialPlan.roi', 'sagittalPlan.roi', 'coronalPlan.roi', DXYStart);
+[AxialROIStruct, SagittalROIStruct] = LoadROIStructs('axialPlan.roi', 'sagittalPlan.roi', 'coronalPlan.roi', DXYStart);
+[AxialROIStruct, SagittalROIStruct, CoronalROIStruct] = LoadROIStructs('axialPlan.roi', 'sagittalPlan.roi', 'coronalPlan.roi', DXYStart);
+
+Input parameters:
+'axialPlan.roi' - filename of the pinnacle roi curves in axial planes (Z-plane)
+'sagittalPlan.roi' - filename of the pinnacle roi curves in sagittal planes (X-plane)
+'coronalPlan.roi' - filename of the pinnacle roi curves in coronal planes (Y-plane)
+DXYStart - [startx, starty], internal defined start point of x and y dimension in CAT
+
+Output parameters:
+AxialROIStruct - Matlab structure of axial ROIs (read from 'axialPlan.roi')
+SagittalROIStruct - Matlab structure of sagittal ROIs (read from 'sagittalPlan.roi')
+CoronalROIStruct - Matlab structure of coronal ROIs (read from 'coronalPlan.roi')
+
+
+
+(5) To write ROI data in Matlab structure to a file, call function WriteROIStruct in Matlab:
+
+[] = WriteROIStruct(ROIStruct, OutFile, DXYStart);
+[] = WriteROIStruct(ROIStruct, OutFile, DXYStart, DataSetName);
+[] = WriteROIStruct(ROIStruct, OutFile, DXYStart, ROIType);
+[] = WriteROIStruct(ROIStruct, OutFile, DXYStart, DataSetName, ROIType);
+
+Input parameters:
+ROIStruct   - Matlab structure array storing a list of ROIs, with each ROI organized as curves of points
+OutFile     - String of output filename
+DXYStart    - Size 2 double array indicating shift in coordinates of X and Y dimension, [startx, starty]
+DataSetName - Dataset name indicating the ROIStruct belonging to, default empty
+ROIType     - value indicating the ROI type, 0 : Axial, 1 : Sagittal, 2 : Coronal, default 0
+
+
+
+(6) To convert ROI polygon to a binary image (2d), call function RoiPoly2bwImage2d in Matlab (this function is to replace roipoly):
+
+bwimage = RoiPoly2bwImage2d(nr, nc, coord_c, coord_r);
+
+Input parameters:
+nr, nc  - size of output image, nr is number of rows, nc is number columns;
+coord_c - column coordinates of polygon (x value);
+coord_r - row coordinates of polygon (y value);
+
+Output parameters:
+bwimage - output binary image in logical format;
+
+
+  
+Jinzhong Yang
+2010/07/09

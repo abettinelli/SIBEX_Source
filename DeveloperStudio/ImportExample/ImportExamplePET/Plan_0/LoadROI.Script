@@ -1,0 +1,8 @@
+Store.At.ScriptPath=SimpleString{};
+Store.At.ScriptPath.AppendString=Script .ScriptList .Directory;
+ 
+RoiImportFileList.Directory = Store.StringAt.ScriptPath;
+RoiImportFileList.File = "plan.roi";
+ImportRoi = "OK";
+ 
+Store.FreeAt.ScriptPath= "";

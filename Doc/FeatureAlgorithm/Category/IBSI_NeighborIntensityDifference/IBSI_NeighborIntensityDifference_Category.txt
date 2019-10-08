@@ -1,0 +1,29 @@
+ -Description: 
+ 1. This method is to compute neighborhood intensity difference matrix (NIDM) from image inside
+    the binary mask.
+ 2. NIDM is passed into NeighborIntensityDifference_Feature.m to compute the related features.
+ 
+ -Parameters:
+ 1. AggregationMethod:
+	1: 2D:avg 	averaged over slices.
+	2: 2D:mrg	merged over all slices.             (rare)
+	3: 3D       calculated from single 3D matrix.   (default)
+ 2. Rescale: 
+	'fbn': fixed bin number -> specify BinNumber.
+	'fbs': fixed bin size   -> specify BinSize.
+	'off': do not perform the discretization step.
+ 3. BinNumber: Integer specifying the number of bin number to use when scaling the grayscale values. [] when rescale is set to 'fbs' or 'off'.
+ 4. BinSize: Integer specifying the bin size to use when scaling the grayscale values. [] when rescale is set to 'fbn' or 'off'.
+ 5. NHood: The neighborhood matrix size in X dimension.
+ 6. NHoodSym:      
+	1: neighborhood matrix size in Y and Z are calculated to best match neighborhood physical length in X dimension.
+	0: neighborhood matrx size are same in X, Y, and Z dimensions.
+ 7. IncludeEdge:
+	1: include edge pixels for analysis.
+	0: do not include edge pixels for analysis.
+ 
+ -Revision:
+ 2019-02-13: The method is implemented.
+ 
+ -Authors:
+ Andrea Bettinelli

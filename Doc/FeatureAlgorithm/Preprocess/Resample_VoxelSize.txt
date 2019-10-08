@@ -1,0 +1,20 @@
+-Note:
+In the test review window, the original image is also resampled accordingly.
+
+-Description: 
+This method is to resample the pixel size in 3D.  The core code is in C++.
+
+-Parameters: 
+1.  XPixDim: Pixel size in X dimension. 
+2.  YPixDim: Pixel size in Y dimension.
+3.  ZPixDim: Pixel size in Z dimension.
+4.  NoSampleZPix: 1==Keep the original ZPixSize; 0==Resample the ZPixSize as requested.
+
+-Formula:
+Trilinear interpolation is used.
+
+-Revision:
+2014-06-03: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

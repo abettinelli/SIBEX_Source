@@ -1,0 +1,15 @@
+-Description: 
+This method is to perform 2D Laplacian of Gaussian filter in slice-by-slice. 
+
+-Parameters:
+1.  Size: Maxtrix size of the filter.
+2.  Sigma: Standard deviation.
+3.  FillROIOutOn: 1==Overwrite the outside of mask with FillROIOutValue. 0==No overwrite the ouside of mask.
+4.  FillROIOutValue:  The value is used when FillROIOutOn=1, 
+
+-Revision:
+2014-02-15: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org
+David Fried, DVFried@mdanderson.org

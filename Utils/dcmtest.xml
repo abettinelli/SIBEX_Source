@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<file-format>
+<meta-header xfer="1.2.840.10008.1.2.1" name="Little Endian Explicit">
+<element tag="0002,0000" vr="UL" vm="1" len="4" name="FileMetaInformationGroupLength">196</element>
+<element tag="0002,0001" vr="OB" vm="1" len="2" name="FileMetaInformationVersion" binary="hidden"></element>
+<element tag="0002,0002" vr="UI" vm="1" len="26" name="MediaStorageSOPClassUID">1.2.840.10008.5.1.4.1.1.2</element>
+<element tag="0002,0003" vr="UI" vm="1" len="52" name="MediaStorageSOPInstanceUID">1.2.840.113619.2.144.3994501807.8819.1268234573.652</element>
+<element tag="0002,0010" vr="UI" vm="1" len="18" name="TransferSyntaxUID">1.2.840.10008.1.2</element>
+<element tag="0002,0012" vr="UI" vm="1" len="34" name="ImplementationClassUID">1.2.826.0.1.3680043.2.135.1066.101</element>
+<element tag="0002,0013" vr="SH" vm="1" len="12" name="ImplementationVersionName">1.4.14/WIN32</element>
+</meta-header>
+<data-set xfer="1.2.840.10008.1.2" name="Little Endian Implicit">
+<element tag="0008,0000" vr="UL" vm="1" len="4" name="GenericGroupLength">420</element>
+<element tag="0008,0005" vr="CS" vm="1" len="10" name="SpecificCharacterSet">ISO_IR 100</element>
+<element tag="0008,0008" vr="CS" vm="3" len="30" name="ImageType">DERIVED\SECONDARY\REFORMATTED</element>
+<element tag="0008,0012" vr="DA" vm="1" len="8" name="InstanceCreationDate">20100323</element>
+<element tag="0008,0013" vr="TM" vm="1" len="14" name="InstanceCreationTime">082956.433000</element>
+<element tag="0008,0016" vr="UI" vm="1" len="26" name="SOPClassUID">1.2.840.10008.5.1.4.1.1.2</element>
+<element tag="0008,0018" vr="UI" vm="1" len="52" name="SOPInstanceUID">1.2.840.113619.2.144.3994501807.8819.1268234573.652</element>
+<element tag="0008,0020" vr="DA" vm="1" len="8" name="StudyDate">20100310</element>
+<element tag="0008,0021" vr="DA" vm="1" len="8" name="SeriesDate">20100310</element>
+<element tag="0008,0023" vr="DA" vm="1" len="8" name="ContentDate">20100310</element>
+<element tag="0008,0030" vr="TM" vm="1" len="6" name="StudyTime">093555</element>
+<element tag="0008,0031" vr="TM" vm="1" len="6" name="SeriesTime">093843</element>
+<element tag="0008,0033" vr="TM" vm="1" len="6" name="ContentTime">093900</element>
+<element tag="0008,0050" vr="SH" vm="0" len="0" name="AccessionNumber"></element>
+<element tag="0008,0060" vr="CS" vm="1" len="2" name="Modality">CT</element>
+<element tag="0008,0070" vr="LO" vm="1" len="18" name="Manufacturer">GE MEDICAL SYSTEMS</element>
+<element tag="0008,0090" vr="PN" vm="0" len="0" name="ReferringPhysicianName"></element>
+<element tag="0008,1030" vr="LO" vm="1" len="4" name="StudyDescription">4DCT</element>
+<element tag="0008,103e" vr="LO" vm="1" len="50" name="SeriesDescription">Ave-IP(10) 0%_10%_20%_30%_40%_50%_60%_70%_80%_90%</element>
+<element tag="0008,1090" vr="LO" vm="1" len="12" name="ManufacturerModelName">Discovery ST</element>
+<element tag="0010,0000" vr="UL" vm="1" len="4" name="GenericGroupLength">54</element>
+<element tag="0010,0010" vr="PN" vm="1" len="14" name="PatientName">Calabrese^Dawn</element>
+<element tag="0010,0020" vr="LO" vm="1" len="6" name="PatientID">821615</element>
+<element tag="0010,0030" vr="DA" vm="0" len="0" name="PatientBirthDate"></element>
+<element tag="0010,0040" vr="CS" vm="1" len="2" name="PatientSex">F</element>
+<element tag="0018,0000" vr="UL" vm="1" len="4" name="GenericGroupLength">270</element>
+<element tag="0018,0022" vr="CS" vm="1" len="10" name="ScanOptions">CINE MODE</element>
+<element tag="0018,0050" vr="DS" vm="1" len="4" name="SliceThickness">2.5</element>
+<element tag="0018,0060" vr="DS" vm="1" len="4" name="KVP">120</element>
+<element tag="0018,0090" vr="DS" vm="1" len="4" name="DataCollectionDiameter">500</element>
+<element tag="0018,1020" vr="LO" vm="1" len="16" name="SoftwareVersions">LightSpeedverrel</element>
+<element tag="0018,1100" vr="DS" vm="1" len="4" name="ReconstructionDiameter">500</element>
+<element tag="0018,1110" vr="DS" vm="1" len="10" name="DistanceSourceToDetector">949.075012</element>
+<element tag="0018,1111" vr="DS" vm="1" len="4" name="DistanceSourceToPatient">541</element>
+<element tag="0018,1120" vr="DS" vm="1" len="4" name="GantryDetectorTilt">0.0</element>
+<element tag="0018,1130" vr="DS" vm="1" len="10" name="TableHeight">178.199997</element>
+<element tag="0018,1140" vr="CS" vm="1" len="2" name="RotationDirection">CW</element>
+<element tag="0018,1150" vr="IS" vm="1" len="4" name="ExposureTime">500</element>
+<element tag="0018,1151" vr="IS" vm="1" len="4" name="XRayTubeCurrent">100</element>
+<element tag="0018,1152" vr="IS" vm="1" len="2" name="Exposure">6</element>
+<element tag="0018,1160" vr="SH" vm="1" len="12" name="FilterType">BODY FILTER</element>
+<element tag="0018,1170" vr="IS" vm="1" len="6" name="GeneratorPower">12000</element>
+<element tag="0018,1190" vr="DS" vm="1" len="6" name="FocalSpots">7.0e-1</element>
+<element tag="0018,1210" vr="SH" vm="1" len="8" name="ConvolutionKernel">STANDARD</element>
+<element tag="0018,5100" vr="CS" vm="1" len="4" name="PatientPosition">HFS</element>
+<element tag="0020,0000" vr="UL" vm="1" len="4" name="GenericGroupLength">308</element>
+<element tag="0020,000d" vr="UI" vm="1" len="54" name="StudyInstanceUID">1.2.840.113619.2.55.3.1871670999.11848.1268235355.731</element>
+<element tag="0020,000e" vr="UI" vm="1" len="52" name="SeriesInstanceUID">1.2.840.113619.2.144.3994501807.8819.1268234573.507</element>
+<element tag="0020,0010" vr="SH" vm="1" len="6" name="StudyID">12453</element>
+<element tag="0020,0011" vr="IS" vm="1" len="4" name="SeriesNumber">211</element>
+<element tag="0020,0012" vr="IS" vm="1" len="2" name="AcquisitionNumber">1</element>
+<element tag="0020,0013" vr="IS" vm="1" len="2" name="InstanceNumber">1</element>
+<element tag="0020,0032" vr="DS" vm="3" len="14" name="ImagePositionPatient">-250\-250\160</element>
+<element tag="0020,0037" vr="DS" vm="6" len="20" name="ImageOrientationPatient">1\0.0\0.0\0.0\1\0.0</element>
+<element tag="0020,0052" vr="UI" vm="1" len="62" name="FrameOfReferenceUID">1.2.840.113619.2.55.3.1871670999.11848.1268235355.733.4705.0.1</element>
+<element tag="0020,1040" vr="LO" vm="0" len="0" name="PositionReferenceIndicator"></element>
+<element tag="0020,1041" vr="DS" vm="1" len="4" name="SliceLocation">160</element>
+<element tag="0028,0000" vr="UL" vm="1" len="4" name="GenericGroupLength">166</element>
+<element tag="0028,0002" vr="US" vm="1" len="2" name="SamplesPerPixel">1</element>
+<element tag="0028,0004" vr="CS" vm="1" len="12" name="PhotometricInterpretation">MONOCHROME2</element>
+<element tag="0028,0010" vr="US" vm="1" len="2" name="Rows">512</element>
+<element tag="0028,0011" vr="US" vm="1" len="2" name="Columns">512</element>
+<element tag="0028,0030" vr="DS" vm="2" len="22" name="PixelSpacing">9.76562e-1\9.76562e-1</element>
+<element tag="0028,0100" vr="US" vm="1" len="2" name="BitsAllocated">16</element>
+<element tag="0028,0101" vr="US" vm="1" len="2" name="BitsStored">16</element>
+<element tag="0028,0102" vr="US" vm="1" len="2" name="HighBit">15</element>
+<element tag="0028,0103" vr="US" vm="1" len="2" name="PixelRepresentation">0</element>
+<element tag="0028,1050" vr="DS" vm="1" len="2" name="WindowCenter">40</element>
+<element tag="0028,1051" vr="DS" vm="1" len="4" name="WindowWidth">400</element>
+<element tag="0028,1052" vr="DS" vm="1" len="6" name="RescaleIntercept">-1024</element>
+<element tag="0028,1053" vr="DS" vm="1" len="2" name="RescaleSlope">1</element>
+<element tag="3241,0000" vr="UL" vm="1" len="4" name="PrivateGroupLength">148</element>
+<element tag="3241,0010" vr="LO" vm="1" len="34" name="PrivateCreator">Varian Medical Systems VISION 3241</element>
+<element tag="3241,1000" vr="??" vm="1" len="8" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3241,1002" vr="??" vm="1" len="2" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3241,1004" vr="??" vm="1" len="20" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3241,1005" vr="??" vm="1" len="14" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3241,1006" vr="??" vm="1" len="22" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3253,0000" vr="UL" vm="1" len="4" name="PrivateGroupLength">244</element>
+<element tag="3253,0010" vr="LO" vm="1" len="34" name="PrivateCreator">Varian Medical Systems VISION 3253</element>
+<element tag="3253,1000" vr="??" vm="1" len="160" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3253,1001" vr="??" vm="1" len="2" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="3253,1002" vr="??" vm="1" len="16" name="Unknown Tag &amp; Data" binary="hidden"></element>
+<element tag="7fe0,0000" vr="UL" vm="1" len="4" name="ACR_NEMA_2C_VariablePixelDataGroupLength">524296</element>
+<element tag="7fe0,0010" vr="OW" vm="1" len="524288" name="PixelData" loaded="no" binary="hidden"></element>
+</data-set>
+</file-format>

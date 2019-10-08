@@ -1,0 +1,15 @@
+-Description: 
+Applies a 2D Butterworth filter in the frequency domain slice-by-slice.
+
+ Based on text Digital Imaging Processing by Gonzales and Woods.
+ 
+-Parameters:
+1.  cutoff: Frequencies below radius cutoff will be filtered. Smaller
+               number produce more smoothing in the spatial domain.
+2.  order: higher orders produce harder cuts at the cutoff frequency.
+
+-Revision:
+2015-10-30: The method is implemented.
+
+-Author:
+Dennis Mackin, dsmackin@mdanderson.org

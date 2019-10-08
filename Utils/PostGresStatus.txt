@@ -1,0 +1,65 @@
+	lastname	firstname	middlename	medicalrecordnumber	radiationoncologist	institutionid	name	patientpath
+	2015 Resident Prostate 1			123456		3	3	Institution_3/Mount_0/Patient_131997
+	2015 Resident Prostate 2			123456		3	3	Institution_3/Mount_0/Patient_131984
+	2015 Resident Prostate 3			123456		3	3	Institution_3/Mount_0/Patient_131983
+	2015 Resident Prostate 4			123456		3	3	Institution_3/Mount_0/Patient_131982
+	2015 Resident Prostate 5			123456		3	3	Institution_3/Mount_0/Patient_131987
+	2015 Resident Prostate 6			123456		3	3	Institution_3/Mount_0/Patient_131981
+	2015 Resident Prostate 7			123456		3	3	Institution_3/Mount_0/Patient_131986
+	2015 Resident Prostate 8			123456		3	3	Institution_3/Mount_0/Patient_131996
+	2015 Student 1			123456		3	3	Institution_3/Mount_0/Patient_131408
+	2015 Student 10			123456		3	3	Institution_3/Mount_0/Patient_131403
+	2015 Student 11			123456		3	3	Institution_3/Mount_0/Patient_131404
+	2015 Student 12			123456		3	3	Institution_3/Mount_0/Patient_131405
+	2015 Student 13			123456		3	3	Institution_3/Mount_0/Patient_131406
+	2015 Student 14			123456		3	3	Institution_3/Mount_0/Patient_131407
+	2015 Student 15			123456		3	3	Institution_3/Mount_0/Patient_131409
+	2015 Student 16			123456		3	3	Institution_3/Mount_0/Patient_131410
+	2015 Student 17			123456		3	3	Institution_3/Mount_0/Patient_131411
+	2015 Student 18			123456		3	3	Institution_3/Mount_0/Patient_131412
+	2015 Student 19			123456		3	3	Institution_3/Mount_0/Patient_131413
+	2015 Student 2			123456		3	3	Institution_3/Mount_0/Patient_131395
+	2015 Student 20			123456		3	3	Institution_3/Mount_0/Patient_131414
+	2015 Student 21			123456		3	3	Institution_3/Mount_0/Patient_131415
+	2015 Student 22			123456		3	3	Institution_3/Mount_0/Patient_131416
+	2015 Student 23			123456		3	3	Institution_3/Mount_0/Patient_131417
+	2015 Student 24			123456		3	3	Institution_3/Mount_0/Patient_131418
+	2015 Student 25			123456		3	3	Institution_3/Mount_0/Patient_131419
+	2015 Student 3			123456		3	3	Institution_3/Mount_0/Patient_131396
+	2015 Student 4			123456		3	3	Institution_3/Mount_0/Patient_131397
+	2015 Student 5			123456		3	3	Institution_3/Mount_0/Patient_131398
+	2015 Student 6			123456		3	3	Institution_3/Mount_0/Patient_131399
+	2015 Student 7			123456		3	3	Institution_3/Mount_0/Patient_131400
+	2015 Student 8			123456		3	3	Institution_3/Mount_0/Patient_131401
+	2015 Student 9			123456		3	3	Institution_3/Mount_0/Patient_131402
+	ALCOCER	JORGE		1235113	Rosenthal	1	Institution_1	Institution_1/Mount_0/Patient_10
+	bad			123456		3	3	Institution_3/Mount_0/Patient_127681
+	Brst-Exam	CW		1234567		9	9	Institution_9/Mount_0/Patient_143704
+	Brst-Long auto-restored	Shirley	A	1123944	Strom	9	9	Institution_9/Mount_0/Patient_143688
+	Brst-Robinson auto-restored	Angela	A	1232951	Strom	9	9	Institution_9/Mount_0/Patient_143694
+	Spine1	Spine		123456		3	3	Institution_3/Mount_0/Patient_131962
+	Spine2	Spine		123456		3	3	Institution_3/Mount_0/Patient_126809
+	Spine3	Spine		123456		3	3	Institution_3/Mount_0/Patient_126985
+	Spine4	Spine		123456		3	3	Institution_3/Mount_0/Patient_126986
+	Spine5	Spine		123456		3	3	Institution_3/Mount_0/Patient_126979
+	Spine6	Spine		123456		3	3	Institution_3/Mount_0/Patient_126982
+	Spine7	Spine		123456		3	3	Institution_3/Mount_0/Patient_126983
+	Spine8	Spine		123456		3	3	Institution_3/Mount_0/Patient_126984
+	ss Irvin auto-restored	Ricky	V	1232932	McAleer	3	3	Institution_3/Mount_0/Patient_143666
+	Student 10			123456		3	3	Institution_3/Mount_0/Patient_127675
+	Student 11			123456		3	3	Institution_3/Mount_0/Patient_127676
+	Student 12			123456		3	3	Institution_3/Mount_0/Patient_127683
+	Student 13			123456		3	3	Institution_3/Mount_0/Patient_127678
+	Student 14			123456		3	3	Institution_3/Mount_0/Patient_127689
+	Student 15			123456		3	3	Institution_3/Mount_0/Patient_127688
+	Student 16			123456		3	3	Institution_3/Mount_0/Patient_127687
+	Student 17			123456		3	3	Institution_3/Mount_0/Patient_127686
+	Student 18			123456		3	3	Institution_3/Mount_0/Patient_127680
+	Student 19			123456		3	3	Institution_3/Mount_0/Patient_127684
+	Student 3			123456		3	3	Institution_3/Mount_0/Patient_126076
+	Student 4			123456		3	3	Institution_3/Mount_0/Patient_127677
+	Student 5			123456		3	3	Institution_3/Mount_0/Patient_127679
+	Student 6			123456		3	3	Institution_3/Mount_0/Patient_127682
+	Student 7			123456		3	3	Institution_3/Mount_0/Patient_127685
+	Student 8			123456		3	3	Institution_3/Mount_0/Patient_127690
+	Student 9			123456		3	3	Institution_3/Mount_0/Patient_127674

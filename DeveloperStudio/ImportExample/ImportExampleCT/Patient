@@ -1,0 +1,68 @@
+PatientID = 11111;
+LastName = "ExampleCT";
+FirstName = "Import";
+MiddleName = "";
+MedicalRecordNumber = "111111";
+EncounterNumber = "";
+PrimaryPhysician = "";
+AttendingPhysician = "";
+ReferringPhysician = "";
+RadiationOncologist = "";
+Oncologist = "";
+Radiologist = "";
+Prescription = "";
+Disease = "";
+Diagnosis = "";
+Comment = "";
+NextUniquePlanID = 1;
+NextUniqueImageSetID = 1;
+Gender = "Male";
+DateOfBirth = "";
+ImageSetList ={
+ImageSet ={
+ImageSetID = 0;
+PatientID = 11111;
+ImageName = "ImageSet_0";
+NameFromScanner = "ExampleCT^Import^^";
+ExamID = "11111";
+StudyID = "11111";
+Modality = "CT";
+NumberOfImages = 136;
+ScanTimeFromScanner = "20001010 101010";
+FileName = "";
+};
+}
+PlanList ={
+Plan ={
+PlanID = 0;
+ToolType = "Pinnacle^3";
+PlanName = "FakePlan";
+Physicist = "";
+Comment = "";
+Dosimetrist = "";
+PrimaryCTImageSetID = 0;
+FusionIDArray ={
+};
+PrimaryImageType = "Images";
+PinnacleVersionDescription = "Pinnacle 7.6c";
+IsNewPlanPrefix = 1;
+PlanIsLocked = 1;
+OKForSyntegraInLaunchpad = 0;
+ObjectVersion ={
+WriteVersion = "Launch Pad: 3.4b";
+CreateVersion = "Launch Pad: 3.4b";
+LoginName = "p3rtp";
+CreateTimeStamp = "2014-03-26 14:54:41";
+WriteTimeStamp = "2014-03-26 14:54:41";
+LastModifiedTimeStamp = "";
+};
+};
+};
+ObjectVersion ={
+WriteVersion = "Launch Pad: 3.4b";
+CreateVersion = "Launch Pad: 3.4b";
+LoginName = "p3rtp";
+CreateTimeStamp = "2014-03-26 14:54:41";
+WriteTimeStamp = "2014-03-26 14:54:41";
+LastModifiedTimeStamp = "";
+};

@@ -1,0 +1,14 @@
+-Description: 
+This method is to deblur 2D image using Lucy-Richardson method and gussian PSF in slice-by-slice. 
+
+-Parameters:
+1.  Size: Size of Gaussian lowpass filter.
+
+-Formula:
+Matlab build-in function deconvlucy is used.
+
+-Revision:
+2013-10-12: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

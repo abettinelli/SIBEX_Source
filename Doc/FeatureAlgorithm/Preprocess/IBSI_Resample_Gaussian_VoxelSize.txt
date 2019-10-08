@@ -1,0 +1,15 @@
+-Note:
+In the test review window, the original image is also resampled accordingly.
+
+-Description: 
+
+-Parameters: 
+1.  XPixDim: Pixel size in X dimension. 
+2.  YPixDim: Pixel size in Y dimension.
+3.  ZPixDim: Pixel size in Z dimension.
+
+-Revision:
+2019-02-21: The method is implemented.
+
+-Author:
+Andrea Bettinelli

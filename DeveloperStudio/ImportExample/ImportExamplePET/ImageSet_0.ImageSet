@@ -1,0 +1,10 @@
+ImageSetID = 0;
+PatientID = 11111;
+ImageName = "ImageSet_0";
+NameFromScanner = "PETExample^Import^^";
+ExamID = "11111";
+StudyID = "11111";
+Modality = "PT";
+NumberOfImages = 207;
+ScanTimeFromScanner = "20110601 075249";
+FileName = "";

@@ -1,0 +1,15 @@
+ -Description: 
+ 1. This method is to preprocess the binary mask for the features derived directly from the image intensity.
+    The binary mask can be modified through the intensity thresholding.
+ 2. Image and binary mask are passed into IBSI_IntensityDirect_Feature.m to compute the related features.
+ 
+ -Parameters:
+ 
+ -Revision:
+ 2018-21-12: The method is made IBSI compliant.
+ 2014-01-01: The method is implemented.
+ 
+ -Authors:
+ Joy Zhang, lifzhang@mdanderson.org
+ ----
+ Andrea Bettinelli

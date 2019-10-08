@@ -1,0 +1,15 @@
+-Purpose: 
+ROIs are exported into the DICOM RT Struct format.
+
+-Format Description:
+1.  The Image UID information is perserved if available. 
+2.  The ROIs with no curvs are not exported.
+2.  If no image UIDs are available, the new image UIDs are generated. 
+Under this scenerio, the exported DICOM RT Struct file may not be able to be imported 
+dependent upon the individual DICOM importer. 
+
+-Revision:
+2014-09-22: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

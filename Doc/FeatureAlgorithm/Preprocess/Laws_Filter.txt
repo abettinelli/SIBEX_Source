@@ -1,0 +1,12 @@
+-Description: 
+This method is to perform Law's image filters in slice-by-slice. 
+
+-Parameters:
+1.  averWindSize: Size of the average window of Law's filters.
+
+-Revision:
+2016-06-14: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org
+Young Yul Kim, yk13@rice.edu

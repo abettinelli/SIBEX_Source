@@ -1,0 +1,4 @@
+IBSI_LocalIntensityFeaturesList={
+'LocalIntensityPeak';
+'GlobalIntensityPeak';
+};

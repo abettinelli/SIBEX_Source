@@ -1,0 +1,63 @@
+byte_order = 0;
+read_conversion = "";
+write_conversion = "";
+t_dim = 0;
+x_dim = 224;
+y_dim = 256;
+z_dim = 28;
+datatype = 1;
+bitpix = 16;
+bytes_pix = 2;
+vol_max = 0.000000;
+vol_min = 0.000000;
+t_pixdim = 0.000000;
+x_pixdim = 0.0859375;
+y_pixdim = 0.0859375;
+z_pixdim = 0.6500002529;
+t_start = 0.000000;
+x_start =-9.651048175;
+y_start =-30.18249026;
+z_start =-9.337055651;
+z_time = 0.000000;
+dim_units : 
+voxel_type : 
+id = 0;
+vis_only = 0;
+data_type : 
+vol_type : 
+db_name : ExpampleMR^Import^^
+medical_record : 
+originator : 
+date : 20140121 130351.684000
+scanner_id : 
+patient_position : HFS
+orientation = 0;
+scan_acquisition = 0;
+comment : 
+fname_format : 
+fname_index_start = 0;
+fname_index_delta = 0;
+binary_header_size = 0;
+manufacturer : Philips
+model : Mx8000 IDT
+couch_pos = 0.000000;
+couch_height = 18.4;
+X_offset = -0.000000;
+Y_offset = 0.000000;
+dataset_modified = 0;
+study_id : 11111
+exam_id : 11111
+patient_id : 111111
+modality : MR
+gating_type :
+gating_UID :
+Series_Description : AX T1 FS +C
+Scan_Options : FS
+Low_Sag : 
+Negative_Voxel : Yes
+Station_Name : MR23
+KVP : 
+SeriesDateTime : 20140121 134303.215000
+Version : 9.0
+x_start_dicom = -9.651;
+y_start_dicom = -13.6456;

@@ -1,0 +1,74 @@
+WaitMessage= "Importing dose ...";
+
+//---Pinn Version
+Store.StringAt.Version = "Pinnacle v"; 
+Store.At.Version.AppendString = AppVersion; 
+
+//---Add New Trial
+TrialList .CreateChild = "Add New Trial";
+
+//---Judge if trial name is already taken
+Store.StringAt.NewTrialName= "JoyTrial02";
+
+//---Set Trial Name and Activate
+TrialList .Current=TrialList .Last .Name;
+TrialList .Current .Name = Store.StringAt.NewTrialName;
+
+Store.FreeAt.NewTrialName= "";
+
+//---Add a Prescription
+TrialList .Current .PrescriptionList .CreateChild = "Add";
+TrialList .Current .PrescriptionList .#"#0" .Name = "FakePrescription";
+TrialList .Current .PrescriptionList .Current .Method = "Set Monitor Units";
+TrialList .Current .PrescriptionList .Current .RequestedMonitorUnitsPerFraction = 100;
+TrialList .Current .PrescriptionList .Current .NumberOfFractions = 1;
+
+//---Set Dose Grid
+TrialList .Current .DoseGrid .VoxelSize .X = "0.3";
+TrialList .Current .DoseGrid .VoxelSize .Y = "0.3";
+TrialList .Current .DoseGrid .VoxelSize .Z = "0.3";
+TrialList .Current .DoseGrid .Dimension .X = "80";
+TrialList .Current .DoseGrid .Dimension .Y = "90";
+TrialList .Current .DoseGrid .Dimension .Z = "30";
+TrialList .Current .DoseGrid .Origin .X = "-20";
+TrialList .Current .DoseGrid .Origin .Y = "-70.3";
+TrialList .Current .DoseGrid .Origin .Z = " -2.2";
+
+//---Change WindowView to BeamDose View
+WindowList .NewBeamSpreadsheet .Create = "BeamSpreadsheetButton";
+BeamLayout .Index = 5;
+
+//---Add New Beam
+CreateNewBeam = "Add New Beam";
+TrialList .Current .BeamList .Current .Name = "BeamDefView";
+
+//----Append the creating of new beam here---------
+
+//Set Beam Display
+TrialList .Current .BeamList .#"*" .Display2d = 0;
+TrialList .Current .BeamList .#"*" .Display3d = 0;
+
+//Compute Beam Dose
+TrialList .Current .BeamList .#"*" .DoseEngine .TypeName = "CC Convolution";
+TrialList .Current .ComputeDose .#"*" = 0;
+
+//Set DoseGrid on
+TrialList .Current .DoseGrid .Display2d = 1;
+
+//---Load New Dose Volume 
+TrialList.Current.BeamList.#"#0".MonitorUnitsValid = 100;
+TrialList.Current.BeamList.#"#0".Weight = 100;
+TrialList.Current.BeamList.#"#0".DoseVolume = \BOB{L}:0\;
+TrialList.Current.BeamList.#"#0".ComputationVersion = Store.StringAt.Version;
+
+
+
+//-----Append the creating of new dose volume here-------
+
+Store.FreeAt.Version = ""; 
+
+WaitMessageOff= "";
+
+
+
+

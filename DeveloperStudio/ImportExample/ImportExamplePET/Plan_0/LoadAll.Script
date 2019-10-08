@@ -1,0 +1,9 @@
+Store.At.ScriptPath=SimpleString{};
+Store.At.ScriptPath.AppendString=Script .ScriptList .Directory;
+
+Store.At.ROIPath=SimpleString{};
+Store.At.ROIPath.AppendString=Script .ScriptList .Directory;
+Store.At.ROIPath.AppendString="/LoadROI.Script";
+Script.ExecuteNow =Store.StringAt.ROIPath;
+Store.FreeAt.ROIPath= "";
+

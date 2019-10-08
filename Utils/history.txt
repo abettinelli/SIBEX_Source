@@ -1,0 +1,395 @@
+Mesh Utility as CAT/IGRTUtils Plug-In Update History
+
+
+
+version 2.3.2 (08/07/2015)
+
+* Fixed a bug in writing ROI to files.
+* Fixed a bug in surface cutting for 3D to 2D conversion.
+
+
+
+version 2.3.1 (12/09/2014)
+
+* Fixed several bugs in contour warping.
+
+
+
+version 2.2.1 (06/20/2012)
+
+* Update the write out Pinnacle ROI with default line width of medium.
+
+
+
+version 2.2.0 (10/25/2011)
+
+* Fixed a bug in 2d contour tracking after cutting through 3d mesh. Use
+  Chinese Postman Problem solver in graph theory to solve complicated
+  contour tracking.
+* Fixed bugs in 2d contour processing. Use more sophisticated logical control
+  to allow more complicated cases, such as an ROI having different size
+  of contours in the same slice.
+* Upgrade to VTK 5.8.0 in order to use the graph related classes
+  
+  
+  
+version 2.0.2 (07/05/2011)
+
+* Fixed a bug in converting Pinnacle ROI file to a bitmap image.
+* Fixed a bug in cutting 3d mesh to 2d contours (missing slices).
+
+
+
+version 2.0.0 (03/07/2011)
+
+* Fixed a bug in reading Pinnacle 9 image header.
+
+
+
+version 1.10.0 (10/29/2010)
+
+* Supported Pinnacle 9 image & ROI files.
+
+
+
+version 1.9.1 (10/15/2010)
+
+* Fixed a bug in 2d contour processing.
+
+
+
+version 1.9.0 (10/05/2010)
+
+* Added functions to read/write Pinnacle image information files, including 
+  Patient, *.ImgaeSet, and *.ImageInfo files. Fixed bugs in read/write 
+  Pinnacle image format.
+* Removed "^Mesh^Deformed^^" suffix in the output deformed ROI files.
+
+
+
+version 1.8.8 (07/08/2010)
+
+* Added interface function to convert ROI polygon to binary image. It replaces
+  the roipoly function in MATLAB.
+
+
+
+version 1.8.7 (07/02/2010)
+
+* Fixed bugs in generating 3d mesh from 2d contours. There exists up to one voxel
+  error in the generated 3d surface mesh. Remove the smoothing process in the 
+  distance map used for the mesh generation.
+* Revised 3d mesh to 2d conversion by incluing more points in order to reduce the
+  error caused by resolution.
+* Added function to convert binary bitmap images to Pinnacle ROI contours.
+* Added function to convert Pinnacle ROI contours to binary bitmap images. 
+
+
+
+version 1.8.0 (01/04/2010)
+
+* Fixed bugs in reading Pinnacle ROI files.
+
+
+
+version 1.7.8 (12/29/2009)
+
+* Fixed a bug in reading deformation field in CAT format.
+* Revised the program in reading Pinnacle ROI files to be more robust in order to
+  account for some unexpected errors of the ROI file itself.
+* Revised function of loading ROI structure by adding a color field.
+  
+  
+  
+version 1.7.5 (10/07/2009)
+
+* Fixed a bug in reading Pinnacle ROI file. For Pinnacle version 8.0m when the mesh
+  header is not presented, the previous version will not be able to load in the 
+  data successfully.
+* Fixed a bug in generating 3d mesh from 2d contours. In previous version, when the
+  intersection of some axes exactly falls on some points in the contours' point
+  list, there will be a cut-off gap separating the whole ROI structure.
+  
+  
+  
+version 1.7.2 (09/25/2009)
+
+* Updated parallel processing and added exception handling in parallel processing 
+  on the contour deformation and generating sagittal and coronal contours.
+  
+  
+  
+version 1.7.1 (09/25/2009)
+
+* Fixed a bug in 2d contour processing which may cause the program crash when there
+  is only one slice in the reference ROI contours.
+* Fixed a bug in the generated sagittal and coronal contours. In some slices, the 
+  contours are missing, which is caused by two very similar contours generated in 
+  the resulting axial contours.
+* Added basic exception processing when performing contour deformation, contour
+  reformatting, and generating sagittal and coronal contours.
+
+
+  
+version 1.7.0 (09/22/2009)
+
+* Fixed a bug in mesh warping that might cause out-of-boundary issue. The points in
+  3d mesh to be deformed may be out of the boundary of deformation field so that no
+  displacement vector can be applied to them. Revised the warping algorithm by 
+  trilinearly interpolating the deformation vectors to resolve this problem. 
+* Revised the program to be 64 bit compatible. The program right now can be compiled
+  on both 32 bit and 64 bit Windows operating systems.
+* Revised the spacing and orgin from single precision floating values to double 
+  precision floating values.
+* Changed the ITK library to be version 3.16.0 and the VTK library to be version
+  5.4.2. The ITK library should be compiled with ITK_USE_CENTERED_PIXEL_COORDINATES_
+  CONSISTENTLY option ON.
+  
+  
+  
+version 1.6.2 (09/11/2009)
+
+* Fixed a bug in cutting 3d surface to generate 2d contours, which is caused by the
+  precision of float points.
+* Fixed a bug in 2d contour processing, which may result in missing contours when a 
+  ring structure presents.
+  
+  
+  
+version 1.6.1 (09/10/2009)
+
+* Added an interface function to load Pinnacle ROIs from a file (plan.roi). The output
+  is a structure which will be used in CAT (MATLAB) via a MEX function. The ROI file
+  of all three directions (axial, sagittal, coronal) can be loaded via this function:
+  
+  void ReadPinnacleROIFile(std::vector<PinnacleROIStruct> & roiStructArray, //output ROI structure list 
+                           const std::string & roiFileName,                 //input ROI file name
+                           PinnacleROIType roiType,                         //direction (axial, sagittal, coronal)
+                           const double DXYStart[2]);                       //internal start point defined in CAT
+                           
+  MEX function will convert the output roiStructArray to be of MATLAB data structure.
+  
+  
+  
+version 1.6.0 (09/04/2009)
+
+* Modified the source for parallel processing the contour warping - requires boost
+  library version 1.38 (http://www.boostpro.com/download/boost_1_38_setup.exe)
+* Added precompiled header to speed up the project building (in CMakeLists.txt)
+* Added Windows resource file to the library. A version tag is inserted into the
+  ContourWarping.dll, which can be viewed by right clicking the file and selecting
+  "properties".
+* Fixed a bug in 2d contour processing the boundary slices.
+
+
+  
+version 1.5.2 (09/01/2009)
+
+* Note: require install update of Visual C++ 2005 Redistributible. Compiled runtime
+  library depends on WER.dll and IESHIMS.dll which are included in the update
+  http://www.microsoft.com/downloads/details.aspx?displaylang=en&FamilyID=766a6af7-
+  ec73-40ff-b072-9112bab119c2
+  Download vcredist_x86.exe and install it on local computer to resolve depency problem.
+
+
+
+version 1.5.1 (08/24/2009)
+
+* Fixed a bug in generating curves in sagittal and coronal planes. Different flag value is
+  set for sagittal or coronal curves so that they can be displayed correctly in Pinnacle.
+
+
+
+version 1.5.0 (08/19/2009)
+
+* Revised the adaptive smoothing mechanism for 2d contours to make the smoothing a little
+  bit aggressive for middle size (in the sense of curve area) curves
+* In 2d contour processing, added additional check to prevent from removing too many 
+  boundary slices in the case of the slice number of deformed ROI is equal or less than
+  that of reference ROI.
+* In 2d contour processing, added a function to prevent from removing curves in transitional
+  slices - which means two neighboring slice curve areas of the reference ROI have a 
+  large change.
+* In 2d contour processing, considered the case that one slice contains no curves. No curve
+  similarity checking when going through those slices, including reference checking and 
+  neighboring checking.
+* In 2d contour processing, added function to check curves in a same slice and remove the 
+  smaller one of two very similar curves.
+* In 2d contour processing, revised the curve similarity computation for neighboring curve
+  similarity and in slice curve similarity.                    
+* Made the cutted 2d contours closed in both contour deformation (in CAT) and contour
+  reformatting (in IGRTUtilies).
+   
+
+   
+version 1.4.0 (08/14/2009)
+
+* Fixed a bug in tracking 2d contours after cutting them from 3d surface.
+* Reduced the computation time for cutting 3d surface to 2d contours to be around 1/3 of
+  that in previous version.
+* Reduced the computation time for processing 2d contours to be around 1/2 of that in
+  previsous version.
+* Revised the 2d contour to 3d mesh conversion algorithm to adaptively reduce the bumpy
+  effect on 3d surface in between slices, and keep the surface rendering reasonably good.
+* Implemented interface functions for computing contours in sagittal and coronal planes.
+  The external call to these functions are
+  
+  void GenerateXYDirectionROIs(const char * axialROIFileName,          // Pinnacle ROI file (input, in axial plane)
+                               const char * roiName,                   // ROI name
+                               const char * imgHeaderFileName,         // Image header file corresponding to ROI file
+                               const char * sagittalROIFileName,       // Pinnacle ROI file (output, in sagittal plane)
+                               const char * coronalROIFileName,        // Pinnacle ROI file (output, in coronal plane)
+                               const bool bPerformSmoothing = false);  // Switch to perform 3d mesh smoothing
+
+  void GenerateXYDirectionROIs(const char * axialROIFileName,
+                               const char * imgHeaderFileName,
+                               const char * sagittalROIFileName, //X
+                               const char * coronalROIFileName,  //Y
+                               const bool bPerformSmoothing = false);
+                                    
+  Mex function calling the second one to provide interface to CAT is implemented in 
+  ComputeXYCurves.dll. This function will be used to generate curves in sagittal and 
+  coronal planes for display in CAT.
+  
+  
+  
+version 1.3.0 (07/29/2009)
+
+* Implemented interface functions for parallel processing. The following functions haved
+  been added in the compiled ContourWarping.dll -
+    a) ReadPinnacleROIs(): read ROIs from a pinnacle file
+    b) DeformPinnacleROI(): warp one ROI
+    c) WritePinnacleROIs(): write ROIs to a pinnacle file
+    d) QueryPointerSize(): obtain the size for allocating memory to pointers outside
+    e) ReadDeformationField(): read in deformation field from file
+    f) BuildTablePosition(): build a vector of table position
+    g) ReleaseItkSmartPointerMemory(): release ITK smart pointer memory
+  Refer to parallel_example.cpp for detailed usage.
+
+
+
+version 1.2.1 (07/28/2009)
+
+* Fixed a bug in constructing 3d surface from 2d poly contours. Float point round-off issue
+  may cause the 3d suface being cutted off due to lost of one slice at the boundary of slice
+  with z value = 0.
+* Fixed a bug in cutting 3d surface to 2d poly contours after deformation. All cells in 2d
+  cutting plane that are not line type should be removed from tracking the poly contours.
+* Added slice region boundary to deformed contours to avoid error in the later curve display
+  in CAT.
+
+
+  
+version 1.2.0 (07/20/2009)
+
+* Incorporated the mesh part in IGRTUtils for updating plan.roi in the case of rotation and 
+  slice spacing change. The interface to IGRTUtils is in file CTRotation_Joy.m.
+* Fixed a bug in reading image header to acquire image size, spacing, starting point for
+  the initialization of class PinnacleROIConvert.
+* Fixed a bug in reading plan.roi file in the case there are empty curves (no point list but 
+  with a curve header in the file).
+* Fixed a bug in converting 3d surface to 2d slice contours. There are missing curves on some
+  slices due to a bug in preprocessing the 2d contour for tracking a point-ordered curve.
+* Improved the 2d contour point tracking algorithm for the case that two enclosed curves share
+  a piece of common edges.
+* Fixed a bug in clipping 2d contours when the deformation region box is smaller than the 
+  curves of some object. Used integer instead of float for comparison to avoid discarding
+  curves on boundary slices.
+* Revised the 2d contour to 3d mesh conversion algorithm to make sure the boundary slices will
+  not be discard, and rotation in IGRTUtils will not generate a zigzag contour shape when the 
+  rotation angle is large.
+* Reduced the memory usage when performing deformation or reformatting in class 
+  PinnacleROIConvert.
+
+
+
+version 1.1.0 (07/06/2009)
+
+* Adaptive contour smoothing ¨C smoothing of contours will self-adjust according to the 
+  enclosed contour area. The smaller contour area, the less aggressive smoothing performed.
+* Fixed a bug in logical contour processing which might cause the CAT crashing. It's caused 
+  by the index exceeding vector bound due to a very small number of slices in a ROI.
+* Fix a bug that made the program unable to locate the image header file required for mesh 
+  processing when the entire data set is copied from another computer. This file
+  UtilsMeshDeformROI.m is updated to resolve this problem.
+* Refined the logical contour processing to remove small islands and holes.
+
+
+
+version 1.0.0 (06/30/2009)
+
+* Incorporated the mesh part into CAT for contour deformation following image registration.
+  The interface to CAT is in file Alignment.m, AlignmentSmall.m, and UtilsMeshDeformROI.m.
+* Developed the mesh utility using C++, along with ITK and VTK. Output is a shared dynamic
+  library (*.dll) file called by mex functions, which provide the interface to main CAT
+  program running on MATLAB.
+* List of functionalities and corresponding C++ classes of the mesh utility -
+
+         Functionality                                          C++ class  
+
+  Read/write Pinnacle ROI file plan.roi                     PinnacleROIConvert
+  Convert curves to vtk structure for processing
+  
+  Pinnacle (version 8.0m) mesh processing                   PinnacleROIMesh
+  
+  2d vtk contour structure representation                   vtkPolyContours
+  
+  Clip 2d contours to specified region box                  vtkPolyContoursClipper
+  
+  2d contours to 3d surface conversion                      vtkVoxelContourToSurfaceFilterEx
+  
+  3d surface processing (decimation, smoothing)             vtkSurfaceMeshProcess
+  
+  3d surface deformation                                    vtkSurfaceDeformation
+  
+  Read/write CAT format deformation field                   catDeformationField
+  
+  3d surface deformation using CAT field                    vtkSurfaceDeformationUsingCatField
+  
+  3d surface transformation (rigidly)                       vtkSurfaceTransformation
+  
+  3d surface to 2d contours conversion                      vtkSurfaceToSliceContours
+  
+  2d contour processing after deformation:                  vtkContourProcess
+  2d smoothing, logical removal small islands 
+  and holes
+  
+* Wrapped up functions to be called externally -
+  
+  - Deform contours of one Pinnacle ROI in plan.roi file
+  
+    void ContourDeformation(char * roiFileName,                             // plan.roi file
+                            char * roiName,                                 // name of ROI to be processed
+                            char * imgHeaderFileName,                       // image header corresponding to the plan.roi
+                            char * defHeaderFileName,                       // CAT deformation field header file
+                            char * warpedROIFileName,                       // output deformed ROI file name
+                            const float * DailyTablePos = NULL,             // daily table position for deformed image (contours)
+                            int TablePosLength = 0,                         // length of daily table position
+                            const bool bPerformPostWarpingSmooth = true);   // switch to perform 2d contour smoothing
+                               
+  - Deform contours of all Pinnacle ROIs in plan.roi file
+  
+    void ContourDeformation(char * roiFileName,
+                            char * imgHeaderFileName,
+                            char * defHeaderFileName,
+                            char * warpedROIFileName,
+                            const float * DailyTablePos = NULL,
+                            int TablePosLength = 0,
+                            const bool bPerformPostWarpingSmooth = true);
+                            
+  - Reformat one Pinnacle ROI in plan.roi file 
+  
+    void ContourReformation(char * roiFileName,
+                            char * roiName,
+                            char * imgHeaderFileName,
+                            char * transROIFileName,                        // output transformed ROI file name
+                            const float transSpacing,                       // new spacing after reformatting
+                            const float transRotation[3]);                  // rotation angles centered at X, Y, Z axes
+  
+  - Reformat all Pinnacle ROIs in plan.roi file
+  
+    void ContourReformation(char * roiFileName,
+                            char * imgHeaderFileName,
+                            char * transROIFileName,
+                            const float transSpacing,
+                            const float transRotation[3]);

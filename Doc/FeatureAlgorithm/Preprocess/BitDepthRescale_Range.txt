@@ -1,0 +1,20 @@
+-Description: 
+This method is to scale the image intensity into the certain bit range. 
+
+-Parameters:
+1. BitDepth:   Bit depth for the scaled image
+2. RangeMin:   Mininum value of the source range.
+3. RangeMax:   Maximum value of the source range.
+4. RangeFix:   1==RangeMin and RangeMax in the parameter window are used. 0==Ignore RangeMin and RangeMax in the parameter window. 
+               RangeMin and RangeMax are dynamically determined by min and max of the current image.
+
+-Formula:
+InputRange=[Param.RangeMin, Param.RangeMax];
+FinalRange=[1, 2^Param.BitDepth];
+CurrentData=(CurrentData-InputRange(1))*(FinalRange(2)-FinalRange(1))/(InputRange(2)-InputRange(1))+FinalRange(1);
+
+-Revision:
+2013-10-12: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

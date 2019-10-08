@@ -1,0 +1,42 @@
+PatientID = 11111;
+LastName = "ExampleMR2";
+FirstName = "Import";
+MiddleName = "";
+MedicalRecordNumber = "111111";
+EncounterNumber = "";
+PrimaryPhysician = "";
+AttendingPhysician = "";
+ReferringPhysician = "";
+RadiationOncologist = "";
+Oncologist = "";
+Radiologist = "";
+Prescription = "";
+Disease = "";
+Diagnosis = "";
+Comment = "";
+NextUniquePlanID = 0;
+NextUniqueImageSetID = 1;
+Gender = "Male";
+DateOfBirth = "";
+ImageSetList ={
+ImageSet ={
+ImageSetID = 0;
+PatientID = 11111;
+ImageName = "ImageSet_0";
+NameFromScanner = "ExampleMR2^Import^^Cor";
+ExamID = "11111";
+StudyID = "11111";
+Modality = "MR";
+NumberOfImages = 31;
+ScanTimeFromScanner = "20130930 112143";
+FileName = "";
+};
+}
+ObjectVersion ={
+WriteVersion = "Launch Pad: 3.4b";
+CreateVersion = "Launch Pad: 3.4b";
+LoginName = "p3rtp";
+CreateTimeStamp = "2014-09-16 14:51:32";
+WriteTimeStamp = "2014-09-16 14:51:32";
+LastModifiedTimeStamp = "";
+};

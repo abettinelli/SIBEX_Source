@@ -1,0 +1,16 @@
+-Description: 
+ Consider intensity range between mean +/- 3*sigma.
+ Outside the range[u-3sigma, u+3sigma] were not considered
+
+-Parameters:
+Sigma: Range with std: n=3 (default)
+BitDepth: Quantized to 8 bit: BitDepth = 8 (default)
+
+-Reference:
+Collewet et. al. 2003, Influence of MRI acquisition protocols and image intensity normalization methods on texture classification
+
+-Revision:
+2017-03-10: The method is implemented.
+
+-Author:
+ Joonsang Lee, jlee27@mdanderson.org

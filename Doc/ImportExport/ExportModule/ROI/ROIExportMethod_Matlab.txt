@@ -1,0 +1,16 @@
+-Purpose: 
+ROIs are exported into Matlab format.
+
+-Format Description:
+1.  Variable 'structAxialROI':  contains the curve information of each ROI. Its data type  is structure. 
+     It has fields describing ROI name, 2D ROI curve's coordinates, curve's slice location.
+2.  Variable 'BWMatInfo':  contains the binary mask information of each ROI. Its data type  is structure. 
+    It has fields describing the raw data of binary mask, binary mask's start point, its dimension, and its voxel size.
+3. Variable 'PatInfo': contains the last name, the first name, and the MRN of the patient. 
+
+
+-Revision:
+2014-09-19: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

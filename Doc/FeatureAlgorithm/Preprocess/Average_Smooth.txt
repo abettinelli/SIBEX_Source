@@ -1,0 +1,11 @@
+-Description: 
+This method is to perform 2D averaging filter in slice-by-slice. 
+
+-Parameters:
+1. Size: The kernel size in the pixel unit. Kernal is a square matrix.
+
+-Revision:
+2013-10-12: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

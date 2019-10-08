@@ -1,0 +1,21 @@
+-Description: 
+This method is to remove edge voxels of binary mask based on the fraction of edge voxel.
+To get the fraction, binary mask is first generated into the finer resolution, cacluate the fraction,  then go back to the original resolution.
+
+-Parameters: 
+1. EdgeVoxFraction: The Threshold to remove or keep edge voxels
+2. XPix_ScaleFactor: Scale Factor of pixel size in X dimension. 
+3. YPix_ScaleFactor: Scale Factor of pixel size in Y dimension.
+4. ZPix_ScaleFactor: Scale Factor of pixel size in Z dimension.
+
+-Formula:
+1.  Down-Sample: Pix_ScaleFactor > 1; Up-Sample: Pix_ScaleFactor < 1. 
+     PixSizeAfter=PixSizeCurrent*Pix_ScaleFactor.
+2.  Trilinear interpolation is used.
+
+-Revision:
+2014-09-09: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org
+David Fried, DVFried@mdanderson.org

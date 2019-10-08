@@ -1,0 +1,70 @@
+***Feature_10thPercentile_Info***
+10th percentile of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_90thPercentile_Info***
+-Description: 
+90th percentile of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_CoefficientOfVariation_Info***
+The coefficient of variation of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Entropy_Info***
+The energy of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_InterQuartileRange_Info***
+The interquartile range of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Kurtosis_Info***
+Measure the peakedness of all the discretized voxels' intensity.
+ 
+***Feature_Max_Info***
+The intensity maximum among all the discretized voxel intensities.
+ 
+***Feature_MaximumHistogramGradient_Info***
+The maximum of the histogram gradient.
+ 
+***Feature_MaximumHistogramGradientGL_Info***
+ The discretised intensity corresponding to the maximum histogram gradient.
+ 
+***Feature_Mean_Info***
+The mean of discretised voxel intensities.
+ 
+***Feature_MeanAbsoluteDeviation_Info***
+The mean absolute deviation of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Median_Info***
+The intensity median among all the discretized voxel intensities.
+ 
+***Feature_MedianAbsoluteDeviation_Info***
+The median absolute deviation of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Min_Info***
+The intensity minimum among all the discretized voxel intensities.
+ 
+***Feature_MinimumHistogramGradient_Info***
+The minimum of the histogram gradient.
+ 
+***Feature_MinimumHistogramGradientGL_Info***
+ The discretised intensity corresponding to the minimum histogram gradient.
+ 
+***Feature_Mode_Info***
+The intensity mode among all the discretized voxel intensities.
+ 
+***Feature_QuartileCoefficientOfDispersion_Info***
+The quartile coefficient of dispersion of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Range_Info***
+The intensity range(MaxValue-MinValue) among all the discretized voxel intensities.
+ 
+***Feature_RobustMeanAbsoluteDeviation_Info***
+The robust mean absolute deviation of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Skewness_Info***
+Measure the  asymmetry of all the discretized voxels' intensity.
+ 
+***Feature_Uniformity_Info***
+The uniformity of the intensity values among all the discretized voxel intensities.
+ 
+***Feature_Variance_Info***
+The variance of discretised voxel intensities.
+ 

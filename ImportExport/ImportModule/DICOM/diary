@@ -1,0 +1,18 @@
+<a href="matlab: opentoline('C:\Work\MyProgram\Matlab\ImageFeatureOutcomeAnalysis\Utils\SendMailForFeedback.m',2,1)">2   </a>if nargin < 1
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep; end
+if system_dependent('IsDebugMode')==1, dbstep out; end
+if system_dependent('IsDebugMode')==1, dbcont; end
+dbclear ('C:\Work\MyProgram\Matlab\ImageFeatureOutcomeAnalysis\Utils\SendMailForFeedback.m', '2')
+builtin('cd','C:\Work\MyProgram\Matlab\ImageFeatureOutcomeAnalysis\Utils');
+pcode SendMailForFeedback.m
+IBEXMain

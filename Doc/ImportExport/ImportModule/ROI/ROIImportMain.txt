@@ -1,0 +1,13 @@
+-Purpose: 
+ROIs are imported into workspace through filters under \*\ImportExport\ImportModule\ROI\ROIImportMethod_*.
+
+-Format Description:
+1.  Filters are defined in \*\ImportExport\ImportModule\ROI\ROIImportMethod_*.
+2.  For the pinnacle format, pinnacle version(8 or 9) can be selected.
+3.  GUI goes through every filter to import the given file. 
+
+-Revision:
+2014-09-28: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

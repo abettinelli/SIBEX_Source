@@ -1,0 +1,19 @@
+-Description: 
+This method modifies the image and mask by applying an image intensity
+threshold and 2D binary mask erosion. After applying the image intensity
+threshold it uses the MatLab 'imfill' function to recover pixels whose
+intensities are below the threshold value but are surrounded by pixels
+above the threshold in all nine 2D directions. This allows for the
+inclusion of low density areas within the tumor while excluding any
+surrounding areas of air that shouldn't be included in the ROI. 
+
+-Parameters:
+1. ThresholdLow:   Lower threshold of image intensity.
+2. ThresholdHigh:  Upper threshold of image intensity.
+3. ErosionDist:    Distance in mm for binary mask erosion.
+
+-Revision:
+2014-06-21: The method is implemented.
+
+-Author:
+Xenia Fave, XJFave@mdanderson.org

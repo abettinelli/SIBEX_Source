@@ -1,0 +1,56 @@
+***Feature_10thPercentile_Info***
+-Description: 
+10th percentile of the intensity values among all the voxels.
+ 
+***Feature_90thPercentile_Info***
+-Description: 
+90th percentile of the intensity values among all the voxels.
+ 
+***Feature_CoefficientOfVariation_Info***
+The coefficient of variation of the intensity values among all the voxels.
+ 
+***Feature_Energy_Info***
+The energy of the intensity values among all the voxels.
+ 
+***Feature_InterQuartileRange_Info***
+The interquartile range of the intensity values among all the voxels.
+ 
+***Feature_Kurtosis_Info***
+Measure the peakedness of all the voxels' intensity.
+ 
+***Feature_Max_Info***
+The intensity maximum among all the voxels.
+ 
+***Feature_Mean_Info***
+The intensity mean among all the voxels.
+ 
+***Feature_MeanAbsoluteDeviation_Info***
+The mean absolute deviation of the intensity values among all the voxels.
+ 
+***Feature_Median_Info***
+The intensity median among all the voxels.
+ 
+***Feature_MedianAbsoluteDeviation_Info***
+The median absolute deviation of the intensity values among all the voxels.
+ 
+***Feature_Min_Info***
+The intensity minimum among all the voxels.
+ 
+***Feature_QuartileCoefficientOfDispersion_Info***
+The quartile coefficient of dispersion of the intensity values among all the voxels.
+ 
+***Feature_Range_Info***
+The intensity range(MaxValue-MinValue) among all the voxels.
+ 
+***Feature_RobustMeanAbsoluteDeviation_Info***
+The robust mean absolute deviation of the intensity values among all the voxels.
+ 
+***Feature_RootMeanSquare_Info***
+The root mean square of the intensity values among all the voxels.
+ 
+***Feature_Skewness_Info***
+Measure the  asymmetry of all the voxels' intensity.
+ 
+***Feature_Variance_Info***
+The intensity variance among all the voxels.
+ 

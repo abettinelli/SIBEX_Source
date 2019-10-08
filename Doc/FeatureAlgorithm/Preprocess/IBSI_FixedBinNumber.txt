@@ -1,0 +1,15 @@
+ -Description: 
+ 1. To apply a fixed bin number discretisation to image intensity values as a separate preprocessing step.
+ 
+ -Parameters:
+ 1. BinNumber: Integer specifying the number of bin number to use when scaling the grayscale values.
+ 
+ -References:
+ 1. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+    December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
+
+ -Revision:
+ 2019-07-10: The method is implemented.
+ 
+ -Authors:
+ Andrea Bettinelli

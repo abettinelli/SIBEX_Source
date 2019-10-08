@@ -1,0 +1,11 @@
+ -Description: 
+ 1.  This method is to extract ROI voxel centers, compute the convex-hull, apply the marching cube algorithm 
+ 2.  The data are passed into IBSI_MorphologicalFeatures_Feature.m to compute the related features.
+ 
+ -Parameters:
+ 
+ -Revision:
+ 2019-02-15: The method is implemented.
+ 
+ -Authors:
+ Andrea Bettinelli

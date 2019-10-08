@@ -1,0 +1,14 @@
+-Purpose: 
+ROIs are exported into the Pinnacle treatment planning system's ROI format.
+
+-Format Description:
+1.  Pinnacle ROI file is ASCII file. It can be opened by any text editors. 
+     Pinnacle ROI file describes ROI properties and 2D ROI curve's coordinates. 
+     It doesn't care patient's MRN and patient's name.  
+2.  ROI binary mask is not exported in this format. 
+
+-Revision:
+2014-09-19: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

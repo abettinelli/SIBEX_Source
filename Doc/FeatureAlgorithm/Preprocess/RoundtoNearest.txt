@@ -1,0 +1,15 @@
+-Description: 
+This function rounds the image data to the nearest X where X is the value
+of the input  parameter.
+
+-Parameters:
+Value: The value which all numbers should be rounded to its nearest
+increment
+e.g. if value is 0.5 for [1.1,2.6,3.2] the result is [1.0, 2.5, 3.0]
+e.g. if value is 1 for [1.1,2.6,3.2] the result is [1.0, 3.0, 3.0]
+
+-Revision:
+08-11-2014: Implemented
+
+-Author:
+David Fried, DVFried@mdanderson.org

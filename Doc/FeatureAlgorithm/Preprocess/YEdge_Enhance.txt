@@ -1,0 +1,12 @@
+-Description: 
+This method is to apply 2D sobel vertical edge-emphasizing filter in slice-by-slice. 
+
+-Parameters:
+No
+
+
+-Revision:
+2013-10-12: The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org

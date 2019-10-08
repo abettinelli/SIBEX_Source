@@ -1,0 +1,63 @@
+byte_order = 0;
+read_conversion = "";
+write_conversion = "";
+t_dim = 0;
+x_dim = 512;
+y_dim = 512;
+z_dim = 31;
+datatype = 1;
+bitpix = 16;
+bytes_pix = 2;
+vol_max = 0.000000;
+vol_min = 0.000000;
+t_pixdim = 0.000000;
+x_pixdim = 0.04688;
+y_pixdim = 0.04688;
+z_pixdim = 0.64892807;
+t_start = 0.000000;
+x_start =-11.7911;
+y_start =-35.82638;
+z_start =-11.20659714;
+z_time = 0.000000;
+dim_units : 
+voxel_type : 
+id = 0;
+vis_only = 0;
+data_type : 
+vol_type : 
+db_name : ExampleMR2^Import^^Cor 
+medical_record : 
+originator : 
+date : 20130930 112143
+scanner_id : 
+patient_position : HFS
+orientation = 0;
+scan_acquisition = 0;
+comment : 
+fname_format : 
+fname_index_start = 0;
+fname_index_delta = 0;
+binary_header_size = 0;
+manufacturer : Philips
+model : Mx8000 IDT
+couch_pos = 0.000000;
+couch_height = 18.4;
+X_offset = -0.000000;
+Y_offset = 0.000000;
+dataset_modified = 0;
+study_id : 11111
+exam_id : 11111
+patient_id : 1111111
+modality : MR
+gating_type :
+gating_UID :
+Series_Description : Cor T1 w/ FC +C
+Scan_Options : FC\EDR_GEMS\FILTERED_GEMS
+Low_Sag : 
+Negative_Voxel : Yes
+Station_Name : 1109f3
+KVP : 
+SeriesDateTime : 20130930 120012
+Version : 9.0
+x_start_dicom = -11.7911;
+y_start_dicom = -12.085;

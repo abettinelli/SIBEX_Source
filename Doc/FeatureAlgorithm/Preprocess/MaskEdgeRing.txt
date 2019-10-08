@@ -1,0 +1,11 @@
+-Description: 
+This filter is to create ring mask around the mask boundary
+
+-Parameters:
+ BandSize: The baned size in the pixel unit. 
+
+-Revision:
+2015-06-18:  The method is implemented.
+
+-Author:
+Joy Zhang, lifzhang@mdanderson.org
