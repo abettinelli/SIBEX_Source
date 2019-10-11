@@ -82,7 +82,7 @@ ElapseTime=abs(etime(CurrentDate, ReleaseDate));
 
 
 %Add path
-% addpath(handles.ProgramPath);
+addpath(handles.ProgramPath);
 AddSubPath(handles);
 
 %Read configuration
@@ -278,10 +278,6 @@ addpath([handles.ProgramPath, '\FeatureAlgorithm']);
 addpath([handles.ProgramPath, '\FeatureAlgorithm\Category']);
 addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess']);
 addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\Helper']);
-% addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b']);
-% addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b\functions2D']);
-% addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b\functions3D']);
-% addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b\functions']);
 
 %Add Category Path
 Category=GetFeatureCategoryFolder;
@@ -430,7 +426,8 @@ PrefaceImage=imread([handles.ProgramPath, '\Pic\IBEX.jpg']);
 set(handles.figure1, 'CurrentAxes', handles.AxesImage);
 imshow(PrefaceImage);
 set(handles.AxesImage,'XTick', [], 'YTick', []);
-
+set(gca,'Visible','off')
+ 
 % --- Outputs from this function are returned to the command line.
 function varargout = IBEXMain_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -488,6 +485,7 @@ RemoveModulePath(handles.ProgramPath, 'Import');
 RemoveModulePath(handles.ProgramPath, 'Export');
 RemoveModulePath(handles.ProgramPath, 'FeatureCategory');
 
+rmpath(handles.ProgramPath);
 rmpath([handles.ProgramPath, '\AutoSeg']);
 rmpath([handles.ProgramPath, '\Config']);
 rmpath([handles.ProgramPath, '\GUIHelper']);
@@ -503,10 +501,6 @@ rmpath([handles.ProgramPath, '\FeatureAlgorithm']);
 rmpath([handles.ProgramPath, '\FeatureAlgorithm\Category']);
 rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess']);
 rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\Helper']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b\functions2D']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b\functions3D']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\coherencefilter_version5b\functions']);
 
 warning on;
 

@@ -10,7 +10,17 @@ hText=findobj(hStatus, 'Style', 'Text');
 drawnow;
 
 %Get File Names
-FileList=dir(TempPath);
+Temp=dir(TempPath);
+
+FileList = struct();
+for i = 1:length(Temp)
+    FileList(i).name = Temp(i).name;
+    FileList(i).date = Temp(i).date;
+    FileList(i).bytes = Temp(i).bytes;
+    FileList(i).isdir = Temp(i).isdir;
+    FileList(i).datenum = Temp(i).datenum;
+end
+
 cellFileList=struct2cell(FileList);
 charFileName=char(cellFileList(1,:)');
 
