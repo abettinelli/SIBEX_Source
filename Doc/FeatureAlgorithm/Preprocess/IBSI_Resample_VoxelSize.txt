@@ -13,9 +13,10 @@
  5. NoZDim:
        0: Resample the ZPixSize as requested (3D interpolation).
        1: Keep the original ZPixSize (slice by slice interpolation). 
- 6. AlignCornerCentre:
-       0: alignment of the centers of the interpolation and originalgrids.
-       1: alignment of the origins of the interpolation and originalgrids.
+ 6. GridAlignment:
+       0: align grid centers
+       1: align grid origins
+       2: fit to original grid
  7. Alpha: Threshold to binarise intesnity fractions of the ROI mask.
  
  -References:

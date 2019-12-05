@@ -15,9 +15,10 @@ function [ImageInfo_InROIBox, BinaryMaskInfo_InROIBox]=IBSI_Resample_VoxelSize(D
 % 5. NoZDim:
 %       0: Resample the ZPixSize as requested (3D interpolation).
 %       1: Keep the original ZPixSize (slice by slice interpolation). 
-% 6. AlignCornerCentre:
-%       0: alignment of the centers of the interpolation and originalgrids.
-%       1: alignment of the origins of the interpolation and originalgrids.
+% 6. GridAlignment:
+%       0: align grid centers
+%       1: align grid origins
+%       2: fit to original grid
 % 7. Alpha: Threshold to binarise intesnity fractions of the ROI mask.
 % 
 % -References:
@@ -54,8 +55,8 @@ end
 if ~isfield(Param, 'Method')
     Param.Method = 'linear';
 end
-if ~isfield(Param, 'AlignCornerCentre')
-    Param.AlignCornerCentre = false;
+if ~isfield(Param, 'GridAlignment')
+    Param.GridAlignment = 0;
 end
 if ~isfield(Param, 'NoZDim')
     Param.NoZDim = false;
@@ -124,30 +125,63 @@ FULL_ImageInfo.YGrid = FULL_ImageInfo.YStart+(0:FULL_ImageInfo.YDim-1)*FULL_Imag
 FULL_ImageInfo.ZGrid = FULL_ImageInfo.ZStart+(0:FULL_ImageInfo.ZDim-1)*FULL_ImageInfo.ZPixDim;
 
 % Full Image New
-FULL_ImageInfoNew.XPixDim=Param.XPixDim;
-FULL_ImageInfoNew.YPixDim=Param.YPixDim;
-FULL_ImageInfoNew.ZPixDim=Param.ZPixDim;
-FULL_ImageInfoNew.XDim=ceil((FULL_ImageInfo.XDim*FULL_ImageInfo.XPixDim)/Param.XPixDim);
-FULL_ImageInfoNew.YDim=ceil((FULL_ImageInfo.YDim*FULL_ImageInfo.YPixDim)/Param.YPixDim);
-FULL_ImageInfoNew.ZDim=ceil((FULL_ImageInfo.ZDim*FULL_ImageInfo.ZPixDim)/Param.ZPixDim);
-FULL_ImageInfoNew.XStart = FULL_ImageInfo.XStart + 0.5*FULL_ImageInfo.XPixDim*(FULL_ImageInfo.XDim-1)-0.5*Param.XPixDim*(FULL_ImageInfoNew.XDim-1);
-FULL_ImageInfoNew.YStart = FULL_ImageInfo.YStart + 0.5*FULL_ImageInfo.YPixDim*(FULL_ImageInfo.YDim-1)-0.5*Param.YPixDim*(FULL_ImageInfoNew.YDim-1);
-FULL_ImageInfoNew.ZStart = FULL_ImageInfo.ZStart + 0.5*FULL_ImageInfo.ZPixDim*(FULL_ImageInfo.ZDim-1)-0.5*Param.ZPixDim*(FULL_ImageInfoNew.ZDim-1);
-% Grid New Full
-FULL_ImageInfoNew.XGrid = FULL_ImageInfoNew.XStart+(0:FULL_ImageInfoNew.XDim-1)*FULL_ImageInfoNew.XPixDim;
-FULL_ImageInfoNew.YGrid = FULL_ImageInfoNew.YStart+(0:FULL_ImageInfoNew.YDim-1)*FULL_ImageInfoNew.YPixDim;
-FULL_ImageInfoNew.ZGrid = FULL_ImageInfoNew.ZStart+(0:FULL_ImageInfoNew.ZDim-1)*FULL_ImageInfoNew.ZPixDim;
+if Param.GridAlignment == 0 || Param.GridAlignment == 1
+    FULL_ImageInfoNew.XPixDim=Param.XPixDim;
+    FULL_ImageInfoNew.YPixDim=Param.YPixDim;
+    FULL_ImageInfoNew.ZPixDim=Param.ZPixDim;
+    FULL_ImageInfoNew.XDim=ceil((FULL_ImageInfo.XDim*FULL_ImageInfo.XPixDim)/Param.XPixDim);
+    FULL_ImageInfoNew.YDim=ceil((FULL_ImageInfo.YDim*FULL_ImageInfo.YPixDim)/Param.YPixDim);
+    FULL_ImageInfoNew.ZDim=ceil((FULL_ImageInfo.ZDim*FULL_ImageInfo.ZPixDim)/Param.ZPixDim);
+    FULL_ImageInfoNew.XStart = FULL_ImageInfo.XStart + 0.5*FULL_ImageInfo.XPixDim*(FULL_ImageInfo.XDim-1)-0.5*Param.XPixDim*(FULL_ImageInfoNew.XDim-1);
+    FULL_ImageInfoNew.YStart = FULL_ImageInfo.YStart + 0.5*FULL_ImageInfo.YPixDim*(FULL_ImageInfo.YDim-1)-0.5*Param.YPixDim*(FULL_ImageInfoNew.YDim-1);
+    FULL_ImageInfoNew.ZStart = FULL_ImageInfo.ZStart + 0.5*FULL_ImageInfo.ZPixDim*(FULL_ImageInfo.ZDim-1)-0.5*Param.ZPixDim*(FULL_ImageInfoNew.ZDim-1);
+    % Grid New Full
+    FULL_ImageInfoNew.XGrid = FULL_ImageInfoNew.XStart+(0:FULL_ImageInfoNew.XDim-1)*FULL_ImageInfoNew.XPixDim;
+    FULL_ImageInfoNew.YGrid = FULL_ImageInfoNew.YStart+(0:FULL_ImageInfoNew.YDim-1)*FULL_ImageInfoNew.YPixDim;
+    FULL_ImageInfoNew.ZGrid = FULL_ImageInfoNew.ZStart+(0:FULL_ImageInfoNew.ZDim-1)*FULL_ImageInfoNew.ZPixDim;
 
-% ROI old
-ROI_ImageInfo=CDataSetInfo.IBSI_info.BoundingBox;
-ROI_ImageInfo.XPixDim=CDataSetInfo.XPixDim;
-ROI_ImageInfo.YPixDim=CDataSetInfo.YPixDim;
-ROI_ImageInfo.ZPixDim=CDataSetInfo.ZPixDim;
+    % ROI old
+    ROI_ImageInfo=CDataSetInfo.IBSI_info.BoundingBox;
+    ROI_ImageInfo.XPixDim=CDataSetInfo.XPixDim;
+    ROI_ImageInfo.YPixDim=CDataSetInfo.YPixDim;
+    ROI_ImageInfo.ZPixDim=CDataSetInfo.ZPixDim;
 
-% ROI new
-ROI_ImageInfoNew.XPixDim=Param.XPixDim;
-ROI_ImageInfoNew.YPixDim=Param.YPixDim;
-ROI_ImageInfoNew.ZPixDim=Param.ZPixDim;
+    % ROI new
+    ROI_ImageInfoNew.XPixDim=Param.XPixDim;
+    ROI_ImageInfoNew.YPixDim=Param.YPixDim;
+    ROI_ImageInfoNew.ZPixDim=Param.ZPixDim;
+    
+elseif Param.GridAlignment == 2
+    FULL_ImageInfoNew.XDim=ceil((FULL_ImageInfo.XDim*FULL_ImageInfo.XPixDim)/Param.XPixDim);
+    FULL_ImageInfoNew.YDim=ceil((FULL_ImageInfo.YDim*FULL_ImageInfo.YPixDim)/Param.YPixDim);
+    FULL_ImageInfoNew.ZDim=ceil((FULL_ImageInfo.ZDim*FULL_ImageInfo.ZPixDim)/Param.ZPixDim);
+    
+    XDim_temp=ceil((FULL_ImageInfo.XDim-1)*FULL_ImageInfo.XPixDim)/Param.XPixDim;
+    YDim_temp=ceil((FULL_ImageInfo.YDim-1)*FULL_ImageInfo.YPixDim)/Param.YPixDim;
+    ZDim_temp=ceil((FULL_ImageInfo.ZDim-1)*FULL_ImageInfo.ZPixDim)/Param.ZPixDim;
+    
+    FULL_ImageInfoNew.XPixDim = (FULL_ImageInfo.XDim-1)*FULL_ImageInfo.XPixDim/(XDim_temp-1);
+    FULL_ImageInfoNew.YPixDim = (FULL_ImageInfo.YDim-1)*FULL_ImageInfo.YPixDim/(YDim_temp-1);
+    FULL_ImageInfoNew.ZPixDim = (FULL_ImageInfo.ZDim-1)*FULL_ImageInfo.ZPixDim/(ZDim_temp-1);
+    FULL_ImageInfoNew.XStart = FULL_ImageInfo.XStart;
+    FULL_ImageInfoNew.YStart = FULL_ImageInfo.YStart;
+    FULL_ImageInfoNew.ZStart = FULL_ImageInfo.ZStart;
+    % Grid New Full
+    FULL_ImageInfoNew.XGrid = FULL_ImageInfoNew.XStart+(0:FULL_ImageInfoNew.XDim-1)*FULL_ImageInfoNew.XPixDim;
+    FULL_ImageInfoNew.YGrid = FULL_ImageInfoNew.YStart+(0:FULL_ImageInfoNew.YDim-1)*FULL_ImageInfoNew.YPixDim;
+    FULL_ImageInfoNew.ZGrid = FULL_ImageInfoNew.ZStart+(0:FULL_ImageInfoNew.ZDim-1)*FULL_ImageInfoNew.ZPixDim;
+    
+    % ROI old
+    ROI_ImageInfo=CDataSetInfo.IBSI_info.BoundingBox;
+    ROI_ImageInfo.XPixDim=CDataSetInfo.XPixDim;
+    ROI_ImageInfo.YPixDim=CDataSetInfo.YPixDim;
+    ROI_ImageInfo.ZPixDim=CDataSetInfo.ZPixDim;
+
+    % ROI new
+    ROI_ImageInfoNew.XPixDim=FULL_ImageInfoNew.XPixDim;
+    ROI_ImageInfoNew.YPixDim=FULL_ImageInfoNew.YPixDim;
+    ROI_ImageInfoNew.ZPixDim=FULL_ImageInfoNew.ZPixDim;
+end
 
 % Find start and end indeces of the ROI in the new Grid
 % idx_old = findStartEndIdx(FULL_ImageInfo, ROI_ImageInfo);
@@ -162,14 +196,15 @@ ROI_ImageInfoNew.XDim = (idx_new.X_End-idx_new.X_Start)+1;
 ROI_ImageInfoNew.YDim = (idx_new.Y_End-idx_new.Y_Start)+1;
 ROI_ImageInfoNew.ZDim = (idx_new.Z_End-idx_new.Z_Start)+1;
 
-if Param.NoZDim
-    ROI_ImageInfoNew.ZDim = ROI_ImageInfo.ZDim;
-    ROI_ImageInfoNew.ZPixDim = ROI_ImageInfo.ZPixDim;
+
+if Param.GridAlignment == 1 % Align grid origins
+    ROI_ImageInfoNew.XStart = ROI_ImageInfo.XStart;
+    ROI_ImageInfoNew.YStart = ROI_ImageInfo.YStart;
     ROI_ImageInfoNew.ZStart = ROI_ImageInfo.ZStart;
 end
 
-if Param.AlignCornerCentre
-    ROI_ImageInfoNew.XStart = ROI_ImageInfo.XStart;
-    ROI_ImageInfoNew.YStart = ROI_ImageInfo.YStart;
+if Param.NoZDim
+    ROI_ImageInfoNew.ZDim = ROI_ImageInfo.ZDim;
+    ROI_ImageInfoNew.ZPixDim = ROI_ImageInfo.ZPixDim;
     ROI_ImageInfoNew.ZStart = ROI_ImageInfo.ZStart;
 end
