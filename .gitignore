@@ -4,3 +4,4 @@ Config/IBEXLocation.INI
 SIBEX.INI
 ImportExport/ImportModule/DICOM/diary
 *.INI
+Helper/findjobj_bk.m

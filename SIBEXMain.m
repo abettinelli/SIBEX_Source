@@ -87,13 +87,13 @@ AddSubPath(handles);
 
 %Read configuration
 if ~isdeployed
-    ConfigFile=[handles.ProgramPath, '\SIBEX.INI'];
+    ConfigFile=fullfile(handles.ProgramPath, 'SIBEX.INI');
 else
     CTFPath=ctfroot;
-    TempIndex=strfind(CTFPath, '\');
+    TempIndex=strfind(CTFPath, filesep);
     CTFPath=CTFPath(1:TempIndex(end)-1);   
     
-    ConfigFile=[CTFPath, '\SIBEX.INI'];
+    ConfigFile=fullfile(CTFPath, 'SIBEX.INI');
 end
 
 %Sanity check on the configuration file
@@ -107,16 +107,16 @@ if exist(ConfigFile, 'file')
             
             %Copy the example patient           
             try
-                DeveloperStudioPath=[handles.ProgramPath, '\DeveloperStudio'];
+                DeveloperStudioPath=fullfile(handles.ProgramPath, 'DeveloperStudio');
                 
-                mkdir([ConfigInfo.DataDir, '\User1\Site1\1FeatureDataSet_ImageROI']);
-                mkdir([ConfigInfo.DataDir, '\User1\Site1\1FeatureModelSet_Algorithm']);
-                mkdir([ConfigInfo.DataDir, '\User1\Site1\1FeatureResultSet_Result']);
+                mkdir(fullfile(ConfigInfo.DataDir, 'User1', 'Site1', '1FeatureDataSet_ImageROI'));
+                mkdir(fullfile(ConfigInfo.DataDir, 'User1', 'Site1', '1FeatureModelSet_Algorithm'));
+                mkdir(fullfile(ConfigInfo.DataDir, 'User1', 'Site1', '1FeatureResultSet_Result'));
                 
-                copyfile([DeveloperStudioPath, '\ImportExample\*.*'], [ConfigInfo.DataDir, '\User1\Site1\']);
-                copyfile([DeveloperStudioPath, '\\DataFeatureSetExample\DataSet\*.*'], [ConfigInfo.DataDir, '\User1\Site1\1FeatureDataSet_ImageROI']);
-                copyfile([DeveloperStudioPath, '\\DataFeatureSetExample\FeatureSet\*.*'], [ConfigInfo.DataDir, '\User1\Site1\1FeatureModelSet_Algorithm']);
-                copyfile([DeveloperStudioPath, '\\DataFeatureSetExample\Result\*.*'], [ConfigInfo.DataDir, '\User1\Site1\1FeatureResultSet_Result']);
+                copyfile(fullfile(DeveloperStudioPath, 'ImportExample', '*.*'), fullfile(ConfigInfo.DataDir, 'User1', 'Site1'));
+                copyfile(fullfile(DeveloperStudioPath, 'DataFeatureSetExample', 'DataSet', '*.*'), fullfile(ConfigInfo.DataDir, 'User1', 'Site1', '1FeatureDataSet_ImageROI'));
+                copyfile(fullfile(DeveloperStudioPath, 'DataFeatureSetExample', 'FeatureSet', '*.*'), fullfile(ConfigInfo.DataDir, 'User1', 'Site1', '1FeatureModelSet_Algorithm'));
+                copyfile(fullfile(DeveloperStudioPath, 'DataFeatureSetExample', 'Result', '*.*'), fullfile(ConfigInfo.DataDir, 'User1', 'Site1', '1FeatureResultSet_Result'));
             catch
                 
             end
@@ -146,7 +146,7 @@ if exist(ConfigFile, 'file')
     end    
     
     %Pref file
-    handles.PrefFile=[handles.ProgramPath, '\Config\', 'IBEXLocation.INI'];    
+    handles.PrefFile=fullfile(handles.ProgramPath, 'Config', 'IBEXLocation.INI');    
     if exist(handles.PrefFile, 'file')
         [handles.CurrentUser, handles.CurrentSite]=GetPrefLocation(handles.PrefFile);
     else
@@ -239,14 +239,14 @@ end
 function Flag=UserSanityCheck
 Flag =1; 
 UserPath=getenv('APPDATA');
-TempIndex=strfind(UserPath, '\');
+TempIndex=strfind(UserPath, filesep);
 UserPath=UserPath(1:TempIndex(3)-1);
 
 %First Use?
-if exist([UserPath, '\LCLZV10'], 'file')
-    FirstUseFile=[UserPath, '\LCLZV10'];
+if exist(fullfile(UserPath, 'LCLZV10'), 'file')
+    FirstUseFile=fullfile(UserPath, 'LCLZV10');
 else
-    FirstUseFile=[UserPath, '\LCLZV10'];
+    FirstUseFile=fullfile(UserPath, 'LCLZV10');
 end
 
 try
@@ -263,21 +263,21 @@ catch
 end
 
 function AddSubPath(handles)
-addpath([handles.ProgramPath, '\AutoSeg']);
-addpath([handles.ProgramPath, '\Config']);
-addpath([handles.ProgramPath, '\GUIHelper']);
-addpath([handles.ProgramPath, '\GUIHelperSpecifyData']);
-addpath([handles.ProgramPath, '\Helper']);
-addpath([handles.ProgramPath, '\ImportExport']);
-addpath([handles.ProgramPath, '\ImportExport\Helper']);
-addpath([handles.ProgramPath, '\ImportExport\ImportModule']);
-addpath([handles.ProgramPath, '\Pic']);
-addpath([handles.ProgramPath, '\Utils']);
-addpath([handles.ProgramPath, '\DeveloperStudio']);
-addpath([handles.ProgramPath, '\FeatureAlgorithm']);
-addpath([handles.ProgramPath, '\FeatureAlgorithm\Category']);
-addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess']);
-addpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\Helper']);
+addpath(fullfile(handles.ProgramPath, 'AutoSeg'));
+addpath(fullfile(handles.ProgramPath, 'Config'));
+addpath(fullfile(handles.ProgramPath, 'GUIHelper'));
+addpath(fullfile(handles.ProgramPath, 'GUIHelperSpecifyData'));
+addpath(fullfile(handles.ProgramPath, 'Helper'));
+addpath(fullfile(handles.ProgramPath, 'ImportExport'));
+addpath(fullfile(handles.ProgramPath, 'ImportExport', 'Helper'));
+addpath(fullfile(handles.ProgramPath, 'ImportExport', 'ImportModule'));
+addpath(fullfile(handles.ProgramPath, 'Pic'));
+addpath(fullfile(handles.ProgramPath, 'Utils'));
+addpath(fullfile(handles.ProgramPath, 'DeveloperStudio'));
+addpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm'));
+addpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Category'));
+addpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess'));
+addpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess', 'Helper'));
 
 %Add Category Path
 Category=GetFeatureCategoryFolder;
@@ -304,7 +304,7 @@ end
 
 switch Mode
     case 0
-         JButton=findjobj(handles.PushbuttonWebLink2);
+        JButton=findjobj(handles.PushbuttonWebLink2);
     case 1
         JButton=findjobj(handles.PushbuttonWebLink);
     case 2
@@ -349,8 +349,8 @@ try
         mkdir(DataDir);
     end
     
-    mkdir([DataDir, '\User1']);
-    mkdir([DataDir, '\User1\Site1']);
+    mkdir(fullfile(DataDir, 'User1'));
+    mkdir(fullfile(DataDir, 'User1', 'Site1'));
 catch
     hMsg=msgbox('The data directory can''t be created.', 'Error', 'error', 'modal');
     waitfor(hMsg);
@@ -422,7 +422,7 @@ else
 end
 
 function DisplayMainImage(handles)
-PrefaceImage=imread([handles.ProgramPath, '\Pic\IBEX.jpg']);     
+PrefaceImage=imread(fullfile(handles.ProgramPath, 'Pic', 'IBEX.jpg'));     
 set(handles.figure1, 'CurrentAxes', handles.AxesImage);
 imshow(PrefaceImage);
 set(handles.AxesImage,'XTick', [], 'YTick', []);
@@ -486,21 +486,21 @@ RemoveModulePath(handles.ProgramPath, 'Export');
 RemoveModulePath(handles.ProgramPath, 'FeatureCategory');
 
 rmpath(handles.ProgramPath);
-rmpath([handles.ProgramPath, '\AutoSeg']);
-rmpath([handles.ProgramPath, '\Config']);
-rmpath([handles.ProgramPath, '\GUIHelper']);
-rmpath([handles.ProgramPath, '\GUIHelperSpecifyData']);
-rmpath([handles.ProgramPath, '\Helper']);
-rmpath([handles.ProgramPath, '\ImportExport']);
-rmpath([handles.ProgramPath, '\ImportExport\Helper']);
-rmpath([handles.ProgramPath, '\ImportExport\ImportModule']);
-rmpath([handles.ProgramPath, '\Pic']);
-rmpath([handles.ProgramPath, '\Utils']);
-rmpath([handles.ProgramPath, '\DeveloperStudio']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Category']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess']);
-rmpath([handles.ProgramPath, '\FeatureAlgorithm\Preprocess\Helper']);
+rmpath(fullfile(handles.ProgramPath, 'AutoSeg'));
+rmpath(fullfile(handles.ProgramPath, 'Config'));
+rmpath(fullfile(handles.ProgramPath, 'GUIHelper'));
+rmpath(fullfile(handles.ProgramPath, 'GUIHelperSpecifyData'));
+rmpath(fullfile(handles.ProgramPath, 'Helper'));
+rmpath(fullfile(handles.ProgramPath, 'ImportExport'));
+rmpath(fullfile(handles.ProgramPath, 'ImportExport', 'Helper'));
+rmpath(fullfile(handles.ProgramPath, 'ImportExport', 'ImportModule'));
+rmpath(fullfile(handles.ProgramPath, 'Pic'));
+rmpath(fullfile(handles.ProgramPath, 'Utils'));
+rmpath(fullfile(handles.ProgramPath, 'DeveloperStudio'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Category'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess', 'Helper'));
 
 warning on;
 
@@ -509,20 +509,20 @@ delete(handles.figure1);
 function RemoveModulePath(ProgramPath, ModeStr)
 switch ModeStr
     case 'Import'
-        DataDir=[ProgramPath, '\ImportExport\ImportModule'];
+        DataDir=fullfile(ProgramPath, 'ImportExport', 'ImportModule');
     case 'Export'
-        DataDir=[ProgramPath, '\ImportExport\ExportModule'];
+        DataDir=fullfile(ProgramPath, 'ImportExport', 'ExportModule');
     case  'FeatureCategory'
-        DataDir=[ProgramPath, '\FeatureAlgorithm\Category'];
+        DataDir=fullfile(ProgramPath, 'FeatureAlgorithm', 'Category');
 end
 
 DirList=GetDirList(DataDir);
 
 if ~isempty(DirList)
     for i=1:length(DirList)
-        rmpath([DataDir, '\', DirList{i}]);
+        rmpath(fullfile(DataDir, DirList{i}));
         
-        HelperPath=[DataDir, '\', DirList{i}, '\Helper'];
+        HelperPath=fullfile(DataDir, DirList{i}, 'Helper');
         if exist(HelperPath, 'dir')
             rmpath(HelperPath);
         end
@@ -591,7 +591,7 @@ function PushbuttonWebLink2_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonWebLink2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-LicenseFile=[handles.ProgramPath, '\License.txt'];
+LicenseFile=fullfile(handles.ProgramPath, 'License.txt');
 winopen(LicenseFile);
 
 % --- Executes on button press in PushbuttonFeedback.
@@ -617,7 +617,7 @@ function pushbutton13_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-PatsParentDir = [handles.INIConfigInfo.DataDir  '\' handles.CurrentUser '\' handles.CurrentSite];
+PatsParentDir = fullfile(handles.INIConfigInfo.DataDir, handles.CurrentUser, handles.CurrentSite);
 
 %Show Data Set
 hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
