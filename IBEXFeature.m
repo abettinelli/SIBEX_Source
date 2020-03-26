@@ -131,14 +131,11 @@ TableHeader=[];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Order']}];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Name']}];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Para.']}];
-TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
+% TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
 
-% TableFormat={'char', 'char', 'char', 'char'};
-TableFormat={'numeric', 'char', 'char', 'char'};
-
-TableEdit=[false, false, false, false];
-TableWidth={50, 200, 50, 50};
-
+TableFormat={'numeric', 'char', 'char'}; %, 'char'
+TableEdit=[false, false, false]; %, false
+TableWidth={60, 200, 60}; %, 50
 
 set(handles.UITablePreprocess, 'Visible', 'on', 'Enable', 'on', ...
         'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
@@ -148,21 +145,19 @@ UpdateUITablePreprocess(handles);
 
 set(handles.PushbuttonDeletePreprocess, 'Enable', 'Off');
 
-
 %UITableCategory
 TableHeader=[];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Name']}];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Para.']}];
-TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
+% TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
 
 Category=GetFeatureCategoryFolder;
 Category=[{' '}; Category];
 
-TableFormat={Category', 'char', 'char'};
-
-TableEdit=[ true, false, false];
-TableWidth={220, 60, 60};
-TableData=[{' '}, {' '}, {' '}];
+TableFormat={Category', 'char'}; %, 'char'
+TableEdit=[ true, false]; %, false
+TableWidth={220, 60}; %, 60
+TableData=[{' '}, {' '}]; %, {' '}
 
 set(handles.UITableCategory, 'Visible', 'on', 'Enable', 'on', ...
         'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
@@ -173,13 +168,11 @@ TableHeader=[];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Name']}];
 TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', 'Para.']}];
-TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
+% TableHeader=[TableHeader, {['<html><b><center><font size="4" face="Calibri" color="rgb(0,0,100)">', ' ']}];
 
-TableFormat={'logical', 'char', 'char', 'char'};
-
-TableEdit=[true, false, false, false];
-TableWidth={40, 200, 60, 60};
-
+TableFormat={'logical', 'char', 'char'}; %, 'char'
+TableEdit=[true, false, false]; %, false
+TableWidth={40, 200, 60}; %, 60
 
 set(handles.UITableCategoryFeature, 'Visible', 'on', 'Enable', 'on', ...
     'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
@@ -345,7 +338,7 @@ UpdateUITableCategoryFeature(handles);
 
 TableDataC(1, 1)={' '};
 TableDataC(1, 2)={' '};
-TableDataC(1, 3)={' '};
+% TableDataC(1, 3)={' '};
 set(handles.UITableCategory, 'Data', TableDataC);
 
 % handles.PreprocessStore=[];
@@ -492,8 +485,8 @@ else
     InfoPic=[handles.ProgramPath, '\Pic\FeatureInfo.png'];
     InfoImgHtml=['<html><img src="file:/', InfoPic, '"></html>'];
     
-    TestPic=[handles.ProgramPath, '\Pic\FeatureTest.png'];
-    TestImgHtml=['<html><img src="file:/', TestPic, '"></html>'];
+%     TestPic=[handles.ProgramPath, '\Pic\FeatureTest.png'];
+%     TestImgHtml=['<html><img src="file:/', TestPic, '"></html>'];
            
     ItemLen=length(handles.FeatureStore);   
 
@@ -501,7 +494,7 @@ else
     TableData(:, 2)={handles.FeatureStore.Name}';
     
     TableData(:, 3)=repmat({InfoImgHtml}, ItemLen, 1);    
-    TableData(:, 4)=repmat({TestImgHtml}, ItemLen, 1);   
+%     TableData(:, 4)=repmat({TestImgHtml}, ItemLen, 1);   
         
     set(handles.UITableCategoryFeature, 'Data', TableData);
 end
@@ -513,8 +506,8 @@ else
     InfoPic=[handles.ProgramPath, '\Pic\FeatureInfo.png'];
     InfoImgHtml=['<html><img src="file:/', InfoPic, '"></html>'];
     
-    TestPic=[handles.ProgramPath, '\Pic\FeatureTest.png'];
-    TestImgHtml=['<html><img src="file:/', TestPic, '"></html>'];
+%     TestPic=[handles.ProgramPath, '\Pic\FeatureTest.png'];
+%     TestImgHtml=['<html><img src="file:/', TestPic, '"></html>'];
            
     ItemLen=length(handles.PreprocessStore);
     
@@ -523,7 +516,7 @@ else
     TableData(:, 2)={handles.PreprocessStore.Name}';
     
     TableData(:, 3)=repmat({InfoImgHtml}, ItemLen, 1);
-    TableData(:, 4)=repmat({TestImgHtml}, ItemLen, 1);
+%     TableData(:, 4)=repmat({TestImgHtml}, ItemLen, 1);
     
     set(handles.UITablePreprocess, 'Data', TableData);
 end
@@ -581,20 +574,20 @@ if ColumnIndex == 3
     guidata(handles.figure1, handles);
 end
 
-%Test
-if ColumnIndex == 4    
-    %Delete Status
-    set(handles.PushbuttonDeletePreprocess, 'Enable', 'Off');
-    
-    %Show DataSet List    
-    hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
-    if ~isempty(hFig)
-        delete(hFig);
-    end
-    
-    PreprocessStore=handles.PreprocessStore(1:RowIndex);
-    DataSetList(1, handles.PatsParentDir, handles.figure1, 'Preprocess', {PreprocessStore});
-end
+% %Test
+% if ColumnIndex == 4    
+%     %Delete Status
+%     set(handles.PushbuttonDeletePreprocess, 'Enable', 'Off');
+%     
+%     %Show DataSet List    
+%     hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
+%     if ~isempty(hFig)
+%         delete(hFig);
+%     end
+%     
+%     PreprocessStore=handles.PreprocessStore(1:RowIndex);
+%     DataSetList(1, handles.PatsParentDir, handles.figure1, 'Preprocess', {PreprocessStore});
+% end
 
 % --- Executes when selected cell(s) is changed in UITableCategory.
 function UITableCategory_CellSelectionCallback(hObject, eventdata, handles)
@@ -629,32 +622,32 @@ if ColumnIndex == 2
 end
 
 %Test
-if ColumnIndex == 3    
-   
-    %Show DataSet List    
-    hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
-    if ~isempty(hFig)
-        delete(hFig);
-    end
-    
-    %Get input parameters 
-    TableData=get(handles.UITableCategory, 'Data');
-    
-    Module=TableData{RowIndex, 1};    
-    ItemIndex=GetStoreIndex(Module, handles, 'Category');  
-    
-    CategoryStore=handles.CategoryStore(ItemIndex);
-    
-    %Add Preprocess and Catogry Store
-    TableData=get(handles.UITablePreprocess, 'Data');    
-    if ~isequal(TableData, '')
-        PreprocessStore=handles.PreprocessStore(1:size(TableData, 1));
-    else
-        PreprocessStore=[];
-    end
-    
-    DataSetList(1, handles.PatsParentDir, handles.figure1, 'Category', {PreprocessStore, CategoryStore});
-end
+% if ColumnIndex == 3    
+%    
+%     %Show DataSet List    
+%     hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
+%     if ~isempty(hFig)
+%         delete(hFig);
+%     end
+%     
+%     %Get input parameters 
+%     TableData=get(handles.UITableCategory, 'Data');
+%     
+%     Module=TableData{RowIndex, 1};    
+%     ItemIndex=GetStoreIndex(Module, handles, 'Category');  
+%     
+%     CategoryStore=handles.CategoryStore(ItemIndex);
+%     
+%     %Add Preprocess and Catogry Store
+%     TableData=get(handles.UITablePreprocess, 'Data');    
+%     if ~isequal(TableData, '')
+%         PreprocessStore=handles.PreprocessStore(1:size(TableData, 1));
+%     else
+%         PreprocessStore=[];
+%     end
+%     
+%     DataSetList(1, handles.PatsParentDir, handles.figure1, 'Category', {PreprocessStore, CategoryStore});
+% end
 
 % --- Executes when selected cell(s) is changed in UITableCategoryFeature.
 function UITableCategoryFeature_CellSelectionCallback(hObject, eventdata, handles)
@@ -698,33 +691,33 @@ if ColumnIndex == 3
     guidata(handles.figure1, handles);
 end
 
-%Test
-if ColumnIndex == 4    
-        %Show DataSet List    
-    hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
-    if ~isempty(hFig)
-        delete(hFig);
-    end
-    
-    %Add Preprocess Category, and Feature Store
-    FeatureStore=handles.FeatureStore(RowIndex);
-    
-    TableData=get(handles.UITablePreprocess, 'Data');    
-    if ~isequal(TableData, '')
-        PreprocessStore=handles.PreprocessStore(1:size(TableData, 1));
-    else
-        PreprocessStore=[];
-    end
-    
-    TableData=get(handles.UITableCategory, 'Data');
-    
-    Module=TableData{1, 1};
-    ItemIndex=GetStoreIndex(Module, handles, 'Category');
-    
-    CategoryStore=handles.CategoryStore(ItemIndex);
-    
-    DataSetList(1, handles.PatsParentDir, handles.figure1, 'Feature', {PreprocessStore, CategoryStore, FeatureStore});    
-end
+% %Test
+% if ColumnIndex == 4    
+%         %Show DataSet List    
+%     hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
+%     if ~isempty(hFig)
+%         delete(hFig);
+%     end
+%     
+%     %Add Preprocess Category, and Feature Store
+%     FeatureStore=handles.FeatureStore(RowIndex);
+%     
+%     TableData=get(handles.UITablePreprocess, 'Data');    
+%     if ~isequal(TableData, '')
+%         PreprocessStore=handles.PreprocessStore(1:size(TableData, 1));
+%     else
+%         PreprocessStore=[];
+%     end
+%     
+%     TableData=get(handles.UITableCategory, 'Data');
+%     
+%     Module=TableData{1, 1};
+%     ItemIndex=GetStoreIndex(Module, handles, 'Category');
+%     
+%     CategoryStore=handles.CategoryStore(ItemIndex);
+%     
+%     DataSetList(1, handles.PatsParentDir, handles.figure1, 'Feature', {PreprocessStore, CategoryStore, FeatureStore});    
+% end
 
 % --- Executes when entered data in editable cell(s) in UITableCategory.
 function UITableCategory_CellEditCallback(hObject, eventdata, handles)
@@ -753,11 +746,11 @@ if ColumnIndex == 1
         InfoPic=[handles.ProgramPath, '\Pic\FeatureInfo.png'];
         InfoImgHtml=['<html><img src="file:/', InfoPic, '"></html>'];
         
-        TestPic=[handles.ProgramPath, '\Pic\FeatureTest.png'];
-        TestImgHtml=['<html><img src="file:/', TestPic, '"></html>'];
+%         TestPic=[handles.ProgramPath, '\Pic\FeatureTest.png'];
+%         TestImgHtml=['<html><img src="file:/', TestPic, '"></html>'];
         
         TableData(1, 2)={InfoImgHtml};
-        TableData(1, 3)={TestImgHtml};
+%         TableData(1, 3)={TestImgHtml};
     else
         TableData(1, 2)={' '};
         TableData(1, 3)={' '};
