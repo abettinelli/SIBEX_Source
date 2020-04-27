@@ -10,22 +10,22 @@
 ***Feature_AutoCorrelation_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_ClusterProminence_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_ClusterShade_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_ClusterTendendcy_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_Contrast_Info***
 -Description: 
@@ -75,7 +75,7 @@
 ***Feature_Dissimilarity_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_InformationMeasureCor1_Info***
 -Reference:
@@ -144,17 +144,17 @@
 ***Feature_JointAverage_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_JointEntropy_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_JointMaximum_Info***
 -Reference:
 1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
-    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
+    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780â€“795, 1999
  
 ***Feature_JointVariance_Info***
 -Reference:

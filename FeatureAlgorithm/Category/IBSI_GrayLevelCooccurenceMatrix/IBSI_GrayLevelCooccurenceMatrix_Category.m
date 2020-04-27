@@ -16,6 +16,7 @@ function ParentInfo=IBSI_GrayLevelCooccurenceMatrix_Category(CDataSetInfo, Mode,
 %	3: 2D:vmrg
 %	4: 3D:avg
 %	5: 3D:mrg
+%	6: 25D:dmrg
 % 4. Rescale: 
 %	'fbn': fixed bin number -> specify BinNumber
 %	'fbs': fixed bin size   -> specify BinSize
@@ -196,4 +197,20 @@ if isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod)
     GLCMStruct3.GLCM = GLCM_temp;
     GLCMStruct3.Direction = -333;
     GLCMStruct3.Offset = GLCMStruct_full(s).GLCMStruct2D(i).Offset;
+end
+
+if isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25dmrg')
+    
+    %Merge Directions over slices
+    GLCMStruct3 = [];
+    counter = 1;
+    for i=1:length(Param.Direction)
+        GLCM_temp = zeros(size(GLCMStruct_full(1).GLCMStruct2D(i).GLCM));
+        for s = 1:size(ROIBWData,3)
+            GLCM_temp = GLCM_temp+GLCMStruct_full(s).GLCMStruct2D(i).GLCM;
+        end
+        GLCMStruct3(i).GLCM = GLCM_temp;
+        GLCMStruct3(i).Direction = GLCMStruct_full(1).GLCMStruct2D(i).Direction;
+        GLCMStruct3(i).Offset = GLCMStruct_full(1).GLCMStruct2D(i).Offset;
+    end
 end

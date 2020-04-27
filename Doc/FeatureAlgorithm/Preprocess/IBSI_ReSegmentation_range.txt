@@ -6,7 +6,7 @@
  1. GrayLimits: may be specified both as a closed interval [a,b] (size 1x2) or a half-open interval [a,?)(size 1x1).
 
  -References:
- 1. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+ 1. Zwanenburg A, Leger S, ValliÃ¨res M, LÃ¶ck S. Image biomarker standardisation initiative. 
     December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 
  -Revision:

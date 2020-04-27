@@ -58,7 +58,8 @@ ROIBWData=CDataSetInfo.ROIBWInfo.MaskData;
 [ROIImageData, ROIBWData] = IBSI_minimal_ROI(ROIImageData, ROIBWData);
 
 %Code
-if isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg') || isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg') || isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '2dvmrg')
+if isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg') || isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg')...
+        || isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '2dvmrg') || isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25dmrg')
     if length(Param.Direction) > 4
         error('For 2D extraction only 4 direction possible (0 1 2 3)')
     end
@@ -203,4 +204,22 @@ if isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod)
     GLRLMstruct2D.Direction=-444;
     GLRLMstruct2D.GLRLM=GLRLM_temp;
     GLRLMstruct2D.Nv = Nv_temp;
+end
+
+if isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25dmrg')
+    
+    %Merge Directions over slices
+    GLRLMstruct2D = [];
+    counter = 1;
+    for i=1:length(Param.Direction)
+        GLRLM_temp = zeros(size(GLRLMstruct_full(1).GLRLMStruct2D(i).GLRLM));
+        Nv_temp = 0;
+        for s = 1:size(ROIBWData,3)
+            GLRLM_temp = GLRLM_temp+GLRLMstruct_full(s).GLRLMStruct2D(i).GLRLM;
+            Nv_temp = Nv_temp+GLRLMstruct_full(s).GLRLMStruct2D(i).Nv;
+        end
+        GLRLMstruct2D(i).GLRLM = GLRLM_temp;
+        GLRLMstruct2D(i).Direction = GLRLMstruct_full(1).GLRLMStruct2D(i).Direction;
+        GLRLMstruct2D(i).Nv = Nv_temp;
+    end
 end

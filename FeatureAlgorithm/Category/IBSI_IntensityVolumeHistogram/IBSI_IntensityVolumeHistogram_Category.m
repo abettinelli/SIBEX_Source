@@ -37,6 +37,7 @@ counts = zeros(length(X_d), 1);
 for n = 1:length(X_d)
     counts(n) = nnz(ImgVector_d < X_d(n));
 end
+% counts = 1-counts./nnz(ImgVector_d);
 counts = 1-counts./length(ImgVector_d);
 
 % Gray level fraction

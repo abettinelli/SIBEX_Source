@@ -5,7 +5,7 @@
  1. BinNumber: Integer specifying the number of bin number to use when scaling the grayscale values.
  
  -References:
- 1. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+ 1. Zwanenburg A, Leger S, ValliÃ¨res M, LÃ¶ck S. Image biomarker standardisation initiative. 
     December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 
  -Revision:

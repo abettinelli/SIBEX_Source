@@ -52,9 +52,17 @@ X_gl_d = X_d;                                           % Voxel set discretised 
 
 %----Rescale 'fbn'
 idx_min = CurrentImg <= InputRange(1);
-idx_max = CurrentImg > InputRange(2);
+idx_max = CurrentImg >= InputRange(2);
 CurrentImg_fbn = CurrentImg;
-CurrentImg_fbn(:) = ceil(Param.BinNumber*(CurrentImg(:)-InputRange(1))/(InputRange(2)-InputRange(1)));
+
+% % IBSIv6
+% CurrentImg_fbn(:) = ceil(Param.BinNumber*(CurrentImg(:)-InputRange(1))/(InputRange(2)-InputRange(1)));
+% % end IBSIv6
+
+% IBSIv11
+CurrentImg_fbn(:) = floor(Param.BinNumber*(CurrentImg(:)-InputRange(1))/(InputRange(2)-InputRange(1)))+1;
+% end IBSIv11
+
 CurrentImg_fbn(idx_min) = 1;
 CurrentImg_fbn(idx_max) = Param.BinNumber;
 CurrentImg = CurrentImg_fbn;

@@ -6,5 +6,4 @@ IBSI_IntensityVolumeHistogramList={
 'VolumeFractionDiff';
 'IntensityFractDiff';
 'AreaUnderIVHCurve';
-'bk';
 };

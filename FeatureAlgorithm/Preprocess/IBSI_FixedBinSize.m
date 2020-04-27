@@ -54,7 +54,15 @@ idx_max = CurrentImg > InputRange(2);
 
 %----Filter
 CurrentImg_fbs = CurrentImg;
-CurrentImg_fbs(:) = ceil((CurrentImg(:)-InputRange(1))/Param.BinSize);
+
+% % IBSIv6
+% CurrentImg_fbs(:) = ceil((CurrentImg(:)-InputRange(1))/Param.BinSize);
+% % end IBSIv6
+
+% IBSIv11
+CurrentImg_fbs(:) = floor((CurrentImg(:)-InputRange(1))/Param.BinSize)+1;
+% end IBSIv11
+
 CurrentImg_fbs(idx_min) = 1;
 CurrentImg_fbs(idx_max) = max(CurrentImg_fbs(CurrentMask == 1));
 CurrentImg = CurrentImg_fbs;

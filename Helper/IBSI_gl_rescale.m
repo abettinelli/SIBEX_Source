@@ -37,7 +37,7 @@ switch Param.Rescale
     case 'fbn'
         InputRange=[min(ImgROIVector), max(ImgROIVector)]; % overwrite Max e Min
         idx_min = CurrentImg <= InputRange(1);
-        idx_max = CurrentImg > InputRange(2);
+        idx_max = CurrentImg >= InputRange(2);
 
         G = [1 Param.BinNumber];                                % Total range
         % X_gl = unique(ImgROIVector);                          % Voxel set (not used)   
@@ -46,7 +46,15 @@ switch Param.Rescale
 
         %----Filter
         CurrentImg_fbn = CurrentImg;
-        CurrentImg_fbn(:) = ceil(Param.BinNumber*(CurrentImg(:)-InputRange(1))/(InputRange(2)-InputRange(1)));
+        
+        % % IBSIv6
+        % CurrentImg_fbn(:) = ceil(Param.BinNumber*(CurrentImg(:)-InputRange(1))/(InputRange(2)-InputRange(1)));
+        % % end IBSIv6
+        
+        % % IBSIv11
+        CurrentImg_fbn(:) = floor(Param.BinNumber*(CurrentImg(:)-InputRange(1))/(InputRange(2)-InputRange(1)))+1;
+        % % end IBSIv11
+        
         CurrentImg_fbn(idx_min) = 1;
         CurrentImg_fbn(idx_max) = Param.BinNumber;
         CurrentImg = CurrentImg_fbn;
@@ -62,7 +70,15 @@ switch Param.Rescale
         
         %----Filter
         CurrentImg_fbs = CurrentImg;
-        CurrentImg_fbs(:) = ceil((CurrentImg(:)-InputRange(1))/Param.BinSize);
+        
+        % % IBSIv6
+        % CurrentImg_fbs(:) = ceil((CurrentImg(:)-InputRange(1))/Param.BinSize);
+        % % end IBSIv6
+        
+        % % IBSIv11
+        CurrentImg_fbs(:) = floor((CurrentImg(:)-InputRange(1))/Param.BinSize)+1;
+        % % end IBSIv11
+        
         CurrentImg_fbs(idx_min) = 1;
         CurrentImg_fbs(idx_max) = max(CurrentImg_fbs(CurrentMask == 1));
         CurrentImg = CurrentImg_fbs;
