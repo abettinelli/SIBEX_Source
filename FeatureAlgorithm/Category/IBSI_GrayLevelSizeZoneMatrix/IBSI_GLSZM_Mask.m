@@ -22,13 +22,15 @@ else
         end
         % Sum over matrices
         GLSZM = zeros(max_dim);
+        Nv_temp = 0;
         for n = 1:N
+            Nv_temp = Nv_temp+GLSZMstruct(n).Nv;
             curr_GLSZM = GLSZMstruct(n).GLSZM;
             GLSZM(1:size(curr_GLSZM,1), 1:size(curr_GLSZM,2)) = GLSZM(1:size(curr_GLSZM,1), 1:size(curr_GLSZM,2)) + curr_GLSZM;
         end
         GLSZMstruct = [];
         GLSZMstruct.GLSZM = GLSZM;
-        GLSZMstruct.Nv = nnz(ROIBWData(:,:,n))*N;
+        GLSZMstruct.Nv = Nv_temp;
     end
 end
 end

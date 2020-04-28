@@ -23,13 +23,15 @@ else
         end
         % Sum over matrices
         GLDZM = zeros(max_dim);
+        Nv_temp = 0;
         for n = 1:N
+            Nv_temp = Nv_temp+GLDZMstruct(n).Nv;
             curr_GLSZM = GLDZMstruct(n).GLDZM;
             GLDZM(1:size(curr_GLSZM,1), 1:size(curr_GLSZM,2)) = GLDZM(1:size(curr_GLSZM,1), 1:size(curr_GLSZM,2)) + curr_GLSZM;
         end
         GLDZMstruct = [];
         GLDZMstruct.GLDZM = GLDZM;
-        GLDZMstruct.Nv = nnz(CurrentMask(:,:,n))*N;
+        GLDZMstruct.Nv = Nv_temp;
     end
 end
 end
