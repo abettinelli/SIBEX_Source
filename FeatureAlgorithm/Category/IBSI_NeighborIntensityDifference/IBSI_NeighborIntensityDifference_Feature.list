@@ -1,7 +1,0 @@
-IBSI_NeighborIntensityDifferenceList={
-'Coarseness';
-'Contrast';
-'Busyness';
-'Complexity';
-'TextureStrength';
-};
