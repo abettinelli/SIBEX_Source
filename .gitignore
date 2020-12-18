@@ -1,6 +1,9 @@
 diary
 SIBEX.INI
 Config/IBEXLocation.INI
+
+Doc/
+
 FeatureAlgorithm/Category/IBSI_GrayLevelCooccurenceMatrix/IBSI_GrayLevelCooccurenceMatrix_Category.txt
 FeatureAlgorithm/Category/IBSI_GrayLevelCooccurenceMatrix/IBSI_GrayLevelCooccurenceMatrix_Feature.txt
 FeatureAlgorithm/Category/IBSI_GrayLevelDistZoneMatrix/IBSI_GrayLevelDistZoneMatrix_Feature.txt
