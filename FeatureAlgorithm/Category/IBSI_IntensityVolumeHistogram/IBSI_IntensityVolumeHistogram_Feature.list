@@ -1,9 +1,0 @@
-IBSI_IntensityVolumeHistogramList={
-'VolumeIntFract_10';
-'VolumeIntFract_90';
-'IntensityVolFract_10';
-'IntensityVolFract_90';
-'VolumeFractionDiff';
-'IntensityFractDiff';
-'AreaUnderIVHCurve';
-};
