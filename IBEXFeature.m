@@ -81,9 +81,9 @@ end
 
 %Figure Appearance
 handles.ParentFig=PHandles.figure1;
-set(handles.ParentFig, 'Visible', 'off');
+% set(handles.ParentFig, 'Visible', 'off');
 
-CenterFigOneThirdX(handles.figure1);
+CenterFigCenterRight(handles.figure1,handles.ParentFig); %OneThirdX
 
 figure(handles.figure1);
 
@@ -114,17 +114,11 @@ guidata(handles.figure1, handles);
 
 function InitializeFig(handles)
 %Set text on UI
-TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Add to<br />Feature Set</font></html>';
-set(handles.PushbuttonAddFeatureSet, 'String', TextStr);
-
-TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Show<br />Data Set</font></html>';
-set(handles.PushbuttonShowDataSet, 'String', TextStr);
-
-TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Show<br />Feature Set</font></html>';
-set(handles.PushbuttonShowFeatureSet, 'String', TextStr);
-
-TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Exit</font></html>';
-set(handles.PushbuttonExit, 'String', TextStr);
+% TextStr='<html><b><center><font size="20" face="Calibri" color="rgb(0,0,0)">Add to<br />Feature Set</font></html>';
+% set(handles.PushbuttonAddFeatureSet, 'String', TextStr);
+% 
+% TextStr='<html><b><center><font size="20" face="Calibri" color="rgb(0,0,0)">Show<br />Feature Set</font></html>';
+% set(handles.PushbuttonShowFeatureSet, 'String', TextStr);
 
 %UITablePreprocess
 TableHeader=[];
@@ -419,30 +413,6 @@ CFeatureSethandles.TableData=TableData;
 
 guidata(CFeatureSethandles.figure1, CFeatureSethandles);
 
-% --- Executes on button press in PushbuttonExit.
-function PushbuttonExit_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonExit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-set(handles.ParentFig, 'Visible', 'on');
-delete(handles.figure1);
-
-% --- Executes on button press in PushbuttonShowDataSet.
-function PushbuttonShowDataSet_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonShowDataSet (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-%Show Data Set
-hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
-if ~isempty(hFig)    
-    figure(hFig);
-    return;
-else
-    DataSetList(1, handles.PatsParentDir, handles.figure1);
-end
-
 % --- Executes on button press in PushbuttonDeletePreprocess.
 function PushbuttonDeletePreprocess_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonDeletePreprocess (see GCBO)
@@ -527,7 +497,9 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 % Hint: delete(hObject) closes the figure
-PushbuttonExit_Callback(handles.PushbuttonExit, eventdata, handles);
+
+set(handles.ParentFig, 'Visible', 'on');
+delete(handles.figure1);
 
 % --- Executes when selected cell(s) is changed in UITablePreprocess.
 function UITablePreprocess_CellSelectionCallback(hObject, eventdata, handles)

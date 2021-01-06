@@ -68,7 +68,7 @@ InitializeFig(handles)
 handles.ParentFig=PHandles.figure1;
 set(handles.ParentFig, 'Visible', 'off');
 
-CenterFigOneThirdX(handles.figure1);
+CenterFig(handles.figure1,handles.ParentFig); %OneThirdX
 
 figure(handles.figure1);
 
@@ -83,13 +83,24 @@ handles.output = hObject;
 % Update handles structure
 guidata(hObject, handles);
 
-
-
 % Choose default command line output for IBEXResult
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
+
+set(handles.figure1, 'CurrentAxes', handles.axes1);
+plot([30 610; 30 610]', [261 261; 341 341]','color', [0 0.4470 0.7410])
+xlim([0 640])
+ylim([0 640])
+set(gca,'XTick', [], 'YTick', []);
+set(gca,'Visible','off')
+delta = 610-30;
+x = [0 delta delta 0]+30;
+y = [31 31 51 51];
+patch('XData',x,'YData',y,'EdgeColor','none','FaceColor',[1 1 1]);
+patch('XData',[0 0 0 0],'YData',y,'EdgeColor','none','FaceColor',[0, 0.4470, 0.7410]);
+patch('XData',x,'YData',y,'EdgeColor',[0.5 0.5 0.5],'FaceColor','none','LineWidth',1);
 
 % UIWAIT makes IBEXResult wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -99,11 +110,11 @@ function InitializeFig(handles)
 DisplayListbox(handles.DataDir, handles, 'Data');
 DisplayListbox(handles.FeatureDir, handles, 'Feature');
 
-TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">View<br />Feature</font></html>';
-set(handles.PushbuttonViewFeatureSet, 'String', TextStr);
+TextStr='<html><b><center><font face="Calibri">View Feature</font></html>';
+set(handles.PushbuttonViewFeatureSet, 'String', 'View Feature');
 
-TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">View<br />Data</font></html>';
-set(handles.PushbuttonViewDataSet, 'String', TextStr);
+TextStr='<html><b><center><font face="Calibri">View Data</font></html>';
+set(handles.PushbuttonViewDataSet, 'String', 'View Data');
 
 set(handles.PushbuttonViewDataSet, 'Enable', 'Off');
 set(handles.PushbuttonViewFeatureSet, 'Enable', 'Off');
@@ -281,6 +292,7 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
  HeaderCell=[{' '}, {' '}, {' '}, {' '}; {'Index'}, {'Image'}, {'ROI '}, {'MRN '}];
  
  tic 
+ CategoryIndex = {};
  for i=1:length(FeatureSetsInfo)
      CategoryName=FeatureSetsInfo(i).Category{1};
      
@@ -288,13 +300,21 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
       
      TempStr=['F', num2str(i),'-', CategoryName];
      CategoryNameStr=repmat({TempStr}, 1, length(FeatureName));
+     CategoryIndex=[CategoryIndex repmat({['F' num2str(i)]}, 1, length(FeatureName))];
      
      TempM=[CategoryNameStr; FeatureName];
      HeaderCell=[HeaderCell, TempM];
  end
  
  %3. Result file Middle
+ InfoCategoryName = {};
+ InfoCatAbbreviation = {};
+ InfoCategoryID = {};
+ InfoFeatureName = {};
+ InfoFeatureID = {};
+   
  ResultCell=[];
+ counter = 0;
  for k=1:length(DataSetsInfo)    
      
      CDataSetInfo=DataSetsInfo(k);     
@@ -304,7 +324,15 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
      ResultCCell=[ResultCCell, {CDataSetInfo.MRN}];
      
      for i=1:length(FeatureSetsInfo)
+         counter = counter+1;
          CDataSetInfo=DataSetsInfo(k);
+         percentage = counter/(length(FeatureSetsInfo)*length(DataSetsInfo));
+         set(handles.figure1, 'CurrentAxes', handles.axes1);
+         
+         delta = 610-30;
+         x = [0 (delta)*percentage (delta)*percentage 0]+30;
+         h= gca;
+         h.Children(2).XData = x;
          
          %Status
          CategoryName=FeatureSetsInfo(i).Category{1};
@@ -335,6 +363,15 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
          FeatureInfo=FeatureFuncH(ParentInfo, TestStructF, 'NoReview');
          
          FeatureValue={FeatureInfo.FeatureValue};
+         
+         if k == 1 % solo per un paziente
+             InfoCatAbbreviation = [InfoCatAbbreviation erase(strcat({FeatureInfo.CatAbbreviation}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
+             InfoCategoryName    = [InfoCategoryName erase(strcat({FeatureInfo.Category}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
+             InfoCategoryID      = [InfoCategoryID strcat({FeatureInfo.CategoryID}, {' - '}, {FeatureInfo.AggregationMethodID})];
+             InfoFeatureName     = [InfoFeatureName {FeatureInfo.FeatureName}];
+             InfoFeatureID       = [InfoFeatureID {FeatureInfo.FeatureID}];
+         end
+         
          EmptyIndex=cellfun('isempty', FeatureValue);
          FeatureValue(EmptyIndex)={NaN};         
          
@@ -377,6 +414,20 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
      ResultCell=[ResultCell; ResultCCell];
  end
  
+ % Update HeaderCell
+ HeaderCell2 = HeaderCell;
+ HeaderCell2(1, 5:end) = CategoryIndex;
+ HeaderCell2(2, 5:end) = InfoCatAbbreviation;
+%  HeaderCell2(2, 5:end) = InfoCategoryName;
+ HeaderCell2(3, 5:end) = InfoCategoryID;
+ HeaderCell2(4, 5:end) = InfoFeatureName;
+ HeaderCell2(5, 5:end) = InfoFeatureID;
+ HeaderCell2(1:5,1:4)=[{' '}, {' '}, {' '}, {['Index ' char(8594)]};
+     {' '}, {' '}, {' '}, {['Family Name ' char(8594)]};
+     {' '}, {' '}, {' '}, {['Family ID ' char(8594)]};
+     {' '}, {' '}, {' '}, {['Feature Name ' char(8594)]};
+     {['Index ' char(8595)]}, {['Image ' char(8595)]}, {['ROI ' char(8595)]}, {['MRN ' char(8595) ' \ Feature ID ' char(8594)]}];
+ 
  InfoCell=repmat([{' '}; {' '}; {' '}], 1, size(ResultCell, 2));
  
  InfoCell{1 , 1}='DataSet File: ';
@@ -390,7 +441,7 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
  SetListboxStatus(handles.ListboxStatus, StatusStr);         
          
  %Write result to file
- ResutlInfo=[InfoCell; HeaderCell; ResultCell];
+ ResutlInfo=[InfoCell; HeaderCell2; ResultCell];
  FileStatus=xlswrite([FilePath, '\', FileName], ResutlInfo, 'Result');
  
  if FileStatus < 1
@@ -431,6 +482,9 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
  StatusStr=[datestr(now, 13), ': Done.'];
  SetListboxStatus(handles.ListboxStatus, StatusStr);         
  
+ h= gca;
+ h.Children(2).XData = [0 0 0 0];
+         
   %Delete the default Sheet1, Sheet2, Sheet3
   if FileStatus > 0
       try
@@ -460,22 +514,23 @@ load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
      
  
  function DeleteExcelDefaultSheet(FileName)
- sheetName = 'Sheet';
+ sheetNames = {'Sheet', 'Foglio', 'Tabelle'};
  
  objExcel = actxserver('Excel.Application');
 
 objExcel.Workbooks.Open(FileName); % Full path is necessary!
  
- % Delete sheets. 
- try     
-     % Throws an error if the sheets do not exist.     
-     objExcel.ActiveWorkbook.Worksheets.Item([sheetName '1']).Delete;     
-     objExcel.ActiveWorkbook.Worksheets.Item([sheetName '2']).Delete;     
-     objExcel.ActiveWorkbook.Worksheets.Item([sheetName '3']).Delete;     
- catch     
-     % Do nothing.     
+ % Delete sheets.
+ for i = 1:length(sheetNames)
+     try
+         % Throws an error if the sheets do not exist.
+         objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '1']).Delete;
+         objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '2']).Delete;
+         objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '3']).Delete;
+     catch
+         % Do nothing.
+     end
  end
- 
  % Save, close and clean up. 
  objExcel.ActiveWorkbook.Save; 
  objExcel.ActiveWorkbook.Close; 

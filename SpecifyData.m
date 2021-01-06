@@ -194,7 +194,7 @@ handles=guidata(handles.figure1);
 guidata(handles.figure1, handles);
 
 %Non-CT Non-PT
-if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'PT')
+if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'PT') && ~isequal(DataFormat.Modality, 'CS')
     [handles.GrayMin, handles.GrayMax]=SetAdaptiveWL(handles);
     
     set([handles.AxesImageAxial, handles.AxesImageSag, handles.AxesImageCor], 'CLim', [handles.GrayMin, handles.GrayMax]);
@@ -202,6 +202,13 @@ if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'PT')
     guidata(handles.figure1, handles);
 end
 
+if isequal(DataFormat.Modality, 'CS')
+    [handles.GrayMin, handles.GrayMax]=SetAdaptiveWL_CS(handles);
+    set([handles.AxesImageAxial, handles.AxesImageSag, handles.AxesImageCor], 'CLim', [handles.GrayMin, handles.GrayMax]);
+    guidata(handles.figure1, handles);
+end
+
+TogglebuttonCross_Callback([], [], handles)
 
 %Display ROI Table
 set(hText, 'String', 'Displaying ROI table ...');
@@ -256,9 +263,6 @@ set(handles.figure1, 'Units', 'normalized');
 hChild=get(handles.figure1, 'Children');
 set(hChild, 'Units', 'normalized');
 
-handles.FocusUI=handles.PushbuttonOpenIFOAPat;
-
-
 % Choose default command line output for SpecifyData
 handles.output = hObject;
 
@@ -267,7 +271,6 @@ guidata(handles.figure1, handles);
 
 % UIWAIT makes SpecifyData wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
 
 function PlansInfo=ReadPlanInfo(PatPath, DBName, ImageInfo, ROICurrentImageOnly)
 
@@ -295,8 +298,6 @@ if exist([PatPath, '\User\UserROI.mat'], 'file')
     PlansInfo=InitUserPlanInfo(PlansInfo, 'Pinn9');
     PlansInfo.structAxialROI=[PlansInfo.structAxialROI, {structAxialROI}];    
 end
-
-
 
 function PlansInfo=GetPlanROIStruct(PlansInfo, PatPath, DBName, ImageInfo, ROICurrentImageOnly)
 
@@ -366,12 +367,10 @@ end
 
 PlansInfo.structAxialROI=structAxialROIT;
 
-
 function PropValueStr=GetTextStrValue(ValueStr)
 TempIndex=strfind(ValueStr, ':');
 ValueStr=ValueStr(TempIndex(1)+1:end);    
 PropValueStr=strtrim(ValueStr);
-
 
 function PlansInfo=GetPlanImagePinnV9(PlansInfo, PatPath)
 for i=1:length(PlansInfo.PlanIDList)
@@ -394,8 +393,6 @@ end
 
 PlansInfo.PinnV9=PinnV9;
 
-
-
 function Flag=IsSPUniform(DataFormat, ThresholdNonUniformSP)
 TempS=conv(DataFormat.TablePos, [1,-1]);
 TempS(1)=[]; TempS(size(TempS, 1))=[];
@@ -412,7 +409,6 @@ else
     Flag=1;
 end
 
-
 function  InitializeError(hStatus, hFig, ErrorStr)
 hMsg=MsgboxGuiIFOA(ErrorStr, 'Error', 'error', 'modal');
 waitfor(hMsg);
@@ -420,7 +416,6 @@ waitfor(hMsg);
 delete(hStatus);
 delete(hFig);
     
-
 function [CTSizeInfo, CTDimInfo, CTPixInfo]=GetImageSizeInfo(handles)
 ImageDataAxialInfoT=GetImageDataInfo(handles, 'Axial');
 
@@ -500,18 +495,21 @@ if  isequal(DataFormat.Modality, 'PT')
     %TempData=uint16(TempData);
 end
 
-if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'MR') && ~isequal(DataFormat.Modality, 'PT')
+if  isequal(DataFormat.Modality, 'CS')
+    [TempData, Count]=fread(fid, DataFormat.XDim*DataFormat.YDim*length(DataFormat.TablePos), '*single');
+    TempData=single(TempData);
+end
+
+if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'MR') && ~isequal(DataFormat.Modality, 'PT') && ~isequal(DataFormat.Modality, 'CS')
     [TempData, Count]=fread(fid, DataFormat.XDim*DataFormat.YDim*length(DataFormat.TablePos), '*int16');
     TempData=uint16(TempData);
 end
 
 fclose(fid);
 
-
 ImageData=reshape(TempData, [DataFormat.XDim, DataFormat.YDim, length(DataFormat.TablePos)]);
-ImageData=permute(ImageData, [2,1, 3]);
-
-ImageData=flipdim(ImageData, 1);
+ImageData=permute(ImageData, [2,1,3]);
+ImageData=flip(ImageData, 1);
 
 
 % --- Outputs from this function are returned to the command line.
@@ -523,7 +521,6 @@ function varargout = SpecifyData_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = 0;
-
 
 % --- Executes on button press in PushbuttonAntSlow.
 function PushbuttonAntSlow_Callback(hObject, eventdata, handles)
@@ -559,13 +556,12 @@ guidata(handles.figure1, handles);
 
 DisplayImageCor(handles);
 
-
 % --- Executes on button press in PushbuttonAntFast.
 function PushbuttonAntFast_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonAntFast (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SliceNum=handles.SliceNumCor-5;
+SliceNum=handles.SliceNumCor-10;
 if SliceNum < 1
     SliceNum=1;
 end
@@ -576,7 +572,6 @@ guidata(handles.figure1, handles);
 
 DisplayImageCor(handles);
 
-
 % --- Executes on button press in PushbuttonPostFast.
 function PushbuttonPostFast_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonPostFast (see GCBO)
@@ -584,7 +579,7 @@ function PushbuttonPostFast_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 ImageDataInfo=GetImageDataInfo(handles, 'Cor');
 
-SliceNum=handles.SliceNumCor+5;
+SliceNum=handles.SliceNumCor+10;
 if SliceNum > ImageDataInfo.YDim
     SliceNum=ImageDataInfo.YDim;
 end
@@ -594,7 +589,6 @@ handles.SliceNumCor=SliceNum;
 guidata(handles.figure1, handles);
 
 DisplayImageCor(handles);
-
 
 % --- Executes on button press in PushbuttonRightSlow.
 function PushbuttonRightSlow_Callback(hObject, eventdata, handles)
@@ -611,7 +605,6 @@ handles.SliceNumSag=SliceNum;
 guidata(handles.figure1, handles);
 
 DisplayImageSag(handles);
-
 
 % --- Executes on button press in PushbuttonLeftSlow.
 function PushbuttonLeftSlow_Callback(hObject, eventdata, handles)
@@ -631,13 +624,12 @@ guidata(handles.figure1, handles);
 
 DisplayImageSag(handles);
 
-
 % --- Executes on button press in PushbuttonRightFast.
 function PushbuttonRightFast_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonRightFast (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SliceNum=handles.SliceNumSag-5;
+SliceNum=handles.SliceNumSag-10;
 if SliceNum < 1
     SliceNum=1;
 end
@@ -648,7 +640,6 @@ guidata(handles.figure1, handles);
 
 DisplayImageSag(handles);
 
-
 % --- Executes on button press in PushbuttonLeftFast.
 function PushbuttonLeftFast_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonLeftFast (see GCBO)
@@ -656,7 +647,7 @@ function PushbuttonLeftFast_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 ImageDataInfo=GetImageDataInfo(handles, 'Sag');
 
-SliceNum=handles.SliceNumSag+5;
+SliceNum=handles.SliceNumSag+10;
 if SliceNum > ImageDataInfo.XDim
     SliceNum=ImageDataInfo.XDim;
 end
@@ -666,7 +657,6 @@ handles.SliceNumSag=SliceNum;
 guidata(handles.figure1, handles);
 
 DisplayImageSag(handles);
-
 
 % --- Executes on button press in PushbuttonInferSlow.
 function PushbuttonInferSlow_Callback(hObject, eventdata, handles)
@@ -681,7 +671,6 @@ if SliceNum > 0
     
     DisplayImage(handles);
 end
-
 
 % --- Executes on button press in PushbuttonSupSlow.
 function PushbuttonSupSlow_Callback(hObject, eventdata, handles)
@@ -700,13 +689,12 @@ end
 guidata(handles.figure1, handles);
 DisplayImage(handles);
 
-
 % --- Executes on button press in PushbuttonInferFast.
 function PushbuttonInferFast_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonInferFast (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-SliceNum=handles.SliceNum-5;
+SliceNum=handles.SliceNum-10;
 if SliceNum > 0
     handles.SliceNum=SliceNum;
     
@@ -715,8 +703,6 @@ if SliceNum > 0
     DisplayImage(handles);
 end
 
-
-
 % --- Executes on button press in PushbuttonSupFast.
 function PushbuttonSupFast_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonSupFast (see GCBO)
@@ -724,7 +710,7 @@ function PushbuttonSupFast_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 ImageDataInfo=GetImageDataInfo(handles, 'Axial');
 
-SliceNum=handles.SliceNum+5;
+SliceNum=handles.SliceNum+10;
 if SliceNum <= length(ImageDataInfo.TablePos)
     handles.SliceNum=SliceNum;
 else
@@ -733,9 +719,6 @@ end
             
 guidata(handles.figure1, handles);
 DisplayImage(handles);
-
-
-
 
 % --- Executes on button press in TogglebuttonRuler.
 function TogglebuttonRuler_Callback(hObject, eventdata, handles)
@@ -768,7 +751,6 @@ end
 
 guidata(handles.figure1, handles);
 
-
 % --- Executes on button press in PushbuttonWL.
 function PushbuttonWL_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonWL (see GCBO)
@@ -783,7 +765,6 @@ if isempty(TempH)
     flag_CT = isequal(handles.ImageInfo.Modality, 'CT');
     IBSI_ImcontrastGUIFOA([handles.AxesImageAxial, handles.AxesImageSag, handles.AxesImageCor], [TempPos(1)+(TempPos(3)-300)/2,  TempPos(2)+TempPos(4)-100, 300, 125], flag_CT);
 end
-
 
 % --- Executes on button press in TogglebuttonCTNum.
 function TogglebuttonCTNum_Callback(hObject, eventdata, handles)
@@ -813,8 +794,6 @@ else
     drawnow;
 end
 
-
-
 % --- Executes on button press in TogglebuttonZoom.
 function TogglebuttonZoom_Callback(hObject, eventdata, handles)
 % hObject    handle to TogglebuttonZoom (see GCBO)
@@ -834,7 +813,6 @@ else
 end
 
 guidata(handles.figure1, handles);
-
 
 % --- Executes on button press in TogglebuttonCross.
 function TogglebuttonCross_Callback(hObject, eventdata, handles)
@@ -862,31 +840,26 @@ else
     drawnow;
 end
    
-
-
-% --- Executes on button press in PushbuttonShowDataSet.
-function PushbuttonShowDataSet_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonShowDataSet (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-%Show Data Set
-hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
-if ~isempty(hFig)    
-    figure(hFig);
-    return;
-else
-    DataSetList(1, handles.PatsParentDir, handles.figure1);
-end
-
-
+% % --- Executes on button press in PushbuttonShowDataSet.
+% function PushbuttonShowDataSet_Callback(hObject, eventdata, handles)
+% % hObject    handle to PushbuttonShowDataSet (see GCBO)
+% % eventdata  reserved - to be defined in a future version of MATLAB
+% % handles    structure with handles and user data (see GUIDATA)
+% 
+% %Show Data Set
+% hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
+% if ~isempty(hFig)    
+%     figure(hFig);
+%     return;
+% else
+%     DataSetList(1, handles.PatsParentDir, handles.figure1);
+% end
 
 % --- Executes on button press in PushbuttonShowFeatureSet.
 function PushbuttonShowFeatureSet_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonShowFeatureSet (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 
 % --- Executes on button press in PushbuttonAddToDataSet.
 function PushbuttonAddToDataSet_Callback(hObject, eventdata, handles)
@@ -948,7 +921,6 @@ end
 
 %Add to file
 Flag=AddToDataSet(handles);
-
 
 function Flag=AddToDataSet(handles)
 Flag=1;
@@ -1046,7 +1018,6 @@ CDataSethandles.DataSetsInfo=DataSetsInfo;
 
 guidata(CDataSethandles.figure1, CDataSethandles);
 
-
 function [SelectFlag, SelectNum]=ROISelectStatus(handles)
 SelectFlag=0; SelectNum=0;
 for i=1:2
@@ -1072,29 +1043,6 @@ for i=1:2
     end        
 end
 
-
-% --- Executes on button press in PushbuttonOpenCATPat.
-function PushbuttonOpenCATPat_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonOpenCATPat (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in PushbuttonOpenIFOAPat.
-function PushbuttonOpenIFOAPat_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonOpenIFOAPat (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on button press in PushbuttonExit.
-function PushbuttonExit_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonExit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-set(handles.ParentFig, 'Visible', 'on');
-delete(handles.figure1);
-
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -1102,8 +1050,8 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: delete(hObject) closes the figure
-PushbuttonExit_Callback(handles.PushbuttonExit, eventdata, handles);
-
+set(handles.ParentFig, 'Visible', 'on');
+delete(handles.figure1);
 
 % --- Executes on selection change in PopupmenuWL.
 function PopupmenuWL_Callback(hObject, eventdata, handles)
@@ -1143,7 +1091,6 @@ function PopupmenuWL_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in PushbuttonEditROI.
 function PushbuttonEditROI_Callback(hObject, eventdata, handles)
@@ -1195,7 +1142,6 @@ set(handles.figure1, 'Pointer', 'arrow');
 delete(hStatus);
 drawnow;
 
-
 % --- Executes on button press in PushbuttonSave.
 function PushbuttonSave_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonSave (see GCBO)
@@ -1204,8 +1150,20 @@ function PushbuttonSave_Callback(hObject, eventdata, handles)
 
 SaveROIInWorkspace(handles);
 
+% --- Executes on button press in PushbuttonShowDataSet.
+function PushbuttonShowDataSet_Callback(hObject, eventdata, handles)
+% hObject    handle to PushbuttonShowDataSet (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
 
-
+%Show Data Set
+hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
+if ~isempty(hFig)    
+    figure(hFig);
+    return;
+else
+    DataSetList(1, handles.PatsParentDir, handles.figure1);
+end
 
 % --- Executes on key release with focus on figure1 and none of its controls.
 function figure1_KeyReleaseFcn(hObject, eventdata, handles)
@@ -1216,7 +1174,6 @@ function figure1_KeyReleaseFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) released
 % handles    structure with handles and user data (see GUIDATA)
 
-
 % --- Executes on key press with focus on figure1 and none of its controls.
 function figure1_KeyPressFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -1226,8 +1183,6 @@ function figure1_KeyPressFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 KeyPressFcn_Callback(hObject, eventdata);
-
-
 
 % --- Executes on mouse press over figure background, over a disabled or
 % --- inactive control, or over an axes background.
@@ -1467,7 +1422,6 @@ end
 
 guidata(handles.figure1, handles);
 
-
 % --- Executes on mouse motion over figure - except title and menu.
 function figure1_WindowButtonMotionFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -1576,8 +1530,6 @@ if isequal(get(handles.TogglebuttonRuler, 'Value'), get(handles.TogglebuttonRule
     guidata(handles.figure1, handles);
 end
 
-
-
 % --- Executes on mouse press over figure background, over a disabled or
 % --- inactive control, or over an axes background.
 function figure1_WindowButtonUpFcn(hObject, eventdata, handles)
@@ -1602,7 +1554,6 @@ if isequal(get(handles.TogglebuttonCTNum, 'Value'), get(handles.TogglebuttonCTNu
     
     set(handles.TextStatus, 'String', '', 'Visible', 'Off');
 end
-
 
 % --- Executes on button press in PushbuttonImportROI.
 function PushbuttonImportROI_Callback(hObject, eventdata, handles)
@@ -1672,8 +1623,6 @@ if ~isempty(SelectMat)
     TableData(1:Len, 1)=SelectMat;
     set(handles.UITableROIUser, 'Data', TableData);
 end
-
-
 
 % --- Executes when entered data in editable cell(s) in UITableROI.
 function UITableROI_CellEditCallback(hObject, eventdata, handles)
@@ -1753,9 +1702,6 @@ if isequal(rem(ColumnIndex, 4), 0)
         end
     end
 end
-
-
-
 
 % --- Executes when selected cell(s) is changed in UITableROI.
 function UITableROI_CellSelectionCallback(hObject, eventdata, handles)
@@ -1837,8 +1783,6 @@ if isequal(rem(ColumnIndex, 4), 3)
     end    
 end
 
-
-
 % --- Executes on button press in PushbuttonDeleteROI.
 function PushbuttonDeleteROI_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonDeleteROI (see GCBO)
@@ -1907,7 +1851,6 @@ if ~isempty(SelectIndex)
         guidata(handles.figure1, handles);
     end
 end
-
 
 % --- Executes when entered data in editable cell(s) in UITableROIUser.
 function UITableROIUser_CellEditCallback(hObject, eventdata, handles)
@@ -1981,8 +1924,6 @@ if TableData{RowIndex, 1} > 0
     end
 end
 
-
-
 % --- Executes when selected cell(s) is changed in UITableROIUser.
 function UITableROIUser_CellSelectionCallback(hObject, eventdata, handles)
 % hObject    handle to UITableROIUser (see GCBO)
@@ -1994,7 +1935,6 @@ eventdataNew.Indices=eventdata.Indices;
 eventdataNew.UserTable=1;
     
 UITableROI_CellSelectionCallback(hObject, eventdataNew, handles)
-
 
 % --- Executes on button press in PushbuttonOffAllROIs.
 function PushbuttonOffAllROIs_Callback(hObject, eventdata, handles)
@@ -2031,7 +1971,6 @@ for i=1:2
         set(TableHandle, 'Data', TableData);
     end
 end
-
 
 % --- Executes when selected object is changed in UIButtonGroupPanel.
 function UIButtonGroupPanel_SelectionChangeFcn(hObject, eventdata, handles)
@@ -2085,16 +2024,6 @@ for i=1:2
     end
 end
 
-
-% --- Executes on button press in PushbuttonEditROIMain.
-function PushbuttonEditROIMain_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonEditROIMain (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-PushbuttonEditROI_Callback(handles.PushbuttonEditROI, [], handles);
-
-
 % --- Executes on selection change in PopupmenuColorMap.
 function PopupmenuColorMap_Callback(hObject, eventdata, handles)
 % hObject    handle to PopupmenuColorMap (see GCBO)
@@ -2105,7 +2034,6 @@ function PopupmenuColorMap_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from PopupmenuColorMap
 
 SetColormap(' ', handles, ' ');
-
 
 % --- Executes during object creation, after setting all properties.
 function PopupmenuColorMap_CreateFcn(hObject, eventdata, handles)
@@ -2119,13 +2047,11 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 % --- Executes on button press in PushbuttonColorMap.
 function PushbuttonColorMap_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonColorMap (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
 
 % --- Executes on button press in PushbuttonExportROI.
 function PushbuttonExportROI_Callback(hObject, eventdata, handles)
@@ -2209,7 +2135,6 @@ if ~isempty(ExportPath)
     guidata(handles.figure1, handles);
 end
 
-
 function  [structAxialROIT, BWMatInfoT]=GetSelectROIInfo(handles)
 structAxialROIT=[];
 BWMatInfoT=[];
@@ -2262,8 +2187,6 @@ for i=1:2
     end
 end
 
-
-
 % --- Executes on button press in PushbuttonOnAllROIs.
 function PushbuttonOnAllROIs_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonOnAllROIs (see GCBO)
@@ -2308,10 +2231,3 @@ for i=1:2
         guidata(handles.figure1, handles);
     end
 end
-
-
-% --- Executes on button press in PushbuttonExport.
-function PushbuttonExport_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonExport (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)

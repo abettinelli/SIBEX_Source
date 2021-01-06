@@ -24,7 +24,7 @@ if nargin > 1
     XPos=ScreenPos(1)+XPos;
     YPos=ScreenPos(2)+YPos;
 else    
-    YPos=(ScreenPos(4)-PrefacePos(4))*2/3;
+    YPos=(ScreenPos(4)-PrefacePos(4))/2;
     XPos=(ScreenPos(3)-PrefacePos(3))/2;
 end
 
@@ -32,4 +32,3 @@ pause(0.01);
 
 set(CFig, 'Position', [XPos, YPos, PrefacePos(3), PrefacePos(4)]);
 set(CFig, 'Units', OldUnit);
-

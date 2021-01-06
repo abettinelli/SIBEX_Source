@@ -74,30 +74,24 @@ end
 set(handles.ListboxUser, 'String', UserInfo, 'Value', UserIndex, 'Min', 0, 'Max', 1, ...
     'Enable', 'on', 'SelectionHighlight', 'on', 'ListboxTop', 1);
 
+set(handles.TextLocation, 'String', ['Current location: .\' PrefUser '\' PrefSite])
+
 %Set preference site
 guidata(handles.figure1, handles);
 ListboxUser_Callback(hObject, PrefSite, handles);
 handles=guidata(handles.figure1);
 
-%Set picture
-[ImageData, CMap]=imread('LocationSite.jpg');
-axes(handles.AxesImage); imagesc(ImageData); colormap(gray);
-set(handles.AxesImage,'Box', 'Off', 'XTick', [], 'YTick', []);
-
-%Set position
-set(handles.ParentHandle.figure1, 'Units', 'pixels');
-ParentPos=get(handles.ParentHandle.figure1, 'Position');
-
-set(handles.figure1, 'Units', 'pixels');
-GcfPos=get(handles.figure1, 'Position');
-
-set(handles.figure1, 'Position', [ParentPos(1)+(ParentPos(3)-GcfPos(3)), ParentPos(2)+(ParentPos(4)-GcfPos(4)), GcfPos(3), GcfPos(4)]);
-
-set(handles.figure1, 'Units', 'characters');
-
+% %Set position
+% set(handles.ParentHandle.figure1, 'Units', 'pixels');
+% ParentPos=get(handles.ParentHandle.figure1, 'Position');
+% set(handles.figure1, 'Units', 'pixels');
+% GcfPos=get(handles.figure1, 'Position');
+% set(handles.figure1, 'Position', [ParentPos(1)+(ParentPos(3)-GcfPos(3)), ParentPos(2)+(ParentPos(4)-GcfPos(4)), GcfPos(3), GcfPos(4)]);
+% set(handles.figure1, 'Units', 'characters');
 
 %Change application Icon
 figure(handles.figure1);
+CenterFig(handles.figure1,handles.ParentHandle.figure1);
 drawnow;
 
 uicontrol(handles.ListboxSite);

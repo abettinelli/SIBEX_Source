@@ -55,9 +55,7 @@ function IBEXDevelop_OpeningFcn(hObject, eventdata, handles, varargin)
 Phandles=varargin{2};
 handles.Phandles=Phandles;
 
-InitializeButton(handles);
-
-CenterFigBottomCenter(handles.figure1, Phandles.figure1);
+CenterFig(handles.figure1, Phandles.figure1); %BottomCenter
 
 [MFilePath, MFileName]=fileparts(mfilename('fullpath'));
 handles.ProgramPath=MFilePath;
@@ -70,17 +68,6 @@ guidata(hObject, handles);
 
 % UIWAIT makes IBEXDevelop wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
-
-
-function InitializeButton(handles)      
-set(handles.PushbuttonImportPlugIn, 'String', 'New Import PlugIn');
-      
-set(handles.PushbuttonPreprocessPlugIn, 'String', 'New Preprocess PlugIn');
-     
-set(handles.PushbuttonFeaturePlugIn, 'String', 'New Feature PlugIn');
-   
-set(handles.PushbuttonStandAlonePlugIn, 'String', 'New Stand-Alone PlugIn');
-
 
 % --- Outputs from this function are returned to the command line.
 function varargout = IBEXDevelop_OutputFcn(hObject, eventdata, handles) 

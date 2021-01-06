@@ -54,7 +54,7 @@ function FeatureSetCurrent_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.PatsParentDir= varargin{2}; 
 FeatureSetName= varargin{3};
 
-set(handles.TextFeatureSetName, 'String', FeatureSetName);
+set(handles.TextFeatureSetName, 'String', ['Current FeatureSet: ' FeatureSetName]);
 
 FeatureSetFile=[handles.PatsParentDir, '\', FeatureSetName];
 
@@ -74,6 +74,9 @@ handles.TableData=TableData;
 hFig=findobj(0, 'Type', 'figure', 'Name', 'Specify Feature');
 if isempty(hFig)
     hFig=findobj(0, 'Type', 'figure', 'Name', 'Result');
+        if isempty(hFig)
+            hFig=findobj(0, 'Type', 'figure', 'Name', 'S-IBEX');
+        end
 end
 
 CenterFigCenterRight(handles.figure1,hFig);

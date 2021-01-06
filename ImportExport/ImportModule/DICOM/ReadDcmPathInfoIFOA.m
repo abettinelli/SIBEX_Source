@@ -1,6 +1,5 @@
 %Read Dcm information
 function ReadDcmPathInfoIFOA(handles, TempPath)
-
 %----------------Read DICOM RT information-------------
 %Set Status
 set(handles.figure1, 'Pointer', 'watch');
@@ -46,7 +45,7 @@ for i=1:length(cellFileName)
         DCMInfo=dicominfo([TempPath, '\', cellFileName{i}], 'dictionary', 'DicomDict_Plan.txt');
 
         %CT
-        if isfield(DCMInfo, 'Modality') && (isequal(DCMInfo.Modality, 'CT') || isequal(DCMInfo.Modality, 'MR') || isequal(DCMInfo.Modality, 'PT'))
+        if isfield(DCMInfo, 'Modality') && (isequal(DCMInfo.Modality, 'CT') || isequal(DCMInfo.Modality, 'MR') || isequal(DCMInfo.Modality, 'PT') || isequal(DCMInfo.Modality, 'CS'))
             if isequal(CTSetInfo, {[]})
                 CTSetInfo(1, 1)={DCMInfo.SeriesInstanceUID};
                 CTSetInfo(1, 2)={1}; %ZDim
@@ -360,7 +359,6 @@ delete(hStatus);
 
 guidata(handles.figure1, handles);
 
-
 function InfoList=GetDcmPatInfo(CTInfo, FileName)
     
 %Get info on chosen item
@@ -376,7 +374,11 @@ if isequal(CTInfo.Modality, 'PT')
     InfoList={'[Basic]'; 'Modality: PT.'};
 end
 
-if ~isequal(CTInfo.Modality, 'CT') && ~isequal(CTInfo.Modality, 'MR') && ~isequal(CTInfo.Modality, 'PT')
+if isequal(CTInfo.Modality, 'CS')
+    InfoList={'[Basic]'; 'Modality: CSTM.'};
+end
+
+if ~isequal(CTInfo.Modality, 'CT') && ~isequal(CTInfo.Modality, 'MR') && ~isequal(CTInfo.Modality, 'PT') && ~isequal(CTInfo.Modality, 'CS')
     InfoList={'[Basic]'; 'Modality:  .'};
 end
 
@@ -474,7 +476,6 @@ if isfield(CTInfo, 'SliceThickness')
 else
     InfoList=[InfoList; {['Slice Thickness: ', ' mm.']}];
 end
-
 
 function InfoList=GetDcmPatInfoRS(CTInfo, FileName)
     

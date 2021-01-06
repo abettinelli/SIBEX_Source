@@ -8,9 +8,6 @@ switch Mode
         TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Add to<br />Data Set</font></html>';
         set(handles.PushbuttonAddToDataSet, 'String', TextStr);
         
-        TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Edit<br />ROIs</font></html>';
-        set(handles.PushbuttonEditROIMain, 'String', TextStr);
-        
         TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Off<br />All ROIs</font></html>';
         set(handles.PushbuttonOffAllROIs, 'String', TextStr);
         
@@ -29,72 +26,57 @@ switch Mode
         TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Delete<br />ROIs</font></html>';
         set(handles.PushbuttonDeleteROI, 'String', TextStr);
         
-        TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Show<br />Data Set</font></html>';
-        set(handles.PushbuttonShowDataSet, 'String', TextStr);
-        
-        TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Show<br />Feature Set</font></html>';
-        set(handles.PushbuttonShowFeatureSet, 'String', TextStr);
-        
-        TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Change<br />Pat./Image</font></html>';
-        set(handles.PushbuttonOpenIFOAPat, 'String', TextStr);
-        
         TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Save</font></html>';
         set(handles.PushbuttonSave, 'String', TextStr);
-        
-        TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Export</font></html>';
-        set(handles.PushbuttonExport, 'String', TextStr);
         
         TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Exit</font></html>';
         set(handles.PushbuttonExit, 'String', TextStr);
         
-        TextStr='<html><b><center><font size="4" face="Calibri" color="rgb(0,0,0)">Open<br />CAT Pat.</font></html>';
-        set(handles.PushbuttonOpenCATPat, 'String', TextStr);
-        
           
     case 1
         %EditROI figure
-        [TempIcon, map]=imread('ContourNudge02.jpg');
+        [TempIcon, map]=imread('ContourNudge02.png');
         TempIcon=cat(3,TempIcon, TempIcon, TempIcon);
         set(handles.TogglebuttonContourNudge, 'CData', TempIcon);
         
-        [TempIcon, map]=imread('ContourCut02.jpg');
+        [TempIcon, map]=imread('ContourCut02.png');
         TempIcon=cat(3,TempIcon, TempIcon, TempIcon);
         set(handles.TogglebuttonContourCut, 'CData', TempIcon);
         
-        [TempIcon, map]=imread('ContourDraw02.jpg');
+        [TempIcon, map]=imread('ContourDraw02.png');
         TempIcon=cat(3,TempIcon, TempIcon, TempIcon);
         set(handles.TogglebuttonContourDraw, 'CData', TempIcon);
         
-        [TempIcon, map]=imread('ContourTrail.jpg');
+        [TempIcon, map]=imread('ContourTrail.png');
         set(handles.TogglebuttonContourTrail, 'CData', TempIcon);
         
-        [TempIcon, map]=imread('ContourNew02.jpg');
+        [TempIcon, map]=imread('ContourNew02.png');
         TempIcon=cat(3,TempIcon, TempIcon, TempIcon);
         set(handles.PushbuttonContourNew, 'CData', TempIcon);
                 
-        [TempIcon, map]=imread('ContourInterp.jpg');
+        [TempIcon, map]=imread('ContourInterp.png');
         set(handles.PushbuttonInterpolate, 'CData', TempIcon);
               
-        [TempIcon, map]=imread('ContourCopy.jpg');
+        [TempIcon, map]=imread('ContourCopy.png');
         TempIcon=cat(3,TempIcon, TempIcon, TempIcon);
         set(handles.PushbuttonContourCopy, 'CData', TempIcon);
         
-        [TempIcon, map]=imread('ContourDelete.jpg');
+        [TempIcon, map]=imread('ContourDelete.png');
         set(handles.PushbuttonDelete, 'CData', TempIcon);
         
-        [SaveIcon, map]=imread('Save.jpg');
+        [SaveIcon, map]=imread('Save.png');
         set(handles.PushbuttonSave, 'CData', SaveIcon);
         
-        [ExitBigIcon, map]=imread('ExitBig2.jpg');
+        [ExitBigIcon, map]=imread('ExitBig2.png');
         set(handles.PushbuttonExit, 'Cdata', ExitBigIcon);
         
         if isfield(handles, 'TogglebuttonAutoSegBound')
-            [TempIcon, map]=imread('BoxSmall.jpg');
+            [TempIcon, map]=imread('BoxSmall.png');
             set(handles.TogglebuttonAutoSegBound, 'Cdata', TempIcon);
         end
                 
         if isfield(handles, 'PushbuttonUpdate')
-            [SaveIcon, map]=imread('Update.jpg');
+            [SaveIcon, map]=imread('Update.png');
             set(handles.PushbuttonUpdate, 'CData', SaveIcon);
         end
         
@@ -113,36 +95,25 @@ set(handles.AxesImageSagBack,'XTick', [], 'YTick', []);
 set(handles.TextStatus, 'String', '', 'Visible', 'off');
 
 %Button Pictures for image view
-[ImageData, map]=imread('Zoom.jpg');
-set(handles.TogglebuttonZoom, 'CData', ImageData);
-
-[ImageData, map]=imread('Ruler.jpg');
-set(handles.TogglebuttonRuler, 'CData', ImageData);
-
-[ImageData, map]=imread('CTValue.jpg');
-set(handles.TogglebuttonCTNum, 'Cdata', ImageData);
-
-[ImageData, map]=imread('WL.jpg');
-set(handles.PushbuttonWL, 'Cdata', ImageData);
-
-[ImageData, map]=imread('Intersection3.jpg');
-set(handles.TogglebuttonCross, 'CData', ImageData);
+configureButton(handles.TogglebuttonZoom,[handles.ProgramPath '\Pic\Zoom.png'],'')
+configureButton(handles.TogglebuttonRuler,[handles.ProgramPath '\Pic\Ruler.png'],'')
+configureButton(handles.TogglebuttonCTNum,[handles.ProgramPath '\Pic\CTValue.png'],'')
+configureButton(handles.PushbuttonWL,[handles.ProgramPath '\Pic\WL.png'],'')
+configureButton(handles.TogglebuttonCross,[handles.ProgramPath '\Pic\Intersection3.png'],'')
 
 %Set W/L 
 ConfigFile=[handles.ProgramPath, '\IFOA.INI'];
 UserWL=GetUserWL(ConfigFile);
-
 handles.WLRegionName=[{'Abdomen'}; {'Bone'}; {'Breast'};  {'Head'}; {'Lung'}; {'Pelvis'}; {'BAT'}; {'DIR'}; {'PETSUV'}];
-handles.WLRegionMat=[400, 800, 1200; ...   %Abdomen
-        1400, 700, 2100; ...    %Bone
-        400, 750, 1150; ...      %Breast
-        180, 950, 1130; ...      %Head
-        1600, -300, 1300; ...   %Lung
-        500, 750, 1250; ...      %Pelvis
-        300, 925, 1225; ...      %BAT
-        1400, 0, 1400; ...      %DIR
-        10,0,10;...       %PETSUV
-];
+handles.WLRegionMat=[400, 800, 1200; ...	%Abdomen
+                    1400, 700, 2100; ...	%Bone
+                    400, 750, 1150; ...     %Breast
+                    180, 950, 1130; ...     %Head
+                    1600, -300, 1300; ...	%Lung
+                    500, 750, 1250; ...     %Pelvis
+                    300, 925, 1225; ...     %BAT
+                    1400, 0, 1400; ...      %DIR
+                    10,0,10];               %PETSUV
 
 if ~isempty(UserWL)
     handles.WLRegionName=[handles.WLRegionName; UserWL.Name];
@@ -209,4 +180,11 @@ if exist('UserWL', 'var')
 else
     FUserWL=[];
     return;
-end   
+end
+
+function configureButton(p, CIcon_p, txt)
+
+pxPos = getpixelposition(p);
+% str = ['<html><div width="' num2str(pxPos(3)+50) 'px"; height="50px" align="left">&nbsp;&nbsp;<img src = "file:/', CIcon_p, '" style="vertical-align: middle;">&nbsp;&nbsp;' txt ''];
+str = ['<html><img align="middle" src="file:/', CIcon_p, '">'];
+set(p,'String', str, 'FontSize', 20);

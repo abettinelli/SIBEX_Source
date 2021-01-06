@@ -104,7 +104,7 @@ handles.DataSetFile=DataSetFile;
 handles.DataSetsInfo=DataSetsInfo;
 handles.DataSetName=DataSetName;
 
-CenterFigBottomCenter(handles.figure1);
+CenterFigBottomCenter(handles.figure1); %CenterFigBottomCenter
 
 if handles.SimpleFormatDisplay > 0
     UpdateTextWithFormatInfo(handles);    

@@ -22,7 +22,7 @@ function varargout = SIBEXMain(varargin)
 
 % Edit the above text to modify the response to help SIBEXMain
 
-% Last Modified by GUIDE v2.5 12-Mar-2019 16:01:22
+% Last Modified by GUIDE v2.5 19-Dec-2020 00:09:31
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -292,13 +292,13 @@ AddExportFilterPath;
 function SetWebLink(handles, Mode)
 switch Mode
     case 0
-        LabelStr= '<html><center><a href="">S-IBEX is Intended for Research Use Only.';
+        LabelStr= '<html><left><a href="">S-IBEX is Intended for Research Use Only.';
         set(handles.PushbuttonWebLink2, 'string', LabelStr);
     case 1
-        LabelStr= '<html><center><a href="">Medical Physics, 42, 1341-1353 (2015)';        
+        LabelStr= '<html><left><a href="">Medical Physics, 42, 1341-1353 (2015)';        
         set(handles.PushbuttonWebLink, 'string', LabelStr);
     case 2
-        LabelStr= '<html><center><a href="">Report Bugs/Feedback';
+        LabelStr= '<html><left><a href="">Report Bugs/Feedback';
         set(handles.PushbuttonFeedback, 'string', LabelStr);
 end
 
@@ -316,32 +316,13 @@ JButton.setBorder([]);
 JButton.setBorderPainted(0);
 
 function SetPushbuttonIcon(handles)
-[CIcon, map]=imread('MainLocation.jpg');
-set(handles.PushbuttonSite, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainImport.jpg');
-set(handles.PushbuttonImportPat, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainData.jpg');
-set(handles.PushbuttonSpecifyData, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainMethod.jpg');
-set(handles.PushbuttonSpecifyModel, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainExit.jpg');
-set(handles.PushbuttonExit, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainResult.jpg');
-set(handles.PushbuttonGetView, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainModel.jpg');
-set(handles.PushbuttonModel, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainShowDataSet.jpg');
-set(handles.pushbutton13, 'CData', CIcon, 'String', '');
-
-[CIcon, map]=imread('MainDevelop.jpg');
-set(handles.PushbuttonDevelop, 'CData', CIcon, 'String', '');
+configureButton(handles.PushbuttonSite,[handles.ProgramPath '\Pic\MainLocation.png'],'Location')
+configureButton(handles.PushbuttonImportPat,[handles.ProgramPath '\Pic\MainImport.png'],'Import')
+configureButton(handles.PushbuttonSpecifyData,[handles.ProgramPath '\Pic\MainData.png'],'Data')
+configureButton(handles.PushbuttonSpecifyModel,[handles.ProgramPath '\Pic\MainMethod.png'],'Feature')
+configureButton(handles.PushbuttonGetView,[handles.ProgramPath '\Pic\MainResult.png'],'Result')
+configureButton(handles.pushbutton13,[handles.ProgramPath '\Pic\MainShowDataSet.png'],'Show DataSet')
+configureButton(handles.PushbuttonDevelop,[handles.ProgramPath '\Pic\MainDevelop.png'],'Develop')
 
 function CreateDefaultUserSite(DataDir)
 try
@@ -422,12 +403,34 @@ else
 end
 
 function DisplayMainImage(handles)
-PrefaceImage=imread(fullfile(handles.ProgramPath, 'Pic', 'IBEX.jpg'));     
-set(handles.figure1, 'CurrentAxes', handles.AxesImage);
-imshow(PrefaceImage);
-set(handles.AxesImage,'XTick', [], 'YTick', []);
+set(handles.figure1, 'CurrentAxes', handles.axes3);
+
+plot([30 420; 30 420; 30 420; 30 420; 30 420]', [119 119; 199 199; 279 279; 359 359; 439 439]','color', [0 0.4470 0.7410])
+xlim([0 650])
+ylim([0 569])
+set(gca,'XTick', [], 'YTick', []);
 set(gca,'Visible','off')
- 
+
+set(handles.figure1, 'CurrentAxes', handles.AxesImage);
+% imshow(PrefaceImage);
+load('Pic\FV.mat')
+plot3(V(:,1),V(:,2),V(:,3),'.','Markersize',16,'color', [0 0.4470 0.7410])
+hold on
+
+for i = 1:size(F,1)
+    idx = F(i,:);
+    idx = idx(:,[1 2 3]);
+    plot3(V(idx,1),V(idx,2),V(idx,3),'--','color', [0.5 0.5 0.5])
+end
+axis equal
+rotate3d(gca,'on')
+set(gca,'XTick', [], 'YTick', []);
+set(gca,'Visible','off')
+view(-25,20)
+
+hManager = uigetmodemanager(gcf);
+hManager.CurrentMode.ModeStateData.textState = 0;
+
 % --- Outputs from this function are returned to the command line.
 function varargout = IBEXMain_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -444,6 +447,7 @@ function PushbuttonSite_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
 IBEXLocation(1, handles);
 
 % --- Executes on button press in PushbuttonImportPat.
@@ -452,6 +456,7 @@ function PushbuttonImportPat_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
 IBEXImport(1, handles);
 
 % --- Executes on button press in PushbuttonSpecifyData.
@@ -460,7 +465,7 @@ function PushbuttonSpecifyData_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
-
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
 IBEXData(1, handles);
 
 % --- Executes on button press in PushbuttonSpecifyModel.
@@ -468,43 +473,9 @@ function PushbuttonSpecifyModel_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonSpecifyModel (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
 IBEXFeature(1, handles);
-
-% --- Executes on button press in PushbuttonExit.
-function PushbuttonExit_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonExit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-try
-    TurnOffDiary(handles.ProgramPath);
-catch
-end
-
-RemoveModulePath(handles.ProgramPath, 'Import');
-RemoveModulePath(handles.ProgramPath, 'Export');
-RemoveModulePath(handles.ProgramPath, 'FeatureCategory');
-
-rmpath(handles.ProgramPath);
-rmpath(fullfile(handles.ProgramPath, 'AutoSeg'));
-rmpath(fullfile(handles.ProgramPath, 'Config'));
-rmpath(fullfile(handles.ProgramPath, 'GUIHelper'));
-rmpath(fullfile(handles.ProgramPath, 'GUIHelperSpecifyData'));
-rmpath(fullfile(handles.ProgramPath, 'Helper'));
-rmpath(fullfile(handles.ProgramPath, 'ImportExport'));
-rmpath(fullfile(handles.ProgramPath, 'ImportExport', 'Helper'));
-rmpath(fullfile(handles.ProgramPath, 'ImportExport', 'ImportModule'));
-rmpath(fullfile(handles.ProgramPath, 'Pic'));
-rmpath(fullfile(handles.ProgramPath, 'Utils'));
-rmpath(fullfile(handles.ProgramPath, 'DeveloperStudio'));
-rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm'));
-rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Category'));
-rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess'));
-rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess', 'Helper'));
-
-warning on;
-
-delete(handles.figure1);
 
 function RemoveModulePath(ProgramPath, ModeStr)
 switch ModeStr
@@ -540,7 +511,35 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: delete(hObject) closes the figure
-PushbuttonExit_Callback(handles.PushbuttonExit, [], handles);
+try
+    TurnOffDiary(handles.ProgramPath);
+catch
+end
+
+RemoveModulePath(handles.ProgramPath, 'Import');
+RemoveModulePath(handles.ProgramPath, 'Export');
+RemoveModulePath(handles.ProgramPath, 'FeatureCategory');
+
+rmpath(handles.ProgramPath);
+rmpath(fullfile(handles.ProgramPath, 'AutoSeg'));
+rmpath(fullfile(handles.ProgramPath, 'Config'));
+rmpath(fullfile(handles.ProgramPath, 'GUIHelper'));
+rmpath(fullfile(handles.ProgramPath, 'GUIHelperSpecifyData'));
+rmpath(fullfile(handles.ProgramPath, 'Helper'));
+rmpath(fullfile(handles.ProgramPath, 'ImportExport'));
+rmpath(fullfile(handles.ProgramPath, 'ImportExport', 'Helper'));
+rmpath(fullfile(handles.ProgramPath, 'ImportExport', 'ImportModule'));
+rmpath(fullfile(handles.ProgramPath, 'Pic'));
+rmpath(fullfile(handles.ProgramPath, 'Utils'));
+rmpath(fullfile(handles.ProgramPath, 'DeveloperStudio'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Category'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess'));
+rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess', 'Helper'));
+
+warning on;
+
+delete(handles.figure1);
 
 % --- Executes on button press in PushbuttonGetView.
 function PushbuttonGetView_Callback(hObject, eventdata, handles)
@@ -548,13 +547,8 @@ function PushbuttonGetView_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
 IBEXResult(1, handles);
-
-% --- Executes on button press in PushbuttonModel.
-function PushbuttonModel_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonModel (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
 % --- Executes on button press in PushbuttonDevelop.
 function PushbuttonDevelop_Callback(hObject, eventdata, handles)
@@ -562,6 +556,7 @@ function PushbuttonDevelop_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
 IBEXDevelop(1, handles);
 
 % --- Executes on button press in PushbuttonWebLink.
@@ -617,6 +612,8 @@ function pushbutton13_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 
+% set(hObject,'enable','on','BackgroundColor',[204 232 255]/255);
+
 PatsParentDir = fullfile(handles.INIConfigInfo.DataDir, handles.CurrentUser, handles.CurrentSite);
 
 %Show Data Set
@@ -626,4 +623,29 @@ if ~isempty(hFig)
     return;
 else
     DataSetList(1, PatsParentDir, handles.figure1);
+end
+
+function configureButton(p, CIcon_p, txt)
+
+pxPos = getpixelposition(p);
+% str = ['<html><div width="' num2str(pxPos(3)+50) 'px"; height="50px" align="left">&nbsp;&nbsp;<img src = "file:/', CIcon_p, '" style="vertical-align: middle;">&nbsp;&nbsp;' txt ''];
+str = ['<html><div width="200px"; height="0px" align="left">&nbsp;&nbsp;<img align="middle" src="file:/', CIcon_p, '">&nbsp;&nbsp;' txt ];
+set(p,'String', str, 'FontSize', 20);
+
+
+% --- Executes on button press in PushbuttonShowFeatureSet.
+function pushbuttonShowFeatureSet_Callback(hObject, eventdata, handles)
+% hObject    handle to PushbuttonShowFeatureSet (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+%Show Data Set
+
+PatsParentDir = fullfile(handles.INIConfigInfo.DataDir, handles.CurrentUser, handles.CurrentSite);
+
+hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Feature Set');
+if ~isempty(hFig)    
+    figure(hFig);
+    return;
+else
+    FeatureSetList(1, PatsParentDir, handles.figure1);
 end

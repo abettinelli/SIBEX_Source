@@ -817,6 +817,12 @@ for i=1:ZDim
         InstanceNum=[InstanceNum; DCMFileList{i}.InstanceNumber];
     end
     
+    if isequal(DCMFileList{i}.Modality, 'CS')
+        TempImageData=double(TempImageData)*RescaleSlope+RescaleIntercept;
+        TempImageData=single(TempImageData);
+        InstanceNum=[InstanceNum; DCMFileList{i}.InstanceNumber];
+    end
+    
     if isequal(DCMFileList{i}.Modality, 'MR')
         TempImageData=uint16(TempImageData);
         InstanceNum=[InstanceNum; DCMFileList{i}.InstanceNumber];
@@ -971,7 +977,7 @@ for CurrentGroup=1:GroupNum
         fclose(TempFid);
     end
     
-    if isequal(DCMFileList{1}.Modality, 'PT')
+    if isequal(DCMFileList{1}.Modality, 'PT') || isequal(DCMFileList{1}.Modality, 'CS')
         TempFid=fopen([FileDir, ImageSetName, '.img'], 'w');
         fwrite(TempFid, AxialImage, 'float32');
         fclose(TempFid);
@@ -1043,7 +1049,7 @@ for CurrentGroup=1:GroupNum
         bytes_pix=2;
     end
     
-    if isequal(DCMFileList{1}.Modality, 'PT')
+    if isequal(DCMFileList{1}.Modality, 'PT') || isequal(DCMFileList{1}.Modality, 'CS')
         bitpix=32;
         bytes_pix=4;
     end
@@ -1172,8 +1178,8 @@ for CurrentGroup=1:GroupNum
             {['KVP : ', num2str(KVP)]};...
             {['SeriesDateTime : ', SeriesDateTime]};...
             {'Version : 9.0'};...
-            {['x_start_dicom = ', num2str(XDailyOriginStartV9,10), ';']};...
-            {['y_start_dicom = ', num2str(YDailyOriginStartV9,10), ';']}]; % bettinelli
+            {['x_start_dicom = ', num2str(XDailyOriginStartV9, 10), ';']};...
+            {['y_start_dicom = ', num2str(YDailyOriginStartV9, 10), ';']}]; % bettinelli
     end
     
     
@@ -1560,7 +1566,11 @@ function ROIName=WritePinPlanROIMRI(TempPlanDir, ROIDICOMInfo, ImageDCMInfo, hTe
 
 ImgSOPUID=[];
 for i=1:length(CTDICOMInfo)
-    ImgSOPUID=[ImgSOPUID; {CTDICOMInfo{i}.SOPInstanceUID}];
+    try
+        ImgSOPUID=[ImgSOPUID; {CTDICOMInfo{i}.SOPInstanceUID}];
+    catch
+        break
+    end
 end
 
 %Transform
@@ -2198,7 +2208,7 @@ for i=1:RowNum
             TempData(:, 3)=-TempData(:, 3);
         end
 
-        TempCurvePoint=cellstr(num2str(TempData), 10); %Bettinelli '%.10f'
+        TempCurvePoint=cellstr(num2str(TempData, 10)); %Bettinelli '%.10f'
 
         TempROISection=[TempROISection; TempCurveStart; TempCurvePoint; TempCurveEnd];
     end
@@ -2483,7 +2493,11 @@ if isequal(CTInfo.Modality, 'PT')
     InfoList={'[Basic]'; 'Modality: PT.'};
 end
 
-if ~isequal(CTInfo.Modality, 'CT') && ~isequal(CTInfo.Modality, 'MR') && ~isequal(CTInfo.Modality, 'PT')
+if isequal(CTInfo.Modality, 'CS')
+    InfoList={'[Basic]'; 'Modality: CSTM.'};
+end
+
+if ~isequal(CTInfo.Modality, 'CT') && ~isequal(CTInfo.Modality, 'MR') && ~isequal(CTInfo.Modality, 'PT') && ~isequal(CTInfo.Modality, 'CS')
     InfoList={'[Basic]'; 'Modality:  .'};
 end
 
@@ -2570,7 +2584,7 @@ end
 InfoList=[InfoList; {['ZDim: ', ' .']}];
 
 if isfield(CTInfo, 'SliceThickness')
-    TempStr=num2str(CTInfo.SliceThickness,10);
+    TempStr=num2str(CTInfo.SliceThickness, 10);
     InfoList=[InfoList; {['Slice Thickness: ', TempStr, 'mm.']}];
 else
     InfoList=[InfoList; {['Slice Thickness: ', ' mm.']}];

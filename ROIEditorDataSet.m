@@ -649,7 +649,7 @@ if length(varargin) > 6
     set(handles.PopupmenuImageType, 'Visible', 'on');   
     set(handles.TextImageType, 'Visible', 'on');               
         
-    [ImgIcon, map]=imread('Export.jpg');
+    [ImgIcon, map]=imread('Export.png');
     set(handles.PushbuttonExport, 'CData', ImgIcon, 'Visible', 'on');       
         
     set(handles.PopupmenuImageType, 'Value', 2, 'String', [{'Original'}; {'Preprocess'}]);

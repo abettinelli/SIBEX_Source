@@ -79,19 +79,19 @@ AddImportFilterPath;
 handles.ProgramPath=ProgramPath;
 handles.ImportDir=ImportDir;
 
-%Set position
-set(handles.ParentHandle.figure1, 'Units', 'pixels');
-ParentPos=get(handles.ParentHandle.figure1, 'Position');
-
-set(handles.figure1, 'Units', 'pixels');
-GcfPos=get(handles.figure1, 'Position');
-
-set(handles.figure1, 'Position', [ParentPos(1)+(ParentPos(3)-GcfPos(3)), ParentPos(2)+(ParentPos(4)-GcfPos(4)), GcfPos(3), GcfPos(4)]);
-
-set(handles.figure1, 'Units', 'characters');
-
+% %Set position
+% set(handles.ParentHandle.figure1, 'Units', 'pixels');
+% ParentPos=get(handles.ParentHandle.figure1, 'Position');
+% 
+% set(handles.figure1, 'Units', 'pixels');
+% GcfPos=get(handles.figure1, 'Position');
+% 
+% set(handles.figure1, 'Position', [ParentPos(1)+(ParentPos(3)-GcfPos(3)), ParentPos(2)+(ParentPos(4)-GcfPos(4)), GcfPos(3), GcfPos(4)]);
+% 
+% set(handles.figure1, 'Units', 'characters');
 
 %Change application Icon
+CenterFig(handles.figure1,handles.ParentHandle.figure1);
 figure(handles.figure1);
 drawnow;
 
@@ -200,16 +200,8 @@ handles.ParentHandle.Anonymize=get(handles.CheckboxAnonymize, 'Value');
 
 ReturnFlag=ImportFuncHandle(handles.ParentHandle);
 if ReturnFlag > 0
-    PushbuttonExit_Callback(handles.PushbuttonExit, [], handles);
+    figure1_CloseRequestFcn(hObject, eventdata, handles);
 end
-
-
-% --- Executes on button press in PushbuttonExit.
-function PushbuttonExit_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonExit (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-figure1_CloseRequestFcn(hObject, eventdata, handles);
 
 % --- Executes on button press in PushbuttonConfig.
 function PushbuttonConfig_Callback(hObject, eventdata, handles)

@@ -61,7 +61,7 @@ handles.Mode=Mode;
 set(handles.PushbuttonReviewFormat, 'Visible', 'Off');
 set(handles.TextVoxInfo, 'Visible', 'Off');
 
-[ImageData, CMap]=imread('Question.jpg');
+[ImageData, CMap]=imread('Question.png');
 set(handles.PushbuttonHelp, 'CData', ImageData);
 
 if iscell(PreprocessModule)

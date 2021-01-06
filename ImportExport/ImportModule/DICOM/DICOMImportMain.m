@@ -43,7 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before DICOMImportMain is made visible.
 function DICOMImportMain_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -114,7 +113,6 @@ guidata(hObject, handles);
 % UIWAIT makes DICOMImportMain wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = DICOMImportMain_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -124,7 +122,6 @@ function varargout = DICOMImportMain_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-
 
 % --- Executes on selection change in ListboxPat.
 function ListboxPat_Callback(hObject, eventdata, handles)
@@ -141,7 +138,6 @@ if ~isempty(handles.PatientStr)
     set(handles.ListboxPatInfo, 'String', CurrentPatInfo, 'Value', 1, 'ListboxTop', 1);
 end
 
-
 % --- Executes during object creation, after setting all properties.
 function ListboxPat_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ListboxPat (see GCBO)
@@ -154,7 +150,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
     set(hObject,'BackgroundColor','white');
 end
 
-
 % --- Executes on selection change in ListboxPatInfo.
 function ListboxPatInfo_Callback(hObject, eventdata, handles)
 % hObject    handle to ListboxPatInfo (see GCBO)
@@ -163,7 +158,6 @@ function ListboxPatInfo_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns ListboxPatInfo contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ListboxPatInfo
-
 
 % --- Executes during object creation, after setting all properties.
 function ListboxPatInfo_CreateFcn(hObject, eventdata, handles)
@@ -176,7 +170,6 @@ function ListboxPatInfo_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in PushbuttonOK.
 function PushbuttonOK_Callback(hObject, eventdata, handles)
@@ -206,7 +199,6 @@ if isempty(eventdata) ||  isequal(class(eventdata), 'matlab.ui.eventdata.ActionD
     MsgboxGuiIFOA('Data import is done.', 'Confirm', 'help', 'modal', handles.ProgramPath);
 end
 
-
 % --- Executes on button press in PushbuttonImportAll.
 function PushbuttonImportAll_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonImportAll (see GCBO)
@@ -228,15 +220,6 @@ if BatchFlag < 1
     MsgboxGuiIFOA('Data import is done.', 'Confirm', 'help', 'modal', handles.ProgramPath);
 end
 
-
-% --- Executes on button press in PushbuttonCancel.
-function PushbuttonCancel_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonCancel (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-delete(handles.figure1);
-
-
 % --- Executes on button press in PushbuttonRefresh.
 function PushbuttonRefresh_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonRefresh (see GCBO)
@@ -254,9 +237,6 @@ guidata(handles.figure1, handles);
 
 %Display new
 DisplayInfo(handles);
-
-
-
 
 function EditDCMPath_Callback(hObject, eventdata, handles)
 % hObject    handle to EditDCMPath (see GCBO)
@@ -277,10 +257,6 @@ else
     set(handles.EditDCMPath, 'String', handles.ConfigStruct.DICOMInDir);    
 end
 
-
-
-
-
 % --- Executes during object creation, after setting all properties.
 function EditDCMPath_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to EditDCMPath (see GCBO)
@@ -292,7 +268,6 @@ function EditDCMPath_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in PushbuttonDCMDir.
 function PushbuttonDCMDir_Callback(hObject, eventdata, handles)
@@ -326,7 +301,6 @@ if TempPath ~= 0
     end
 end
 
-
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % hObject    handle to figure1 (see GCBO)
@@ -334,8 +308,7 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: delete(hObject) closes the figure
-PushbuttonCancel_Callback(handles.PushbuttonCancel, [], handles);
-
+delete(handles.figure1);
 
 %-------------------------------Utilities Functions--------------------------------------%
 function DisplayInfo(handles)
@@ -394,23 +367,6 @@ end
 
 if ~isempty(PatientStr)
     
-    %DEBUG
-%     for i=1:2
-%         TempStr=PatientStr{i};
-%         
-%         TempIndex=strfind(TempStr, ',');
-%         TStr=['TestPat' num2str(i), num2str(i), num2str(i)];
-%         
-%         TempStr=[TStr, TempStr(TempIndex(2):end)];
-%         PatientStr{i}=TempStr;
-%         
-%         TempStr=PatientInfoStr{i};
-%         TempStr{2}=['MRN: ', num2str(i), num2str(i), num2str(i), '.'];
-%         TempStr{3}=['Name: ', TStr, '.'];
-%         PatientInfoStr{i}=TempStr;
-%     end    
-    %DEBUG
-    
     set(handles.ListboxPat, 'String', PatientStr, 'Value', 1, 'Enable', 'On');
     set(handles.ListboxPatInfo, 'String', PatientInfoStr{1}, 'Value', 1, 'Enable', 'On');
     
@@ -433,7 +389,6 @@ handles.IMSetIndex=IMSetIndex;
 handles.ROIInfoStr=ROIInfoStr;
 
 guidata(handles.figure1, handles);
-
 
 function ValidFlag=ValidPlanRSCT(POIDetailInfo)
 TempIndex=strmatch('[Relation]', POIDetailInfo);
@@ -502,8 +457,6 @@ PatStr=[PatStr, TempStr(6:end-1), ', '];
 % TempIndex=strmatch('PlanName:', InfoStr);
 % TempStr=InfoStr{TempIndex(1)};
 PatStr=[PatStr, 'Image', '.'];
-
-
 
 function [CurrentPatInfoStr, CurrentROIStr, RSSetNum, IMSetNum]=GetPatInfoStr(POIDetailInfo, ROIDetailInfo, CTDetailInfo)
 %Plan Info
@@ -613,7 +566,6 @@ function CurrentPatInfoStr=GetPatInfoStrCT(CTDetailInfo)
 %Add plan Info
 CurrentPatInfoStr=CTDetailInfo;
 CurrentPatInfoStr(7)=[];
-
 
 % --- Executes on button press in CheckboxBatch.
 function CheckboxBatch_Callback(hObject, eventdata, handles)

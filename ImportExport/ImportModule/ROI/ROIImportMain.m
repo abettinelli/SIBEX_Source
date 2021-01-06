@@ -82,7 +82,7 @@ FormatList=GetExportModuleFormatList(MFilePath, MFileName(1:end-4));
 set(handles.EditFile, 'String', '');
 set(handles.ListboxFormat, 'String', FormatList);
 
-[ImageData, CMap]=imread('Question.jpg');
+[ImageData, CMap]=imread('Question.png');
 set(handles.PushbuttonHelp, 'CData', ImageData);
 
 if isempty(FormatList)

@@ -61,7 +61,7 @@ handles.PadROI = PHandles.INIConfigInfo.PadROI;
 %Bettinelli
 handles.DataFormat='Pinnacle';
 
-handles.HightColor=[0, 255, 0];
+handles.HightColor=[0, 120, 215];
 % handles.TableSetValuePause=1E-90;
 handles.TableSetValuePause=1E-1000;
 
@@ -86,10 +86,10 @@ set(handles.PushbuttonOpen, 'Enable', 'Off');
 set(handles.TextLocation, 'String', ['User: ', PHandles.CurrentUser, '; ', 'Site: ', PHandles.CurrentSite]);
 
 handles.ParentFig=PHandles.figure1;
-set(handles.ParentFig, 'Visible', 'off');
+% set(handles.ParentFig, 'Visible', 'off');
 pause(0.1);
 
-CenterFig(handles.figure1);
+CenterFigCenterLeft(handles.figure1,handles.ParentFig);
 
 figure(handles.figure1);
 
@@ -158,14 +158,7 @@ SpecifyData(1, handles.figure1, handles.PatsParentDir,...
 set(handles.figure1, 'Pointer', 'arrow');
 drawnow;
 
-% --- Executes on button press in PushbuttonCancel.
-function PushbuttonCancel_Callback(hObject, eventdata, handles)
-% hObject    handle to PushbuttonCancel (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 
-set(handles.ParentFig, 'Visible', 'on');
-delete(handles.figure1);
 
 
 
@@ -364,8 +357,8 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 % Hint: delete(hObject) closes the figure
-PushbuttonCancel_Callback(handles.PushbuttonCancel, eventdata, handles);
-
+set(handles.ParentFig, 'Visible', 'on');
+delete(handles.figure1);
 
 
 function UpdatePatientFileComment(PatDir, handles, CurrentValue)

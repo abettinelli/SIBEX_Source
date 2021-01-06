@@ -112,13 +112,18 @@ TableData=[{' '}, {' '}];
 set(handles.PushbuttonAdd, 'Enable', 'Off');
 set(handles.PushbuttonHelp, 'Enable', 'Off');
 
-[ImageData, CMap]=imread('Question.jpg');
-set(handles.PushbuttonHelp, 'CData', ImageData);
+% [ImageData, CMap]=imread('Question.png');
+% set(handles.PushbuttonHelp, 'CData', ImageData);
+configureButton(handles.PushbuttonHelp,[ProgramPath '\Pic\Question.png'])
 
 set(handles.UITableMethod, 'Visible', 'on', 'Enable', 'on', 'Data', TableData, ...
         'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
         'ColumnEditable', logical(TableEdit), 'ColumnWidth', TableWidth); 
 
+function configureButton(p, CIcon_p)
+
+str = ['<html><img align="middle" src="file:/', CIcon_p, '">'];
+set(p,'String', str);
 
 % --- Outputs from this function are returned to the command line.
 function varargout = FeatureAddPreprocess_OutputFcn(hObject, eventdata, handles) 

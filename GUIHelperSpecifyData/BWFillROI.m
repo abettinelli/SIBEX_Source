@@ -113,11 +113,11 @@ else
 end
 
 % Find ROI borders - index
-X_MinCol=round((MinX-ImageDataInfoAxial.XStart)/ImageDataInfoAxial.XPixDim)+1;
+X_MinCol=max(round((MinX-ImageDataInfoAxial.XStart)/ImageDataInfoAxial.XPixDim)+1,1);
 X_MaxCol=round((MaxX-ImageDataInfoAxial.XStart)/ImageDataInfoAxial.XPixDim)+1;
-Y_MinRow=round((MinY-ImageDataInfoAxial.YStart)/ImageDataInfoAxial.YPixDim)+1;
+Y_MinRow=max(round((MinY-ImageDataInfoAxial.YStart)/ImageDataInfoAxial.YPixDim)+1,1);
 Y_MaxRow=round((MaxY-ImageDataInfoAxial.YStart)/ImageDataInfoAxial.YPixDim)+1;
-Z_MinPage=round((MinZ-ImageDataInfoAxial.ZStart)/ImageDataInfoAxial.ZPixDim)+1;
+Z_MinPage=max(round((MinZ-ImageDataInfoAxial.ZStart)/ImageDataInfoAxial.ZPixDim)+1,1);
 Z_MaxPage=round((MaxZ-ImageDataInfoAxial.ZStart)/ImageDataInfoAxial.ZPixDim)+1;
 
 %Update MinX, MinY, MinZ according to ROI borders and GRIDs
