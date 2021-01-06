@@ -34,22 +34,49 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=mean(FeatureValue);
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
+        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
         FeatureValue=mean(FeatureValue);
         FeatureInfo(i).FeatureValue=FeatureValue;
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'GLRLM';
+        FeatureInfo(i).Category = 'Grey level run length matrix';
+        FeatureInfo(i).CategoryID = 'TP0I';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        switch ParentInfo.AggregationMethod
+            case 1
+                FeatureInfo(i).AggregationMethod = '2D:avg';
+                FeatureInfo(i).AggregationMethodID = 'BTW3';
+            case 2
+                FeatureInfo(i).AggregationMethod = '2D:smrg';
+                FeatureInfo(i).AggregationMethodID = 'SUJT';
+            case 6
+                FeatureInfo(i).AggregationMethod = '2.5D:dmrg';
+                FeatureInfo(i).AggregationMethodID = 'JJUI';
+            case 3
+                FeatureInfo(i).AggregationMethod = '2.5D:vmrg';
+                FeatureInfo(i).AggregationMethodID = 'ZW7Z';
+            case 4
+                FeatureInfo(i).AggregationMethod = '3D:avg';
+                FeatureInfo(i).AggregationMethodID = 'ITBB';
+            case 5
+                FeatureInfo(i).AggregationMethod = '3D:mrg';
+                FeatureInfo(i).AggregationMethodID = 'IAZD';
+        end
     end         
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 %----FEATURES
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunEmphasis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunEmphasis(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -57,7 +84,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunEmpha
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunEmphasis(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Short runs emphasis';
+FeatureInfo.FeatureID   = '22OV';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunEmphasis(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -65,7 +95,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunEmphas
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LowGLRunEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Long runs emphasis';
+FeatureInfo.FeatureID   = 'W4KF';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LowGLRunEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -73,7 +106,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LowGLRunEmpha
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LowGrayLevelRunEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_HighGLRunEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Low grey level run emphasis';
+FeatureInfo.FeatureID   = 'V3SW';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_HighGLRunEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -81,7 +117,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_HighGLRunEmph
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'HighGrayLevelRunEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunLowGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'High grey level run emphasis';
+FeatureInfo.FeatureID   = 'G3QZ';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunLowGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -89,7 +128,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunLowGL
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunLowGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunHighGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Short run low grey level emphasis';
+FeatureInfo.FeatureID   = 'HTZT';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunHighGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -97,7 +139,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunHighG
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunHighGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunLowGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Short run high grey level emphasis';
+FeatureInfo.FeatureID   = 'GD3A';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunLowGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -105,7 +150,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunLowGLE
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunLowGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunHighGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Long run low grey level emphasis';
+FeatureInfo.FeatureID   = 'IVPO';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunHighGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -113,7 +161,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunHighGL
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunHighGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Long run high grey level emphasis';
+FeatureInfo.FeatureID   = '3KUM';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
@@ -121,7 +172,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformi
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelNonuniformity');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformityNorm(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Grey level non-uniformity';
+FeatureInfo.FeatureID   = 'R5YN';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformityNorm(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
@@ -129,7 +183,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformi
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelNonuniformityNorm');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Normalised grey level non-uniformity';
+FeatureInfo.FeatureID   = 'OVBL';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
@@ -137,7 +194,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformi
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthNonuniformity');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformityNorm(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Run length non-uniformity';
+FeatureInfo.FeatureID   = 'W92Y';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformityNorm(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
@@ -145,7 +205,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformi
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthNonuniformityNorm');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunPercentage(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Normalised run length non-uniformity';
+FeatureInfo.FeatureID   = 'IC23';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunPercentage(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
@@ -153,7 +216,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunPercentage
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunPercentage');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GrayLevelVariance(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Run percentage';
+FeatureInfo.FeatureID   = '9ZK5';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GrayLevelVariance(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
@@ -161,7 +227,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GrayLevelVari
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelVariance');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunLengthVariance(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Grey level variance';
+FeatureInfo.FeatureID   = '8CE5';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunLengthVariance(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
@@ -169,13 +238,19 @@ function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunLengthVari
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthVariance');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunEntropy(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Run length variance';
+FeatureInfo.FeatureID   = 'SXLW';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunEntropy(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunEntropy');
+
+FeatureInfo.FeatureName = 'Run entropy';
+FeatureInfo.FeatureID   = 'HJ9O';
 
 
 function [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, Mode)

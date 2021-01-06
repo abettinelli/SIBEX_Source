@@ -55,6 +55,7 @@ switch Mode
         
     case 'Child'
         CDataSetInfo.ROIImageInfo.NGLDMStruct=NGLDMStruct;
+        CDataSetInfo.AggregationMethod = Param.AggregationMethod;
         ParentInfo=CDataSetInfo;
 end
 

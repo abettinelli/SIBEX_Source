@@ -34,22 +34,40 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
+        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
         FeatureValue=mean(FeatureValue);
         FeatureInfo(i).FeatureValue=FeatureValue;
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'NGLDM';
+        FeatureInfo(i).Category = 'Neighbouring grey level dependence matrix';
+        FeatureInfo(i).CategoryID = 'REK0';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        switch ParentInfo.AggregationMethod
+            case 1
+                FeatureInfo(i).AggregationMethod = '2D';
+                FeatureInfo(i).AggregationMethodID = '8QNN';
+            case 2
+                FeatureInfo(i).AggregationMethod = '2.5D';
+                FeatureInfo(i).AggregationMethodID = '62GR';
+            case 3
+                FeatureInfo(i).AggregationMethod = '3D';
+                FeatureInfo(i).AggregationMethodID = 'KOBO';
+        end
     end         
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 %----FEATURES
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowDepenEmphasis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_LowDepenEmphasis(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -57,7 +75,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowDepenEmphasis(
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'LowDependenceEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighDepenEmphasis(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Low dependence emphasis';
+FeatureInfo.FeatureID   = 'SODN';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_HighDepenEmphasis(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -65,7 +86,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighDepenEmphasis
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'HighDependenceEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowGLCountEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'High dependence emphasis';
+FeatureInfo.FeatureID   = 'IMOQ';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_LowGLCountEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -73,7 +97,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowGLCountEmpha(P
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'LowGrayLevelCountEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighGLCountEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Low grey level count emphasis';
+FeatureInfo.FeatureID   = 'TL9H';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_HighGLCountEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -81,7 +108,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighGLCountEmpha(
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'HighGrayLevelCountEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowDepenLowGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'High grey level count emphasis';
+FeatureInfo.FeatureID   = 'OAE7';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_LowDepenLowGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -89,7 +119,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowDepenLowGLEmph
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'LowDependenceLowGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowDepenHighGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Low dependence low grey level emphasis';
+FeatureInfo.FeatureID   = 'EQ3F';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_LowDepenHighGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -97,7 +130,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_LowDepenHighGLEmp
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'LowDependenceHighGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighDepenLowGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Low dependence high grey level emphasis';
+FeatureInfo.FeatureID   = 'JA6D';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_HighDepenLowGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -105,7 +141,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighDepenLowGLEmp
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'HighDependenceLowGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighDepenHighGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'High dependence low grey level emphasis';
+FeatureInfo.FeatureID   = 'NBZI';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_HighDepenHighGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -113,7 +152,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_HighDepenHighGLEm
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'HighDependenceHighGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_GLNonuniformity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'High dependence high grey level emphasis';
+FeatureInfo.FeatureID   = '9QMG';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_GLNonuniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -121,7 +163,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_GLNonuniformity(P
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'GrayLevelNonuniformity');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_GLNonuniformityNorm(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Grey level non-uniformity';
+FeatureInfo.FeatureID   = 'FP8K';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_GLNonuniformityNorm(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -129,7 +174,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_GLNonuniformityNo
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'GrayLevelNonuniformityNorm');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountNonuniformity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Normalised grey level non-uniformity';
+FeatureInfo.FeatureID   = '5SPA';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_DepCountNonuniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -137,7 +185,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountNonunifor
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'DependenceCountNonuniformity');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountNonuniformityNorm(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Dependence count non-uniformity';
+FeatureInfo.FeatureID   = 'Z87G';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_DepCountNonuniformityNorm(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -145,7 +196,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountNonunifor
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'DependenceCountNonuniformityNorm');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountPercentage(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Normalised dependence count non-uniformity';
+FeatureInfo.FeatureID   = 'OKJI';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_DepCountPercentage(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -153,7 +207,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountPercentag
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'DependenceCountPercentage');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_GLVariance(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Dependence count percentage';
+FeatureInfo.FeatureID   = '6XV8';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_GLVariance(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -161,7 +218,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_GLVariance(Parent
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'GrayLevelVariance');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountVariance(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Grey level variance';
+FeatureInfo.FeatureID   = '1PFV';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_DepCountVariance(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -169,7 +229,10 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountVariance(
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'DependenceCountVariance');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountEntropy(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Dependence count variance';
+FeatureInfo.FeatureID   = 'DNX2';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_DepCountEntropy(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -177,13 +240,19 @@ function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountEntropy(P
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'DependenceCountEntropy');
 
-function [Value, ReviewInfo]=IBSI_NeighborGLDependence_Feature_DepCountEnergy(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Dependence count entropy';
+FeatureInfo.FeatureID   = 'FCBV';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborGLDependence_Feature_DepCountEnergy(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, 'DependenceCountEnergy');
+
+FeatureInfo.FeatureName = 'Dependence count energy';
+FeatureInfo.FeatureID   = 'CAS9';
 
 
 function [Value, ReviewInfo]=ComputeNGLDMFeature(ParentInfo, Mode)

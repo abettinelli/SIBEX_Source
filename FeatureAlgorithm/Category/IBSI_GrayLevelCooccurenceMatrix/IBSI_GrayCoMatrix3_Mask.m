@@ -13,37 +13,37 @@ function [GLCMS,SI] = IBSI_GrayCoMatrix3_Mask(varargin)
 %   more gray-level co-occurrence matrices, depending on the values of the
 %   optional parameter/value pairs. Parameter names can be abbreviated, and
 %   case does not matter.
-%   
+%
 %   Parameters include:
-%  
-%   'Offset'         A p-by-2 array of offsets specifying the distance 
-%                    between the pixel-of-interest and its neighbor. Each 
-%                    row in the array is a two-element vector, 
-%                    [ROW_OFFSET COL_OFFSET], that specifies the 
-%                    relationship, or 'Offset', between a pair of pixels. 
-%                    ROW_OFFSET is the number of rows between the 
+%
+%   'Offset'         A p-by-2 array of offsets specifying the distance
+%                    between the pixel-of-interest and its neighbor. Each
+%                    row in the array is a two-element vector,
+%                    [ROW_OFFSET COL_OFFSET], that specifies the
+%                    relationship, or 'Offset', between a pair of pixels.
+%                    ROW_OFFSET is the number of rows between the
 %                    pixel-of-interest and its neighbor.  COL_OFFSET is the
-%                    number of columns between the pixel-of-interest and 
+%                    number of columns between the pixel-of-interest and
 %                    its neighbor. For example, if you want the number of
-%                    occurrences where the pixel of interest is one pixel 
-%                    to the left of its neighbor, then 
+%                    occurrences where the pixel of interest is one pixel
+%                    to the left of its neighbor, then
 %                    [ROW_OFFSET COL_OFFSET] is [0 1].
-%  
-%                    Because this offset is often expressed as an angle, 
-%                    the following table lists the offset values that 
+%
+%                    Because this offset is often expressed as an angle,
+%                    the following table lists the offset values that
 %                    specify common angles, given the pixel distance D.
-%                            
+%
 %                    Angle     OFFSET
-%                    -----     ------  
-%                    0         [0 D]   
+%                    -----     ------
+%                    0         [0 D]
 %                    45        [-D D]
 %                    90        [-D 0]
-%                    135       [-D -D]  
-%  
-%                    ROW_OFFSET and COL_OFFSET must be integers. 
+%                    135       [-D -D]
+%
+%                    ROW_OFFSET and COL_OFFSET must be integers.
 %
 %                    Default: [0 1]
-%            
+%
 %   'NumLevels'      An integer specifying the number of gray levels to use
 %                    when scaling the grayscale values in I. For example,
 %                    if 'NumLevels' is 8, GRAYCOMATRIX scales the values in
@@ -53,19 +53,19 @@ function [GLCMS,SI] = IBSI_GrayCoMatrix3_Mask(varargin)
 %
 %                    'NumLevels' must be an integer. 'NumLevels' must be 2
 %                    if I is logical.
-%  
+%
 %                    Default: 8 for numeric
 %                             2 for logical
-%   
-%   'GrayLimits'     A two-element vector, [LOW HIGH], that specifies how 
-%                    the grayscale values in I are linearly scaled into 
-%                    gray levels. Grayscale values less than or equal to 
-%                    LOW are scaled to 1. Grayscale values greater than or 
-%                    equal to HIGH are scaled to HIGH.  If 'GrayLimits' is 
-%                    set to [], GRAYCOMATRIX uses the minimum and maximum 
-%                    grayscale values in I as limits, 
+%
+%   'GrayLimits'     A two-element vector, [LOW HIGH], that specifies how
+%                    the grayscale values in I are linearly scaled into
+%                    gray levels. Grayscale values less than or equal to
+%                    LOW are scaled to 1. Grayscale values greater than or
+%                    equal to HIGH are scaled to HIGH.  If 'GrayLimits' is
+%                    set to [], GRAYCOMATRIX uses the minimum and maximum
+%                    grayscale values in I as limits,
 %                    [min(I(:)) max(I(:))].
-%  
+%
 %                    Default: the LOW and HIGH values specified by the
 %                    class, e.g., [LOW HIGH] is [0 1] if I is double and
 %                    [-32768 32767] if I is int16.
@@ -81,29 +81,29 @@ function [GLCMS,SI] = IBSI_GrayCoMatrix3_Mask(varargin)
 %                    symmetric across its diagonal, and is equivalent to
 %                    the GLCM described by Haralick (1973).
 %
-%                    The GLCM produced by the following syntax, 
+%                    The GLCM produced by the following syntax,
 %
 %                    graycomatrix(I, 'offset', [0 1], 'Symmetric', true)
 %
 %                    is equivalent to the sum of the two GLCMs produced by
 %                    these statements.
 %
-%                    graycomatrix(I, 'offset', [0 1], 'Symmetric', false) 
-%                    graycomatrix(I, 'offset', [0 -1], 'Symmetric', false) 
+%                    graycomatrix(I, 'offset', [0 1], 'Symmetric', false)
+%                    graycomatrix(I, 'offset', [0 -1], 'Symmetric', false)
 %
 %                    Default: false
-%  
-%  
+%
+%
 %   [GLCMS,SI] = GRAYCOMATRIX(...) returns the scaled image used to
 %   calculate GLCM. The values in SI are between 1 and 'NumLevels'.
 %
 %   Class Support
-%   -------------             
+%   -------------
 %   I can be numeric or logical.  I must be 2D, real, and nonsparse. SI is
 %   a double matrix having the same size as I.  GLCMS is an
 %   'NumLevels'-by-'NumLevels'-by-P double array where P is the number of
 %   offsets in OFFSET.
-%  
+%
 %   Notes
 %   -----
 %   Another name for a gray-level co-occurrence matrix is a gray-level
@@ -125,18 +125,18 @@ function [GLCMS,SI] = IBSI_GrayCoMatrix3_Mask(varargin)
 %   Addison-Wesley, 1992, p. 459.
 %
 %   Example 1
-%   ---------      
+%   ---------
 %   Calculate the gray-level co-occurrence matrix (GLCM) and return the
 %   scaled version of the image, SI, used by GRAYCOMATRIX to generate the
 %   GLCM.
 %
 %        I = [1 1 5 6 8 8;2 3 5 7 0 2; 0 2 3 5 6 7];
 %       [GLCMS,SI] = graycomatrix(I,'NumLevels',9,'G',[])
-%     
+%
 %   Example 2
-%   ---------  
+%   ---------
 %   Calculate the gray-level co-occurrence matrix for a grayscale image.
-%  
+%
 %       I = imread('circuit.tif');
 %       GLCMS = graycomatrix(I,'Offset',[2 0])
 %
@@ -144,21 +144,21 @@ function [GLCMS,SI] = IBSI_GrayCoMatrix3_Mask(varargin)
 %   ---------
 %   Calculate gray-level co-occurrences matrices for a grayscale image
 %   using four different offsets.
-%  
+%
 %       I = imread('cell.tif');
 %       offsets = [0 1;-1 1;-1 0;-1 -1];
-%       [GLCMS,SI] = graycomatrix(I,'Of',offsets); 
+%       [GLCMS,SI] = graycomatrix(I,'Of',offsets);
 %
 %   Example 4
-%   ---------  
+%   ---------
 %   Calculate the symmetric gray-level co-occurrence matrix (the Haralick
 %   definition) for a grayscale image.
-%  
+%
 %       I = imread('circuit.tif');
 %       GLCMS = graycomatrix(I,'Offset',[2 0],'Symmetric', true)
-%  
+%
 %   See also GRAYCOPROPS.
-  
+
 %   Copyright 1993-2010 The MathWorks, Inc.
 %   $Revision: 1.1.8.5 $  $Date: 2010/10/11 14:46:51 $
 
@@ -178,30 +178,33 @@ SI(Mask==0)=NaN;
 numOffsets = size(Offset,1);
 
 if NL ~= 0
-
-  % Create vectors of row and column subscripts for every pixel and its
-  % neighbor.
-  s = size(I);
-  [r,c,z] = meshgrid(1:s(1),1:s(2),1:s(3));
-  r = r(:);
-  c = c(:);
-  z = z(:);    
-
-
-  % Compute GLCMS
-  GLCMS = zeros(NL,NL,numOffsets);
-  for k = 1 : numOffsets
-    GLCMS(:,:,k) = computeGLCM(r,c, z, Offset(k,:), SI,NL);
     
-    if makeSymmetric 
-        % Reflect glcm across the diagonal
-        glcmTranspose = GLCMS(:,:,k).';
-        GLCMS(:,:,k) = GLCMS(:,:,k) + glcmTranspose;
+    % Create vectors of row and column subscripts for every pixel and its
+    % neighbor.
+    s = size(I);
+    if length(s) == 3
+        [r,c,z] = meshgrid(1:s(1),1:s(2),1:s(3));
+    elseif length(s) == 2 % In case one slice
+        [r,c,z] = meshgrid(1:s(1),1:s(2),1);
     end
-  end
-
+    r = r(:);
+    c = c(:);
+    z = z(:);
+    
+    % Compute GLCMS
+    GLCMS = zeros(NL,NL,numOffsets);
+    for k = 1 : numOffsets
+        GLCMS(:,:,k) = computeGLCM(r, c, z, Offset(k,:), SI,NL);
+        
+        if makeSymmetric
+            % Reflect glcm across the diagonal
+            glcmTranspose = GLCMS(:,:,k).';
+            GLCMS(:,:,k) = GLCMS(:,:,k) + glcmTranspose;
+        end
+    end
+    
 else
-  GLCMS = zeros(0,0,numOffsets);
+    GLCMS = zeros(0,0,numOffsets);
 end
 
 %-----------------------------------------------------------------------------
@@ -254,68 +257,68 @@ narginchk(1, 10);
 % Check I
 I = varargin{1};
 validateattributes(I,{'logical','numeric'},{'real','nonsparse'}, ...
-              mfilename,'I',1);
-          
+    mfilename,'I',1);
+
 Mask = varargin{2};
 
 % Assign Defaults
 offset = [0 1];
 if islogical(I)
-  nl = 2;
+    nl = 2;
 else
-  nl = 8;
+    nl = 8;
 end
 % gl = getrangefromclass(I);
 sym = false;
 
 % Parse Input Arguments
 if nargin ~= 1
- 
-  paramStrings = {'Offset','NumLevels','GrayLimits','Symmetric'};
-  
-  for k = 3:2:nargin
-
-    param = lower(varargin{k});
-    inputStr = validatestring(param, paramStrings, mfilename, 'PARAM', k);
-    idx = k + 1;  %Advance index to the VALUE portion of the input.
-    if idx > nargin
-      eid = sprintf('Images:%s:missingParameterValue', mfilename);
-      error(eid,'Parameter ''%s'' must be followed by a value.', inputStr);        
-    end
     
-    switch (inputStr)
-     
-     case 'Offset'
-      
-      offset = varargin{idx};
-      validateattributes(offset,{'logical','numeric'},...
+    paramStrings = {'Offset','NumLevels','GrayLimits','Symmetric'};
+    
+    for k = 3:2:nargin
+        
+        param = lower(varargin{k});
+        inputStr = validatestring(param, paramStrings, mfilename, 'PARAM', k);
+        idx = k + 1;  %Advance index to the VALUE portion of the input.
+        if idx > nargin
+            eid = sprintf('Images:%s:missingParameterValue', mfilename);
+            error(eid,'Parameter ''%s'' must be followed by a value.', inputStr);
+        end
+        
+        switch (inputStr)
+            
+            case 'Offset'
+                
+                offset = varargin{idx};
+                validateattributes(offset,{'logical','numeric'},...
                     {'nonempty','integer','real'},...
                     mfilename, 'OFFSET', idx);
-      if size(offset,2)  >  3
-        eid = sprintf('Images:%s:invalidOffsetSize',mfilename);
-        error(eid, 'OFFSET must be an N-by-3 array.');
-      end
-      offset = double(offset);
-
-     case 'NumLevels'
-      
-      nl = varargin{idx};
-      validateattributes(nl,{'logical','numeric'},...
+                if size(offset,2)  >  3
+                    eid = sprintf('Images:%s:invalidOffsetSize',mfilename);
+                    error(eid, 'OFFSET must be an N-by-3 array.');
+                end
+                offset = double(offset);
+                
+            case 'NumLevels'
+                
+                nl = varargin{idx};
+                validateattributes(nl,{'logical','numeric'},...
                     {'real','integer','nonnegative','nonempty','nonsparse'},...
                     mfilename, 'NL', idx);
-      if numel(nl) > 1
-        eid = sprintf('Images:%s:invalidNumLevels',mfilename);
-        error(eid, 'NL cannot contain more than one element.');
-      elseif islogical(I) && nl ~= 2
-        eid = sprintf('Images:%s:invalidNumLevelsForBinary',mfilename);
-        error(eid, 'NL must be two for a binary image.');
-      end
-      nl = double(nl);      
-    
-      case 'Symmetric'
-        sym = varargin{idx};
-        validateattributes(sym,{'logical'}, {'scalar'}, mfilename, 'Symmetric', idx);
-        
+                if numel(nl) > 1
+                    eid = sprintf('Images:%s:invalidNumLevels',mfilename);
+                    error(eid, 'NL cannot contain more than one element.');
+                elseif islogical(I) && nl ~= 2
+                    eid = sprintf('Images:%s:invalidNumLevelsForBinary',mfilename);
+                    error(eid, 'NL must be two for a binary image.');
+                end
+                nl = double(nl);
+                
+            case 'Symmetric'
+                sym = varargin{idx};
+                validateattributes(sym,{'logical'}, {'scalar'}, mfilename, 'Symmetric', idx);
+                
+        end
     end
-  end
 end

@@ -34,22 +34,39 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
-        FeatureValue = mean(FeatureValue); % bettinelli
-        FeatureInfo(i).FeatureValue=FeatureValue;
+        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);            
+        FeatureInfo(i).FeatureValue=nanmean(FeatureValue); % nanmean instead of mean
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'NGTDM';
+        FeatureInfo(i).Category = 'Neighbourhood grey tone difference matrix';
+        FeatureInfo(i).CategoryID = 'IPET';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        switch ParentInfo.AggregationMethod
+            case 1
+                FeatureInfo(i).AggregationMethod = '2D';
+                FeatureInfo(i).AggregationMethodID = '8QNN';
+            case 2
+                FeatureInfo(i).AggregationMethod = '2.5D';
+                FeatureInfo(i).AggregationMethodID = '62GR';
+            case 3
+                FeatureInfo(i).AggregationMethod = '3D';
+                FeatureInfo(i).AggregationMethodID = 'KOBO';
+        end
     end         
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 %----FEATURES
-function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Coarseness(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Coarseness(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -57,7 +74,10 @@ function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Coarseness
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Coarseness');
 
-function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Contrast(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Coarseness';
+FeatureInfo.FeatureID   = 'QCDE';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Contrast(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -65,7 +85,10 @@ function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Contrast(P
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Contrast');
 
-function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Busyness(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Contrast';
+FeatureInfo.FeatureID   = '65HE';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Busyness(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -73,7 +96,10 @@ function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Busyness(P
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Busyness');
 
-function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Complexity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Busyness';
+FeatureInfo.FeatureID   = 'NQ30';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Complexity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -81,13 +107,19 @@ function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_Complexity
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Complexity');
 
-function [Value, ReviewInfo]=IBSI_NeighborIntensityDifference_Feature_TextureStrength(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Complexity';
+FeatureInfo.FeatureID   = 'HDEZ';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_TextureStrength(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'TextureStrength');
+
+FeatureInfo.FeatureName = 'Strength';
+FeatureInfo.FeatureID   = '1X9X';
 
 
 function [FinalValue, ReviewInfo]=ComputeNIDFeature(ParentInfo, Mode)
@@ -101,44 +133,40 @@ FeatureValue=zeros(SliceNum, 1);
 for i=1:SliceNum
     curr_NIDStruct = NIDStruct(i);
     
-    if isnan(curr_NIDStruct.HistOccurPropability)
+    if all(isnan(curr_NIDStruct.HistOccurPropability))
         Value=NaN;
-        ReviewInfo.MaskData=Value;
-        
-        return;
+    else
+        switch Mode
+            case 'Coarseness'
+                Value=1/(Epsilon+sum(curr_NIDStruct.HistOccurPropability.*curr_NIDStruct.HistDiffSum));
+                
+            case 'Contrast'
+                ValidNumVoxel=curr_NIDStruct.ValidNumVoxel;
+                
+                AveDiff1D=sum(curr_NIDStruct.HistDiffSum)/ValidNumVoxel;
+                AveDiff2D=ComputeAverageCrossDiff(curr_NIDStruct);
+                
+                Value=AveDiff1D*AveDiff2D;
+                
+            case 'Busyness'
+                WeightDiff=curr_NIDStruct.HistOccurPropability.*curr_NIDStruct.HistDiffSum;
+                SumDiff1D=sum(WeightDiff);
+                
+                SumDiff2D=ComputeSumCrossDiff(curr_NIDStruct);
+                
+                Value=SumDiff1D/(Epsilon+SumDiff2D);
+                
+            case 'Complexity'
+                Value=ComputeComplex(curr_NIDStruct);
+                
+            case 'TextureStrength'
+                SumDiff=sum(curr_NIDStruct.HistDiffSum);
+                
+                SumWeightDiff2D=ComputeSumCrossWeightDiff(curr_NIDStruct);
+                
+                Value=SumWeightDiff2D/(Epsilon+SumDiff);
+        end
     end
-    
-    switch Mode
-        case 'Coarseness'
-            Value=1/(Epsilon+sum(curr_NIDStruct.HistOccurPropability.*curr_NIDStruct.HistDiffSum));
-            
-        case 'Contrast'
-            ValidNumVoxel=curr_NIDStruct.ValidNumVoxel;
-            
-            AveDiff1D=sum(curr_NIDStruct.HistDiffSum)/ValidNumVoxel;
-            AveDiff2D=ComputeAverageCrossDiff(curr_NIDStruct);
-            
-            Value=AveDiff1D*AveDiff2D;
-            
-        case 'Busyness'
-            WeightDiff=curr_NIDStruct.HistOccurPropability.*curr_NIDStruct.HistDiffSum;
-            SumDiff1D=sum(WeightDiff);
-            
-            SumDiff2D=ComputeSumCrossDiff(curr_NIDStruct);
-            
-            Value=SumDiff1D/(Epsilon+SumDiff2D);
-            
-        case 'Complexity'
-            Value=ComputeComplex(curr_NIDStruct);
-            
-        case 'TextureStrength'
-            SumDiff=sum(curr_NIDStruct.HistDiffSum);
-            
-            SumWeightDiff2D=ComputeSumCrossWeightDiff(curr_NIDStruct);
-            
-            Value=SumWeightDiff2D/(Epsilon+SumDiff);
-    end           
-        
     FeatureValue(i)=Value;
 end
 

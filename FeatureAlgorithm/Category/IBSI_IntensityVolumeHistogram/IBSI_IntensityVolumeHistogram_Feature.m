@@ -34,7 +34,7 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
+        [FeatureValue,~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
         
         if length(FeatureValue) > 1
             FeatureInfo(i).FeatureValueParam=FeatureValue(:, 1);
@@ -42,19 +42,28 @@ for i=1:length(FeatureInfo)
         else
             FeatureInfo(i).FeatureValue=FeatureValue;
         end
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'IVH';
+        FeatureInfo(i).Category = 'Intensity-volume histogram';
+        FeatureInfo(i).CategoryID = 'P88C';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        FeatureInfo(i).AggregationMethod = '';
+        FeatureInfo(i).AggregationMethodID = 'DHQ4';
     end
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 %FEATURES
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_VolumeIntFract_10(ParentInfo, Param)
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_VolumeIntFract_10(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -72,7 +81,10 @@ else
 end
 null = [];
 
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_VolumeIntFract_90(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Volume at intensity fraction 10';
+FeatureInfo.FeatureID   = 'BC2M';
+
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_VolumeIntFract_90(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -89,7 +101,10 @@ else
 end
 null = [];
 
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_IntensityVolFract_10(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Volume at intensity fraction 90';
+FeatureInfo.FeatureID   = 'BC2M';
+
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_IntensityVolFract_10(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -108,7 +123,10 @@ else
 end
 null = [];
 
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_IntensityVolFract_90(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity at volume fraction 10';
+FeatureInfo.FeatureID   = 'GBPN';
+
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_IntensityVolFract_90(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -127,7 +145,10 @@ else
 end
 null = [];
 
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_VolumeFractionDiff(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity at volume fraction 90';
+FeatureInfo.FeatureID   = 'GBPN';
+
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_VolumeFractionDiff(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -148,7 +169,10 @@ else
 end
 null = [];
 
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_IntensityFractDiff(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Volume fraction difference between intensity fractions';
+FeatureInfo.FeatureID   = 'DDTU';
+
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_IntensityFractDiff(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -170,7 +194,10 @@ else
 end
 null = [];
 
-function [Value, null]=IBSI_IntensityVolumeHistogram_Feature_AreaUnderIVHCurve(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity fraction difference between volume fractions';
+FeatureInfo.FeatureID   = 'CNV2';
+
+function [Value, null, FeatureInfo]=IBSI_IntensityVolumeHistogram_Feature_AreaUnderIVHCurve(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -183,3 +210,6 @@ intensities = ParentInfo.ROIImageInfo.intensities;
 
 Value = trapz(gamma, volume);
 null = [];
+
+FeatureInfo.FeatureName = 'Area under the IVH curve';
+FeatureInfo.FeatureID   = '9CMM';

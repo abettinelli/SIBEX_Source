@@ -69,6 +69,7 @@ switch Mode
         
     case 'Child'
         CDataSetInfo.ROIImageInfo.NIDStruct=NIDStruct;
+        CDataSetInfo.AggregationMethod = Param.AggregationMethod;
         ParentInfo=CDataSetInfo;
 end
 

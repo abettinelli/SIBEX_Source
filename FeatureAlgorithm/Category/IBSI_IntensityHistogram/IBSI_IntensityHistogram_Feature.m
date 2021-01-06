@@ -34,7 +34,7 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);               
+        [FeatureValue, ~,Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);               
         
         %handle buffer data or not
         if ~isstruct(FeatureValue)                    
@@ -49,20 +49,29 @@ for i=1:length(FeatureInfo)
              FeatureInfo(i).FeatureValue=FeatureValue.Value;
              ParentInfo.BufferData=FeatureValue.BufferData;
              ParentInfo.BufferType=FeatureValue.BufferType;
-        end               
+        end
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'IH';
+        FeatureInfo(i).Category = 'Intensity histogram';
+        FeatureInfo(i).CategoryID = 'ZVCW';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        FeatureInfo(i).AggregationMethod = '';
+        FeatureInfo(i).AggregationMethodID = 'DHQ4';
     end         
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 %----FEATURES
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Mean(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Mean(ParentInfo, Param)
 %%%Doc Starts%%%
 %The mean of discretised voxel intensities.
 %%%Doc Ends%%%
@@ -78,9 +87,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Mean discretised intensity';
+FeatureInfo.FeatureID   = 'X6K6';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Variance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Variance(ParentInfo, Param)
 %%%Doc Starts%%%
 %The variance of discretised voxel intensities.
 %%%Doc Ends%%%
@@ -96,9 +108,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Discretised intensity variance';
+FeatureInfo.FeatureID   = 'CH89';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Skewness(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Skewness(ParentInfo, Param)
 %%%Doc Starts%%%
 %Measure the  asymmetry of all the discretized voxels' intensity.
 %%%Doc Ends%%%
@@ -114,9 +129,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Discretised intensity skewness';
+FeatureInfo.FeatureID   = '88K1';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Kurtosis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Kurtosis(ParentInfo, Param)
 %%%Doc Starts%%%
 %Measure the peakedness of all the discretized voxels' intensity.
 %%%Doc Ends%%%
@@ -132,9 +150,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = '(Excess) discretised intensity kurtosis';
+FeatureInfo.FeatureID   = 'C3I7';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Median(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Median(ParentInfo, Param)
 %%%Doc Starts%%%
 %The intensity median among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -150,9 +171,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Median discretised intensity';
+FeatureInfo.FeatureID   = 'WIFQ';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Min(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Min(ParentInfo, Param)
 %%%Doc Starts%%%
 %The intensity minimum among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -168,22 +192,31 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Minimum discretised intensity';
+FeatureInfo.FeatureID   = '1PR8';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_10thPercentile(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_10thPercentile(ParentInfo, Param)
 %%%Doc Starts%%%
 %10th percentile of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, '10thPercentile');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_90thPercentile(ParentInfo, Param)
+FeatureInfo.FeatureName = '10th discretised intensity percentile';
+FeatureInfo.FeatureID   = 'GPMT';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_90thPercentile(ParentInfo, Param)
 %%%Doc Starts%%%
 %-Description: 
 %90th percentile of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, '90thPercentile');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Max(ParentInfo, Param)
+FeatureInfo.FeatureName = '90th discretised intensity percentile';
+FeatureInfo.FeatureID   = 'OZ0C';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Max(ParentInfo, Param)
 %%%Doc Starts%%%
 %The intensity maximum among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -199,9 +232,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Maximum discretised intensity';
+FeatureInfo.FeatureID   = '3NCY';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Mode(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Mode(ParentInfo, Param)
 %%%Doc Starts%%%
 %The intensity mode among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -217,15 +253,21 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Intensity histogram mode';
+FeatureInfo.FeatureID   = 'AMMC';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_InterQuartileRange(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_InterQuartileRange(ParentInfo, Param)
 %%%Doc Starts%%%
 %The interquartile range of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'InterQuartileRange');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Range(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Discretised intensity interquartile range';
+FeatureInfo.FeatureID   = 'WR0O';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Range(ParentInfo, Param)
 %%%Doc Starts%%%
 %The intensity range(MaxValue-MinValue) among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -241,39 +283,57 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Discretised intensity range';
+FeatureInfo.FeatureID   = '5Z3W';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_MeanAbsoluteDeviation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_MeanAbsoluteDeviation(ParentInfo, Param)
 %%%Doc Starts%%%
 %The mean absolute deviation of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'MeanAbsoluteDeviation');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_RobustMeanAbsoluteDeviation(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity histogram mean absolute deviation';
+FeatureInfo.FeatureID   = 'D2ZX';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_RobustMeanAbsoluteDeviation(ParentInfo, Param)
 %%%Doc Starts%%%
 %The robust mean absolute deviation of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'RobustMeanAbsoluteDeviation');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_MedianAbsoluteDeviation(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity histogram robust mean absolute deviation';
+FeatureInfo.FeatureID   = 'WRZB';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_MedianAbsoluteDeviation(ParentInfo, Param)
 %%%Doc Starts%%%
 %The median absolute deviation of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'MedianAbsoluteDeviation');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_CoefficientOfVariation(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity histogram median absolute deviation';
+FeatureInfo.FeatureID   = '4RNL';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_CoefficientOfVariation(ParentInfo, Param)
 %%%Doc Starts%%%
 %The coefficient of variation of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'CoefficientOfVariation');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_QuartileCoefficientOfDispersion(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity histogram coefficient of variation';
+FeatureInfo.FeatureID   = 'CWYJ';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_QuartileCoefficientOfDispersion(ParentInfo, Param)
 %%%Doc Starts%%%
 %The quartile coefficient of dispersion of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'QuartileCoefficientOfDispersion');
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Entropy(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Intensity histogram quartile coefficient of dispersion';
+FeatureInfo.FeatureID   = 'SLWD';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Entropy(ParentInfo, Param)
 %%%Doc Starts%%%
 %The energy of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -300,9 +360,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Discretised intensity entropy';
+FeatureInfo.FeatureID   = 'TLU2';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_Uniformity(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_Uniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %The uniformity of the intensity values among all the discretized voxel intensities.
 %%%Doc Ends%%%
@@ -326,9 +389,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Discretised intensity uniformity';
+FeatureInfo.FeatureID   = 'BJ5W';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_MaximumHistogramGradient(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_MaximumHistogramGradient(ParentInfo, Param)
 %%%Doc Starts%%%
 %The maximum of the histogram gradient.
 %%%Doc Ends%%%
@@ -346,9 +412,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Maximum histogram gradient';
+FeatureInfo.FeatureID   = '12CE';
+
 ReviewInfo.MaskData=Value;
                             
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_MaximumHistogramGradientGL(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_MaximumHistogramGradientGL(ParentInfo, Param)
 %%%Doc Starts%%%
 % The discretised intensity corresponding to the maximum histogram gradient.
 %%%Doc Ends%%%
@@ -367,9 +436,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Maximum histogram gradient intensity';
+FeatureInfo.FeatureID   = '8E6O';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_MinimumHistogramGradient(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_MinimumHistogramGradient(ParentInfo, Param)
 %%%Doc Starts%%%
 %The minimum of the histogram gradient.
 %%%Doc Ends%%%
@@ -387,9 +459,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Minimum histogram gradient';
+FeatureInfo.FeatureID   = 'VQB3';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_IntensityHistogram_Feature_MinimumHistogramGradientGL(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityHistogram_Feature_MinimumHistogramGradientGL(ParentInfo, Param)
 %%%Doc Starts%%%
 % The discretised intensity corresponding to the minimum histogram gradient.
 %%%Doc Ends%%%
@@ -407,6 +482,9 @@ if ~isempty(MaskImageMat)
 else
     Value=NaN;
 end
+
+FeatureInfo.FeatureName = 'Minimum histogram gradient intensity';
+FeatureInfo.FeatureID   = 'RHQZ';
 
 ReviewInfo.MaskData=Value;
 

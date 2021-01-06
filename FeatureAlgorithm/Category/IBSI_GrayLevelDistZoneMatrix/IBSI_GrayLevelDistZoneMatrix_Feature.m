@@ -34,22 +34,40 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
+        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
         FeatureValue=mean(FeatureValue);
         FeatureInfo(i).FeatureValue=FeatureValue;
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'GLDZM';
+        FeatureInfo(i).Category = 'Grey level distance zone matrix';
+        FeatureInfo(i).CategoryID = 'VMDZ';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        switch ParentInfo.AggregationMethod
+            case 1
+                FeatureInfo(i).AggregationMethod = '2D';
+                FeatureInfo(i).AggregationMethodID = '8QNN';
+            case 2
+                FeatureInfo(i).AggregationMethod = '2.5D';
+                FeatureInfo(i).AggregationMethodID = '62GR';
+            case 3
+                FeatureInfo(i).AggregationMethod = '3D';
+                FeatureInfo(i).AggregationMethodID = 'KOBO';
+        end
     end         
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 %----FEATURES
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistEmphasis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistEmphasis(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -58,7 +76,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistEmpha
 
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'SmallDistEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistEmphasis(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Small distance emphasis';
+FeatureInfo.FeatureID   = '0GBI';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistEmphasis(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -66,7 +87,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistEmpha
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'LargeDistEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LowGrayLevelEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Large distance emphasis';
+FeatureInfo.FeatureID   = 'MB4I';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LowGrayLevelEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -74,7 +98,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LowGrayLevelEm
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'LowGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_HighGrayLevelEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Low grey level zone emphasis';
+FeatureInfo.FeatureID   = 'S1RA';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_HighGrayLevelEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -82,7 +109,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_HighGrayLevelE
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'HighGrayLevelEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistLowGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'High grey level zone emphasis';
+FeatureInfo.FeatureID   = 'K26C';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistLowGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -90,7 +120,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistLowGL
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'SmallDistLowGLEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistHighGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Small distance low grey level emphasis';
+FeatureInfo.FeatureID   = 'RUVG';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistHighGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -98,7 +131,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_SmallDistHighG
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'SmallDistHighGLEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistLowGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Small distance high grey level emphasis';
+FeatureInfo.FeatureID   = 'DKNJ';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistLowGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -106,7 +142,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistLowGL
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'LargeDistLowGLEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistHighGLEmpha(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Large distance low grey level emphasis';
+FeatureInfo.FeatureID   = 'A7WM';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistHighGLEmpha(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -114,7 +153,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_LargeDistHighG
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'LargeDistHighGLEmphasis');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GLNonuniformity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Large distance high grey level emphasis';
+FeatureInfo.FeatureID   = 'KLTH';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GLNonuniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -122,7 +164,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GLNonuniformit
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'GLNonuniformity');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GLNonuniformityNorm(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Grey level non-uniformity';
+FeatureInfo.FeatureID   = 'VFT7';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GLNonuniformityNorm(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -130,7 +175,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GLNonuniformit
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'GLNonuniformityNorm');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZDNonuniformity(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Normalised grey level non-uniformity';
+FeatureInfo.FeatureID   = '7HP3';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZDNonuniformity(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -138,7 +186,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZDNonuniformit
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'ZoneDistNonuniformity');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZDNonuniformityNorm(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Zone distance non-uniformity';
+FeatureInfo.FeatureID   = 'V294';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZDNonuniformityNorm(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -146,7 +197,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZDNonuniformit
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'ZoneDIstNonuniformityNorm');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZonePercentage(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Normalised zone distance non-uniformity';
+FeatureInfo.FeatureID   = 'IATH';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZonePercentage(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -154,7 +208,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZonePercentage
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'ZonePercentage');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GrayLevelVariance(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Zone percentage';
+FeatureInfo.FeatureID   = 'VIWW';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GrayLevelVariance(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -162,7 +219,10 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_GrayLevelVaria
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'GrayLevelVariance');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZoneDistVariance(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Grey level variance';
+FeatureInfo.FeatureID   = 'QK93';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZoneDistVariance(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -170,13 +230,19 @@ function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZoneDistVarian
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'ZoneDistVariance');
 
-function [Value, ReviewInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZoneDistEntropy(ParentInfo, Param)
+FeatureInfo.FeatureName = 'Zone distance variance';
+FeatureInfo.FeatureID   = '7WT1';
+
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelDistZoneMatrix_Feature_ZoneDistEntropy(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
 [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, 'ZoneDistEntropy');
+
+FeatureInfo.FeatureName = 'Zone distance entropy';
+FeatureInfo.FeatureID   = 'GBDU';
 
 
 function [Value, ReviewInfo]=ComputeGLSZMFeature(ParentInfo, Mode)

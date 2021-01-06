@@ -1,42 +1,43 @@
 function ParentInfo=IBSI_GrayLevelRunLengthMatrix_Category(CDataSetInfo, Mode, Param)
 %%%Doc Starts%%%
-% -Description: 
+% -Description:
 % 1. This method is to compute gray-level run length matrix (GLRLM) from image inside
 %    the binary mask using the desired 2D/3D approach in 13 unique directions.
 % 2. GLRLM is passed into GrayLevelRunLengthMatrix25_Feature.m to compute the related features.
-% 
+%
 % -Parameters:
 % 1. Direction: Define the angle of intensity pair (phi/theta).
 %	0: 0/90, 1: 90/90, 2: 45/90, 3: 135/90, 4: 0/0, 5: 90/45, 6: 90/135
 %	7: 0/45, 8: 0/135, 9: 45/45, 10: 135/45, 11: 45/135, 12: 135/135
-% 2. AggregationMethod: 
+% 2. AggregationMethod:
 %	1: 2D:avg
-%	2: 2D:mrg
-%	3: 2D:vmrg
+%	2: 2D:mrg, 3D:smrg
+%   6: 2.5D:avg, 2.5D:dmrg
+%	3: 2.5D:mrg, 2.5D:vrgm
 %	4: 3D:avg
 %	5: 3D:mrg
-% 3. Rescale: 
+% 3. Rescale:
 %	'fbn': fixed bin number -> specify BinNumber
 %	'fbs': fixed bin size   -> specify BinSize
 %	'off': do not perform the discretization step
 % 4. BinNumber: Integer specifying the number of bin number to use when scaling the grayscale values. [] when rescale is set to 'fbs' or 'off';
 % 5. BinSize: Integer specifying the bin size to use when scaling the grayscale values. [] when rescale is set to 'fbn' or 'off';
-% 
+%
 % -References:
-% 1.  M. M. Galloway. Texture analysis using gray level run lengths. 
+% 1.  M. M. Galloway. Texture analysis using gray level run lengths.
 %    Computer Graphics and Image Processing, 4:172–179, 1975.
 % 2.  Xiaoou Tang. Texture information in run-length matrices.
-%    IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609 
-% 3. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+%    IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609
+% 3. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 %      December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
-% 
+%
 % -Revision:
 % 2019-07-10: The method is made IBSI compliant.
 % 2014-05-22: The method is implemented.
-% 
+%
 % -Authors:
 % Joy Zhang, lifzhang@mdanderson.org
-% 
+%
 % Andrea Bettinelli
 %%%Doc Ends%%%
 
@@ -58,43 +59,49 @@ ROIBWData=CDataSetInfo.ROIBWInfo.MaskData;
 [ROIImageData, ROIBWData] = IBSI_minimal_ROI(ROIImageData, ROIBWData);
 
 %Code
-if isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg') || isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg')...
-        || isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '2dvmrg') || isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25dmrg')
+if      isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg') ||...
+        isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg') ||...
+        isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25ddmrg') ||...
+        isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '25dvmrg')
     if length(Param.Direction) > 4
-        error('For 2D extraction only 4 direction possible (0 1 2 3)')
+        error('For 2D extraction only 4 direction possible [0 1 2 3]')
     end
     GLRLMStruct=ComputeGLRLM2D(ROIImageData, ROIBWData, Param);
     
 end
-if isequal(Param.AggregationMethod, 4) || isequal(lower(Param.AggregationMethod), '3davg') || isequal(Param.AggregationMethod, 5) || isequal(lower(Param.AggregationMethod), '3dmrg')
+if      isequal(Param.AggregationMethod, 4) || isequal(lower(Param.AggregationMethod), '3davg') ||...
+        isequal(Param.AggregationMethod, 5) || isequal(lower(Param.AggregationMethod), '3dmrg')
+    if length(Param.Direction) > 13
+        error('For 3D extraction only 13 direction possible [0 1 2 3 4 5 6 7 8 9 10 11 12]')
+    end
     GLRLMStruct=ComputeGLRLM3D(ROIImageData, ROIBWData, Param);
 end
 
 switch Mode
     case 'Review'
         ReviewInfo=CDataSetInfo.ROIImageInfo;
-        ReviewInfo.GLRLMStruct25=GLRLMStruct;        
+        ReviewInfo.GLRLMStruct25=GLRLMStruct;
         ParentInfo=ReviewInfo;
         
     case 'Child'
         CDataSetInfo.ROIImageInfo.GLRLMStruct25=GLRLMStruct;
+        CDataSetInfo.AggregationMethod = Param.AggregationMethod;
         ParentInfo=CDataSetInfo;
 end
 
 function GLRLMStruct3=ComputeGLRLM3D(ROIImageData, ROIBWData, Param)
+%% [3D:avg] averaged over 3D directions
 
 if ~(isfield(Param, 'Direction') && isfield(Param, 'GrayLimits') && isfield(Param, 'NumLevels') && isfield(Param, 'Offset') && isfield(Param, 'Symmetric'))
     GLCMStruct=[];
 end
 
 Count=1;
-
-% Support 13 directions
-for i=1:length(Param.Direction)
+for i=1:length(Param.Direction) % Support up to 13 directions
     
     [GLRLM, SI] = IBSI_GrayRLMatrix3_Mask(double(ROIImageData), ROIBWData, 'GrayLimits', Param.GrayLimits, 'Offset', Param.Direction(i), 'NumLevels', Param.NumLevels);
-        
-    GLRLMStruct3(Count).Direction=Param.Direction(i);    
+    
+    GLRLMStruct3(Count).Direction=Param.Direction(i);
     GLRLMStruct3(Count).GLRLM=GLRLM;
     % GLRLMStruct3(Count).ScaleImage=SI;
     GLRLMStruct3(Count).Nv = nnz(ROIBWData);
@@ -102,9 +109,10 @@ for i=1:length(Param.Direction)
     Count=Count+1;
 end
 
+%% [3D:mrg] averaged over 3D directions
 if isequal(Param.AggregationMethod, 5) || isequal(lower(Param.AggregationMethod), '3dmrg')
     
-    %Sum all directions
+    % Merge all directions
     dims = [0 0];
     for i = 1:length(GLRLMStruct3)
         dims = max([dims; size(GLRLMStruct3(i).GLRLM)]);
@@ -121,19 +129,20 @@ if isequal(Param.AggregationMethod, 5) || isequal(lower(Param.AggregationMethod)
     GLRLMStruct3.Nv = nnz(ROIBWData)*length(Param.Direction);
 end
 
+
 function GLRLMstruct2D=ComputeGLRLM2D(ROIImageData, ROIBWData, Param)
+%% Standard 2D computation
 
 if ~(isfield(Param, 'Direction') && isfield(Param, 'GrayLimits') && isfield(Param, 'NumLevels') && isfield(Param, 'Offset') && isfield(Param, 'Symmetric'))
     GLRLMstruct2D=[];
 end
 
-N_slice = size(ROIBWData,3);
-
 GLRLMstruct_full.GLRLMStruct2D = [];
+
+N_slice = size(ROIBWData,3);
 for curr_slice = 1:N_slice
-    for curr_direction=1:length(Param.Direction)
+    for curr_direction=1:length(Param.Direction) % Support up to 4 directions
         
-        % Support 13 directions
         [GLRLM, SI] = IBSI_GrayRLMatrix3_Mask(double(ROIImageData(:,:,curr_slice)), ROIBWData(:,:,curr_slice), 'GrayLimits', Param.GrayLimits, 'Offset', Param.Direction(curr_direction), 'NumLevels', Param.NumLevels);
         
         GLRLMstruct_full(curr_slice).GLRLMStruct2D(curr_direction).Direction=Param.Direction(curr_direction);
@@ -143,9 +152,10 @@ for curr_slice = 1:N_slice
     end
 end
 
+%% [2D:avg] averaged over slices and directions
 if isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg')
     
-    %Do not merge
+    % Do not merge
     GLRLMstruct2D = [];
     counter = 1;
     for curr_slice = 1:N_slice
@@ -158,11 +168,13 @@ if isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod)
     end
 end
 
-if isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg')
+%% [2D:mrg, 2D:smrg] merged directions per slice and averaged
+if isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dsmrg')
     
     GLRLMstruct2D = [];
+    
+    % Merge all directions, per slice
     for curr_slice = 1:N_slice
-        %Sum all directions, per slice
         dims = [0 0];
         for curr_direction=1:length(Param.Direction)
             dims = max([dims; size(GLRLMstruct_full(curr_slice).GLRLMStruct2D(curr_direction).GLRLM)]);
@@ -179,19 +191,45 @@ if isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod)
     end
 end
 
-if isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '2dvmrg')        
+%% [2.5D:avg, 2.5D:dmrg] merged per direction and averaged
+if isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25ddmrg')
     
     GLRLMstruct2D = [];
     
-    
+    % Merge directions over slices
     dims = [0 0];
     for curr_slice = 1:N_slice
         for curr_direction=1:length(Param.Direction)
             dims = max([dims; size(GLRLMstruct_full(curr_slice).GLRLMStruct2D(curr_direction).GLRLM)]);
         end
     end
+    for i=1:length(Param.Direction)
+        GLRLM_temp = zeros(dims);
+        
+        Nv_temp = 0;
+        for s = 1:N_slice
+            temp = GLRLMstruct_full(s).GLRLMStruct2D(i).GLRLM;
+            GLRLM_temp(1:size(temp,1), 1:size(temp,2)) = GLRLM_temp(1:size(temp,1), 1:size(temp,2))+temp;
+            Nv_temp = Nv_temp+GLRLMstruct_full(s).GLRLMStruct2D(i).Nv;
+        end
+        GLRLMstruct2D(i).GLRLM = GLRLM_temp;
+        GLRLMstruct2D(i).Direction = GLRLMstruct_full(1).GLRLMStruct2D(i).Direction;
+        GLRLMstruct2D(i).Nv = Nv_temp;
+    end
+end
+
+%% [2.5D:mrg, 2.5D:vmrg] merged over all slices
+if isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '25dvmrg')
     
-    %Sum all direction and slices
+    GLRLMstruct2D = [];
+
+    % Merge all direction and slices
+    dims = [0 0];
+    for curr_slice = 1:N_slice
+        for curr_direction=1:length(Param.Direction)
+            dims = max([dims; size(GLRLMstruct_full(curr_slice).GLRLMStruct2D(curr_direction).GLRLM)]);
+        end
+    end
     GLRLM_temp = zeros(dims);
     Nv_temp = 0;
     for curr_slice = 1:N_slice
@@ -204,22 +242,4 @@ if isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod)
     GLRLMstruct2D.Direction=-444;
     GLRLMstruct2D.GLRLM=GLRLM_temp;
     GLRLMstruct2D.Nv = Nv_temp;
-end
-
-if isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25dmrg')
-    
-    %Merge Directions over slices
-    GLRLMstruct2D = [];
-    counter = 1;
-    for i=1:length(Param.Direction)
-        GLRLM_temp = zeros(size(GLRLMstruct_full(1).GLRLMStruct2D(i).GLRLM));
-        Nv_temp = 0;
-        for s = 1:size(ROIBWData,3)
-            GLRLM_temp = GLRLM_temp+GLRLMstruct_full(s).GLRLMStruct2D(i).GLRLM;
-            Nv_temp = Nv_temp+GLRLMstruct_full(s).GLRLMStruct2D(i).Nv;
-        end
-        GLRLMstruct2D(i).GLRLM = GLRLM_temp;
-        GLRLMstruct2D(i).Direction = GLRLMstruct_full(1).GLRLMStruct2D(i).Direction;
-        GLRLMstruct2D(i).Nv = Nv_temp;
-    end
 end

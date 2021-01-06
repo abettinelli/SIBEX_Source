@@ -34,7 +34,7 @@ for i=1:length(FeatureInfo)
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        FeatureValue=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);               
+        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);               
         
         %handle buffer data or not
         if ~isstruct(FeatureValue)                    
@@ -47,22 +47,32 @@ for i=1:length(FeatureInfo)
         else
             %Handle a group of feature
              FeatureInfo(i).FeatureValue=FeatureValue.Value;
+        
              ParentInfo.BufferData=FeatureValue.BufferData;
              ParentInfo.BufferType=FeatureValue.BufferType;
-        end               
-    end         
+        end
+        
+        % Family/Feature Infos
+        FeatureInfo(i).CatAbbreviation = 'LI';
+        FeatureInfo(i).Category = 'Local intensity';
+        FeatureInfo(i).CategoryID = '9ST6';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        FeatureInfo(i).AggregationMethod = '';
+        FeatureInfo(i).AggregationMethodID = 'DHQ4';
+    end
 end
 
-function [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
 
 % FEATURES
-function [Value, ReviewInfo]=IBSI_LocalIntensityFeatures_Feature_LocalIntensityPeak(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_LocalIntensityFeatures_Feature_LocalIntensityPeak(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -85,9 +95,12 @@ else
     Value=NaN;
 end
 
+FeatureInfo.FeatureName = 'Local intensity peak';
+FeatureInfo.FeatureID   = 'VJGA';
+
 ReviewInfo.MaskData=Value;
 
-function [Value, ReviewInfo]=IBSI_LocalIntensityFeatures_Feature_GlobalIntensityPeak(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_LocalIntensityFeatures_Feature_GlobalIntensityPeak(ParentInfo, Param)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
@@ -104,5 +117,8 @@ if ~isempty(max_vect)
 else
     Value=NaN;
 end
+
+FeatureInfo.FeatureName = 'Global intensity peak';
+FeatureInfo.FeatureID   = '0F91';
 
 ReviewInfo.MaskData=Value;

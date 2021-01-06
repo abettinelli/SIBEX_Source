@@ -51,5 +51,6 @@ switch Mode
         
     case 'Child'
         CDataSetInfo.ROIImageInfo.GLDZMStruct3=GLSZMStruct;
+        CDataSetInfo.AggregationMethod = Param.AggregationMethod;
         ParentInfo=CDataSetInfo;
 end
