@@ -54,7 +54,7 @@ function FeatureSetCurrent_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.PatsParentDir= varargin{2}; 
 FeatureSetName= varargin{3};
 
-set(handles.TextFeatureSetName, 'String', ['Current FeatureSet: ' FeatureSetName]);
+set(handles.TextFeatureSetName, 'String', FeatureSetName);
 
 FeatureSetFile=[handles.PatsParentDir, '\', FeatureSetName];
 
