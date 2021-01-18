@@ -85,13 +85,22 @@ ROIImageInfoNew=GetDestinationFormat(DataItemInfo, Param);
 %----Resampling
 [ROIImageInfoNew, ROIBWInfoNew, CDataSetInfoNew]=IBSI_Resample_Wrapper(ROIImageInfo, ROIImageInfoNew, DataItemInfo, ROIBWInfo, Param.Method, Param.Alpha);
 
-%----Update fields
+%----Update fields MASK
 ROIImageInfoNew.CDataSetInfo=CDataSetInfoNew;
 fields = fieldnames(ROIBWInfo);
 fields_new = fieldnames(ROIBWInfoNew);
 missing_fields = setdiff(fields,fields_new);
 for i = 1:length(missing_fields)
    ROIBWInfoNew.(missing_fields{i}) = ROIBWInfo.(missing_fields{i});
+end
+
+%----Update fields IMAGE IBSIv2
+ROIImageInfoNew.CDataSetInfo=CDataSetInfoNew;
+fields = fieldnames(ROIImageInfo);
+fields_new = fieldnames(ROIImageInfoNew);
+missing_fields = setdiff(fields,fields_new);
+for i = 1:length(missing_fields)
+   ROIImageInfoNew.(missing_fields{i}) = ROIImageInfo.(missing_fields{i});
 end
 
 ROIImageInfo = ROIImageInfoNew;
@@ -113,7 +122,6 @@ BinaryMaskInfo_InROIBox=ROIBWInfo;
 %///////////////////////////////////////////////////////////////////////////%
 
 function ROI_ImageInfoNew=GetDestinationFormat(CDataSetInfo, Param)
-
 % Full Image
 FULL_ImageInfo=CDataSetInfo.IBSI_info.Original;
 FULL_ImageInfo.XPixDim=CDataSetInfo.XPixDim;
