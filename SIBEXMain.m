@@ -57,8 +57,6 @@ set(0, 'defaultUipanelBackgroundColor', [212/255,208/255,200/255]);
 
 disp('Starting S-IBEX...');
 
-warning off;
-
 [ProgramPath, FName, FileType]=fileparts(mfilename('fullpath'));
 
 handles.ProgramPath=ProgramPath;
@@ -516,6 +514,7 @@ try
 catch
 end
 
+warning('off','MATLAB:rmpath:DirNotFound')
 RemoveModulePath(handles.ProgramPath, 'Import');
 RemoveModulePath(handles.ProgramPath, 'Export');
 RemoveModulePath(handles.ProgramPath, 'FeatureCategory');
@@ -536,8 +535,7 @@ rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm'));
 rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Category'));
 rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess'));
 rmpath(fullfile(handles.ProgramPath, 'FeatureAlgorithm', 'Preprocess', 'Helper'));
-
-warning on;
+warning('on','MATLAB:rmpath:DirNotFound')
 
 delete(handles.figure1);
 
