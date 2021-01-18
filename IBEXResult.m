@@ -27,11 +27,11 @@ function varargout = IBEXResult(varargin)
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @IBEXResult_OpeningFcn, ...
-                   'gui_OutputFcn',  @IBEXResult_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @IBEXResult_OpeningFcn, ...
+    'gui_OutputFcn',  @IBEXResult_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -57,7 +57,7 @@ PHandles=varargin{2};
 DataDir=[PHandles.INIConfigInfo.DataDir, '\', PHandles.CurrentUser, '\', PHandles.CurrentSite];
 
 handles.PatsParentDir=DataDir;
-      
+
 handles.FeatureDir=[DataDir, '\1FeatureModelSet_Algorithm'];
 handles.DataDir=[DataDir, '\1FeatureDataSet_ImageROI'];
 handles.FileDir=[handles.PatsParentDir, '\1FeatureResultSet_Result'];
@@ -129,16 +129,16 @@ FileList=GetFileList(DataDir);
 FileList=FilterFlistList(FileList, '.mat');
 
 switch Mode
-    case 'Data' 
+    case 'Data'
         ListboxDataSet=handles.ListboxDataSet;
     case 'Feature'
         ListboxDataSet=handles.ListboxFeatureSet;
 end
 
 if isempty(FileList)
-    set(ListboxDataSet, 'String', {' '}, 'Enable', 'off', 'Value', [], 'Min', 0, 'Max', 2, 'Listboxtop', 1, 'Enable', 'off');    
+    set(ListboxDataSet, 'String', {' '}, 'Enable', 'off', 'Value', [], 'Min', 0, 'Max', 2, 'Listboxtop', 1, 'Enable', 'off');
 else
-     set(ListboxDataSet, 'String', FileList, 'Enable', 'off', 'Value', [], 'Min', 0, 'Max', 2, 'Listboxtop', 1, 'Enable', 'on');        
+    set(ListboxDataSet, 'String', FileList, 'Enable', 'off', 'Value', [], 'Min', 0, 'Max', 2, 'Listboxtop', 1, 'Enable', 'on');
 end
 
 
@@ -154,7 +154,7 @@ end
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = IBEXResult_OutputFcn(hObject, eventdata, handles) 
+function varargout = IBEXResult_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -173,7 +173,7 @@ function ListboxDataSet_Callback(hObject, eventdata, handles)
 % Hints: contents = cellstr(get(hObject,'String')) returns ListboxDataSet contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ListboxDataSet
 set(handles.ListboxDataSet,  'Min', 0, 'Max', 1, 'Listboxtop', 1);
-set(handles.PushbuttonViewDataSet, 'Enable', 'on'); 
+set(handles.PushbuttonViewDataSet, 'Enable', 'on');
 
 if ~isempty(get(handles.ListboxDataSet, 'Value')) && ~isempty(get(handles.ListboxFeatureSet, 'Value'))
     set(handles.PushbuttonComputeResult, 'Enable', 'On');
@@ -205,7 +205,7 @@ function ListboxFeatureSet_Callback(hObject, eventdata, handles)
 %        contents{get(hObject,'Value')} returns selected item from ListboxFeatureSet
 
 set(handles.ListboxFeatureSet,  'Min', 0, 'Max', 1, 'Listboxtop', 1);
-set(handles.PushbuttonViewFeatureSet, 'Enable', 'on'); 
+set(handles.PushbuttonViewFeatureSet, 'Enable', 'on');
 
 if ~isempty(get(handles.ListboxDataSet, 'Value')) && ~isempty(get(handles.ListboxFeatureSet, 'Value'))
     set(handles.PushbuttonComputeResult, 'Enable', 'On');
@@ -254,25 +254,25 @@ else
 end
 
 %Clear file
- if exist([FilePath, '\', FileName], 'file')
-     delete([FilePath, '\', FileName]);
-     
-     if exist([FilePath, '\', FileName], 'file')
-         hMsg=MsgboxGuiIFOA('File already exists and can''t be deleted!', 'Error', 'error', 'modal');
-         waitfor(hMsg);
-         return;         
-     end
- end
+if exist([FilePath, '\', FileName], 'file')
+    delete([FilePath, '\', FileName]);
+    
+    if exist([FilePath, '\', FileName], 'file')
+        hMsg=MsgboxGuiIFOA('File already exists and can''t be deleted!', 'Error', 'error', 'modal');
+        waitfor(hMsg);
+        return;
+    end
+end
 
 % %Close Data View
 % hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Data Set');
-% if ~isempty(hFig)    
+% if ~isempty(hFig)
 %     delete(hFig);
 % end
-% 
+%
 % %Close Feature View
 % hFig=findobj(0, 'Type', 'figure', 'Name', 'Current Feature Set');
-% if ~isempty(hFig)    
+% if ~isempty(hFig)
 %     delete(hFig);
 % end
 
@@ -288,258 +288,277 @@ FeatureSetFile=GetDateSetFile(handles, 'Feature');
 load(DataSetFile, '-mat', 'DataSetsInfo');
 load(FeatureSetFile, '-mat', 'FeatureSetsInfo');
 
- %2. Result file Header
- HeaderCell=[{' '}, {' '}, {' '}, {' '}; {'Index'}, {'Image'}, {'ROI '}, {'MRN '}];
- 
- tic 
- CategoryIndex = {};
- for i=1:length(FeatureSetsInfo)
-     CategoryName=FeatureSetsInfo(i).Category{1};
-     
-     FeatureName=(FeatureSetsInfo(i).Feature)';   
-      
-     TempStr=['F', num2str(i),'-', CategoryName];
-     CategoryNameStr=repmat({TempStr}, 1, length(FeatureName));
-     CategoryIndex=[CategoryIndex repmat({['F' num2str(i)]}, 1, length(FeatureName))];
-     
-     TempM=[CategoryNameStr; FeatureName];
-     HeaderCell=[HeaderCell, TempM];
- end
- 
- %3. Result file Middle
- InfoCategoryName = {};
- InfoCatAbbreviation = {};
- InfoCategoryID = {};
- InfoFeatureName = {};
- InfoFeatureID = {};
-   
- ResultCell=[];
- counter = 0;
- for k=1:length(DataSetsInfo)    
-     
-     CDataSetInfo=DataSetsInfo(k);     
-     
-     StatusStrT=['D', num2str(k),'(', CDataSetInfo.DBName, '-', CDataSetInfo.ROIName, ')'];
-     ResultCCell=[{['D', num2str(k)]}, {CDataSetInfo.DBName}, {CDataSetInfo.ROIName}];
-     ResultCCell=[ResultCCell, {CDataSetInfo.MRN}];
-     
-     for i=1:length(FeatureSetsInfo)
-         counter = counter+1;
-         CDataSetInfo=DataSetsInfo(k);
-         percentage = counter/(length(FeatureSetsInfo)*length(DataSetsInfo));
-         set(handles.figure1, 'CurrentAxes', handles.axes1);
-         
-         delta = 610-30;
-         x = [0 (delta)*percentage (delta)*percentage 0]+30;
-         h= gca;
-         h.Children(2).XData = x;
-         
-         %Status
-         CategoryName=FeatureSetsInfo(i).Category{1};
-         StatusStr=[datestr(now, 13), ': Preprocessing ', StatusStrT, ' & F', num2str(i),'(', CategoryName, ')...'];
-         SetListboxStatus(handles.ListboxStatus, StatusStr);
-         
-         %Preprocess
-         TestStruct=FeatureSetsInfo(i).PreprocessStore;
-         
-         if ~isempty(TestStruct)
-             CDataSetInfo=PreprocessImage(TestStruct, CDataSetInfo);
-         end
-         
-         %Category
-         TestStruct=FeatureSetsInfo(i).CategoryStore;
-         
-         CategoryFuncH=str2func([TestStruct.Name, '_Category']);
-         ParentInfo=CategoryFuncH(CDataSetInfo, 'Child', TestStruct.Value);
-         
-         %Status
-         StatusStr=[datestr(now, 13), ': Computing features on ', StatusStrT, ' & F', num2str(i),'(', CategoryName, ')...'];
-         SetListboxStatus(handles.ListboxStatus,  StatusStr);
-         
-         %Feature
-         TestStructF=FeatureSetsInfo(i).FeatureStore;
-         
-         FeatureFuncH=str2func([TestStruct.Name, '_Feature']);
-         FeatureInfo=FeatureFuncH(ParentInfo, TestStructF, 'NoReview');
-         
-         FeatureValue={FeatureInfo.FeatureValue};
-         
-         if k == 1 % solo per un paziente
-             InfoCatAbbreviation = [InfoCatAbbreviation erase(strcat({FeatureInfo.CatAbbreviation}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
-             InfoCategoryName    = [InfoCategoryName erase(strcat({FeatureInfo.Category}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
-             InfoCategoryID      = [InfoCategoryID strcat({FeatureInfo.CategoryID}, {' - '}, {FeatureInfo.AggregationMethodID})];
-             InfoFeatureName     = [InfoFeatureName {FeatureInfo.FeatureName}];
-             InfoFeatureID       = [InfoFeatureID {FeatureInfo.FeatureID}];
-         end
-         
-         EmptyIndex=cellfun('isempty', FeatureValue);
-         FeatureValue(EmptyIndex)={NaN};         
-         
-         for kkk=1:length(FeatureValue)
-             CurrentFeatureValue=FeatureValue{kkk};
-             
-             %Single Value return
-             if size(CurrentFeatureValue, 1) == 1 && size(CurrentFeatureValue, 2) == 1
-                 ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue)];
-             end
-             
-             if isfield(FeatureInfo, 'FeatureValueParam') && ~isempty(FeatureInfo(kkk).FeatureValueParam)
-                 % 1 column return: Histogram Percentile return [M1, M2; N1, N2]
-                 if size(CurrentFeatureValue, 1) >= 1 && size(CurrentFeatureValue, 2) == 1
-                     %Extend the header cell
-                     if k < 2
-                         HeaderCell=ExtendResultHeaderCell(FeatureInfo, kkk, '1Column', HeaderCell, ResultCCell);
-                     end
-                     
-                     ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue')];
-                 end
-                 
-                 % 2 or more column return: GLCM Feature Value return [M1, M2, M3...; N1, N2, N3....]
-                 if size(CurrentFeatureValue, 1) >= 1 && size(CurrentFeatureValue, 2) > 1
-                     %Extend the header cell
-                     if k < 2
-                         HeaderCell=ExtendResultHeaderCell(FeatureInfo, kkk, '2MoreColumn', HeaderCell, ResultCCell);
-                     end
-                     
-                     for iii=2:size(CurrentFeatureValue, 2)
-                         ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue(:, iii)')];
-                     end
-                 end
-             end
-             
-         end       
-         
-     end
-     
-     ResultCell=[ResultCell; ResultCCell];
- end
- 
- % Update HeaderCell
- HeaderCell2 = HeaderCell;
- HeaderCell2(1, 5:end) = CategoryIndex;
- HeaderCell2(2, 5:end) = InfoCatAbbreviation;
+%2. Result file Header
+HeaderCell=[{' '}, {' '}, {' '}, {' '}; {'Index'}, {'Image'}, {'ROI '}, {'MRN '}];
+
+tic
+CategoryIndex = {};
+for i=1:length(FeatureSetsInfo)
+    CategoryName=FeatureSetsInfo(i).Category{1};
+    
+    FeatureName=(FeatureSetsInfo(i).Feature)';
+    
+    TempStr=['F', num2str(i),'-', CategoryName];
+    CategoryNameStr=repmat({TempStr}, 1, length(FeatureName));
+    CategoryIndex=[CategoryIndex repmat({['F' num2str(i)]}, 1, length(FeatureName))];
+    
+    TempM=[CategoryNameStr; FeatureName];
+    HeaderCell=[HeaderCell, TempM];
+end
+
+%3. Result file Middle
+InfoCategoryName = {};
+InfoCatAbbreviation = {};
+InfoCategoryID = {};
+InfoFeatureName = {};
+InfoFeatureID = {};
+
+ResultCell=[];
+counter = 0;
+for k=1:length(DataSetsInfo)
+    
+    CDataSetInfo=DataSetsInfo(k);
+    
+    StatusStrT=['D', num2str(k),'(', CDataSetInfo.DBName, '-', CDataSetInfo.ROIName, ')'];
+    ResultCCell=[{['D', num2str(k)]}, {CDataSetInfo.DBName}, {CDataSetInfo.ROIName}];
+    ResultCCell=[ResultCCell, {CDataSetInfo.MRN}];
+    
+    for i=1:length(FeatureSetsInfo)
+        counter = counter+1;
+        CDataSetInfo=DataSetsInfo(k);
+        percentage = counter/(length(FeatureSetsInfo)*length(DataSetsInfo));
+        set(handles.figure1, 'CurrentAxes', handles.axes1);
+        
+        delta = 610-30;
+        x = [0 (delta)*percentage (delta)*percentage 0]+30;
+        h= gca;
+        h.Children(2).XData = x;
+
+        % Current Structs Preprocessing, Category, Features
+        TestStructPre=FeatureSetsInfo(i).PreprocessStore;
+        TestStructCat=FeatureSetsInfo(i).CategoryStore;
+        TestStructFeat=FeatureSetsInfo(i).FeatureStore;
+
+        try
+            % Update Status Preprocessing
+            CategoryName=FeatureSetsInfo(i).Category{1};
+            StatusStr=[datestr(now, 13), ': Preprocessing ', StatusStrT, ' & F', num2str(i),'(', CategoryName, ')...'];
+            SetListboxStatus(handles.ListboxStatus, StatusStr);
+            
+            flag = 1;
+            % Compute Preprocess
+            if ~isempty(TestStructPre)
+                CDataSetInfo=PreprocessImage(TestStructPre, CDataSetInfo);
+            end
+            
+            flag = 2;
+            % Compute Parent Info
+            CategoryFuncH=str2func([TestStructCat.Name, '_Category']);
+            ParentInfo=CategoryFuncH(CDataSetInfo, 'Child', TestStructCat.Value);
+            
+            % Update Status Category
+            StatusStr=[datestr(now, 13), ': Computing features on ', StatusStrT, ' & F', num2str(i),'(', CategoryName, ')...'];
+            SetListboxStatus(handles.ListboxStatus,  StatusStr);
+            
+            flag = 3;
+            % Compute Features
+            FeatureFuncH=str2func([TestStructCat.Name, '_Feature']);
+            FeatureInfo=FeatureFuncH(ParentInfo, TestStructFeat, 'NoReview');
+            FeatureValue={FeatureInfo.FeatureValue};
+        catch
+            switch flag
+                case 1
+                    warning('Broken Preprocessing')
+                case 2
+                    warning('Broken Parent Category')
+                case 3
+                    warning('Broken Feature')
+            end
+            EmptyIndex=cellfun('isempty', FeatureValue);
+            FeatureValue(~EmptyIndex)={[]};
+        end
+        
+        if k == 1 % solo per un paziente
+            InfoCatAbbreviation = [InfoCatAbbreviation erase(strcat({FeatureInfo.CatAbbreviation}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
+            InfoCategoryName    = [InfoCategoryName erase(strcat({FeatureInfo.Category}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
+            InfoCategoryID      = [InfoCategoryID strcat({FeatureInfo.CategoryID}, {' - '}, {FeatureInfo.AggregationMethodID})];
+            InfoFeatureName     = [InfoFeatureName {FeatureInfo.FeatureName}];
+            InfoFeatureID       = [InfoFeatureID {FeatureInfo.FeatureID}];
+        end
+        
+        EmptyIndex=cellfun('isempty', FeatureValue);
+        FeatureValue(EmptyIndex)={NaN};
+        
+        for kkk=1:length(FeatureValue)
+            CurrentFeatureValue=FeatureValue{kkk};
+            
+            %Single Value return
+            if size(CurrentFeatureValue, 1) == 1 && size(CurrentFeatureValue, 2) == 1
+                ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue)];
+            end
+            
+            if isfield(FeatureInfo, 'FeatureValueParam') && ~isempty(FeatureInfo(kkk).FeatureValueParam)
+                % 1 column return: Histogram Percentile return [M1, M2; N1, N2]
+                if size(CurrentFeatureValue, 1) >= 1 && size(CurrentFeatureValue, 2) == 1
+                    %Extend the header cell
+                    if k < 2
+                        HeaderCell=ExtendResultHeaderCell(FeatureInfo, kkk, '1Column', HeaderCell, ResultCCell);
+                    end
+                    
+                    ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue')];
+                end
+                
+                % 2 or more column return: GLCM Feature Value return [M1, M2, M3...; N1, N2, N3....]
+                if size(CurrentFeatureValue, 1) >= 1 && size(CurrentFeatureValue, 2) > 1
+                    %Extend the header cell
+                    if k < 2
+                        HeaderCell=ExtendResultHeaderCell(FeatureInfo, kkk, '2MoreColumn', HeaderCell, ResultCCell);
+                    end
+                    
+                    for iii=2:size(CurrentFeatureValue, 2)
+                        ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue(:, iii)')];
+                    end
+                end
+            end
+            
+        end
+        
+    end
+    
+    ResultCell=[ResultCell; ResultCCell];
+end
+
+% Update HeaderCell
+HeaderCell2 = HeaderCell;
+HeaderCell2(1, 5:end) = CategoryIndex;
+HeaderCell2(2, 5:end) = InfoCatAbbreviation;
 %  HeaderCell2(2, 5:end) = InfoCategoryName;
- HeaderCell2(3, 5:end) = InfoCategoryID;
- HeaderCell2(4, 5:end) = InfoFeatureName;
- HeaderCell2(5, 5:end) = InfoFeatureID;
- HeaderCell2(1:5,1:4)=[{' '}, {' '}, {' '}, {['Index ' char(8594)]};
-     {' '}, {' '}, {' '}, {['Family Name ' char(8594)]};
-     {' '}, {' '}, {' '}, {['Family ID ' char(8594)]};
-     {' '}, {' '}, {' '}, {['Feature Name ' char(8594)]};
-     {['Index ' char(8595)]}, {['Image ' char(8595)]}, {['ROI ' char(8595)]}, {['MRN ' char(8595) ' \ Feature ID ' char(8594)]}];
- 
- InfoCell=repmat([{' '}; {' '}; {' '}], 1, size(ResultCell, 2));
- 
- InfoCell{1 , 1}='DataSet File: ';
- InfoCell{1 , 2}= DataSetFile;
- 
- InfoCell{2, 1}='FeatureSet File: ';
- InfoCell{2, 2}=FeatureSetFile;  
- 
- %Status
- StatusStr=[datestr(now, 13), ': Writing result to file..'];
- SetListboxStatus(handles.ListboxStatus, StatusStr);         
-         
- %Write result to file
- ResutlInfo=[InfoCell; HeaderCell2; ResultCell];
- FileStatus=xlswrite([FilePath, '\', FileName], ResutlInfo, 'Result');
- 
- if FileStatus < 1
-     %Write Txt file
-     [~, TxtFileName]=fileparts(FileName);
-     TxtFileNameResult =[FilePath, '\', TxtFileName, '_Result.txt'];
-     WriteCellDataFile(TxtFileNameResult, ResutlInfo);
- end
- 
- %Status
- StatusStr=[datestr(now, 13), ': Writing data set info. to file..'];
- SetListboxStatus(handles.ListboxStatus, StatusStr);         
-         
- %Write data set info. to file
- DataInfo=GetDataSetInfo(DataSetsInfo, DataSetFile);
- if FileStatus >  0
-     xlswrite([FilePath, '\', FileName], DataInfo, 'Data Info.');
- else
-     TxtFileNameResult =[FilePath, '\', TxtFileName, '_DataInfo.txt'];
-     WriteCellDataFile(TxtFileNameResult, DataInfo);
- end
- 
- %Status
- StatusStr=[datestr(now, 13), ': Writing feature set info. to file..'];
- SetListboxStatus(handles.ListboxStatus, StatusStr);         
-         
- %Write feature set info. to file
- FeatureInfo=GetFeatureSetInfo(FeatureSetsInfo, FeatureSetFile);
- if FileStatus > 0
-     xlswrite([FilePath, '\', FileName], FeatureInfo, 'Feature Info.');
- else
-     TxtFileNameResult =[FilePath, '\', TxtFileName, '_FeatureInfo.txt'];
-     WriteCellDataFile(TxtFileNameResult, FeatureInfo);
- end
-  
- TotalTime=toc;
- 
- StatusStr=[datestr(now, 13), ': Done.'];
- SetListboxStatus(handles.ListboxStatus, StatusStr);         
- 
- h= gca;
- h.Children(2).XData = [0 0 0 0];
-         
-  %Delete the default Sheet1, Sheet2, Sheet3
-  if FileStatus > 0
-      try
-          DeleteExcelDefaultSheet([FilePath, '\', FileName]);
-      catch
-      end
-  end
- 
- StatusStr=[datestr(now, 13), ': Total time is ', num2str(TotalTime), 's.'];
- SetListboxStatus(handles.ListboxStatus, StatusStr);   
- 
- function WriteCellDataFile(FileName, CellData)
- FID= fopen(FileName, 'w');
- 
- for i=1:size(CellData, 1)
-     for j=1:size(CellData, 2)
-         CurrentCell=CellData{i, j};
-         if ~isstr(CurrentCell)
+HeaderCell2(3, 5:end) = InfoCategoryID;
+HeaderCell2(4, 5:end) = InfoFeatureName;
+HeaderCell2(5, 5:end) = InfoFeatureID;
+HeaderCell2(1:5,1:4)=[{' '}, {' '}, {' '}, {['Index ' char(8594)]};
+    {' '}, {' '}, {' '}, {['Family Name ' char(8594)]};
+    {' '}, {' '}, {' '}, {['Family ID ' char(8594)]};
+    {' '}, {' '}, {' '}, {['Feature Name ' char(8594)]};
+    {['Index ' char(8595)]}, {['Image ' char(8595)]}, {['ROI ' char(8595)]}, {['MRN ' char(8595) ' \ Feature ID ' char(8594)]}];
+
+InfoCell=repmat([{' '}; {' '}; {' '}], 1, size(ResultCell, 2));
+
+InfoCell{1 , 1}='DataSet File: ';
+InfoCell{1 , 2}= DataSetFile;
+
+InfoCell{2, 1}='FeatureSet File: ';
+InfoCell{2, 2}=FeatureSetFile;
+
+%Status
+StatusStr=[datestr(now, 13), ': Writing result to file..'];
+SetListboxStatus(handles.ListboxStatus, StatusStr);
+
+%Write result to file
+warning('OFF', 'MATLAB:xlswrite:AddSheet')
+
+ResutlInfo=[InfoCell; HeaderCell2; ResultCell];
+FileStatus=xlswrite([FilePath, '\', FileName], ResutlInfo, 'Result');
+
+if FileStatus < 1
+    %Write Txt file
+    [~, TxtFileName]=fileparts(FileName);
+    TxtFileNameResult =[FilePath, '\', TxtFileName, '_Result.txt'];
+    WriteCellDataFile(TxtFileNameResult, ResutlInfo);
+end
+
+%Status
+StatusStr=[datestr(now, 13), ': Writing data set info. to file..'];
+SetListboxStatus(handles.ListboxStatus, StatusStr);
+
+%Write data set info. to file
+DataInfo=GetDataSetInfo(DataSetsInfo, DataSetFile);
+if FileStatus >  0
+    
+    xlswrite([FilePath, '\', FileName], DataInfo, 'Data Info.');
+else
+    TxtFileNameResult =[FilePath, '\', TxtFileName, '_DataInfo.txt'];
+    WriteCellDataFile(TxtFileNameResult, DataInfo);
+end
+
+%Status
+StatusStr=[datestr(now, 13), ': Writing feature set info. to file..'];
+SetListboxStatus(handles.ListboxStatus, StatusStr);
+
+%Write feature set info. to file
+FeatureInfo=GetFeatureSetInfo(FeatureSetsInfo, FeatureSetFile);
+if FileStatus > 0
+    xlswrite([FilePath, '\', FileName], FeatureInfo, 'Feature Info.');
+else
+    TxtFileNameResult =[FilePath, '\', TxtFileName, '_FeatureInfo.txt'];
+    WriteCellDataFile(TxtFileNameResult, FeatureInfo);
+end
+
+TotalTime=toc;
+
+StatusStr=[datestr(now, 13), ': Done.'];
+SetListboxStatus(handles.ListboxStatus, StatusStr);
+
+h= gca;
+h.Children(2).XData = [0 0 0 0];
+
+%Delete the default Sheet1, Sheet2, Sheet3
+if FileStatus > 0
+    try
+        DeleteExcelDefaultSheet([FilePath, '\', FileName]);
+    catch
+    end
+end
+
+StatusStr=[datestr(now, 13), ': Total time is ', num2str(TotalTime), 's.'];
+SetListboxStatus(handles.ListboxStatus, StatusStr);
+
+warning('on', 'MATLAB:xlswrite:AddSheet')
+
+function WriteCellDataFile(FileName, CellData)
+FID= fopen(FileName, 'w');
+
+for i=1:size(CellData, 1)
+    for j=1:size(CellData, 2)
+        CurrentCell=CellData{i, j};
+        if ~isstr(CurrentCell)
             CurrentCell=num2str(CurrentCell);
-         end
-         
-         fprintf(FID, '%s\t', CurrentCell);
-     end
-     fprintf(FID, '\n');
- end
- fclose(FID);
-     
- 
- function DeleteExcelDefaultSheet(FileName)
- sheetNames = {'Sheet', 'Foglio', 'Tabelle'};
- 
- objExcel = actxserver('Excel.Application');
+        end
+        
+        fprintf(FID, '%s\t', CurrentCell);
+    end
+    fprintf(FID, '\n');
+end
+fclose(FID);
+
+
+function DeleteExcelDefaultSheet(FileName)
+sheetNames = {'Sheet', 'Foglio', 'Tabelle'};
+
+objExcel = actxserver('Excel.Application');
 
 objExcel.Workbooks.Open(FileName); % Full path is necessary!
- 
- % Delete sheets.
- for i = 1:length(sheetNames)
-     try
-         % Throws an error if the sheets do not exist.
-         objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '1']).Delete;
-         objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '2']).Delete;
-         objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '3']).Delete;
-     catch
-         % Do nothing.
-     end
- end
- % Save, close and clean up. 
- objExcel.ActiveWorkbook.Save; 
- objExcel.ActiveWorkbook.Close; 
- objExcel.Quit; 
- objExcel.delete;
 
-    
- 
- 
+% Delete sheets.
+for i = 1:length(sheetNames)
+    try
+        % Throws an error if the sheets do not exist.
+        objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '1']).Delete;
+        objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '2']).Delete;
+        objExcel.ActiveWorkbook.Worksheets.Item([sheetNames{i} '3']).Delete;
+    catch
+        % Do nothing.
+    end
+end
+% Save, close and clean up.
+objExcel.ActiveWorkbook.Save;
+objExcel.ActiveWorkbook.Close;
+objExcel.Quit;
+objExcel.delete;
+
+
+
+
 function DataInfo=GetDataSetInfo(DataSetsInfo, DataSetFile)
 DataInfo=[];
 TitleInfo=[{' '}];
@@ -589,7 +608,7 @@ DataInfo=[];
 
 FeatureHeader={'Category', 'Parameters', 'Feature', 'Parameters', 'Preprocess', 'Parameters'};
 for i=1:length(FeatureSetsInfo)
-       
+    
     DataInfoT=[];
     
     FeatureItem=repmat({' '}, 1, length(FeatureHeader));
@@ -598,7 +617,7 @@ for i=1:length(FeatureSetsInfo)
     RowNum=max(length(FeatureSetsInfo(i).PreprocessStore), length(FeatureSetsInfo(i).FeatureStore));
     DataInfoT=repmat({' '}, RowNum, length(FeatureHeader));
     
-    %Category      
+    %Category
     DataInfoT{1, 1}=FeatureSetsInfo(i).CategoryStore.Name;
     DataInfoT{1, 2}=GetParaStr(FeatureSetsInfo(i).CategoryStore.Value);
     
@@ -608,12 +627,12 @@ for i=1:length(FeatureSetsInfo)
         DataInfoT{j, 4}=GetParaStr(FeatureSetsInfo(i).FeatureStore(j).Value);
     end
     
-    %Preprocess    
+    %Preprocess
     for j=1:length(FeatureSetsInfo(i).PreprocessStore)
         DataInfoT{j, 5}=FeatureSetsInfo(i).PreprocessStore(j).Name;
         DataInfoT{j, 6}=GetParaStr(FeatureSetsInfo(i).PreprocessStore(j).Value);
     end
-        
+    
     DataInfo=[DataInfo; FeatureItem; FeatureHeader; DataInfoT; repmat({' '}, 1, length(FeatureHeader))];
 end
 
@@ -626,41 +645,41 @@ InfoCell{1 , 1}='FeatureSet File: ';
 InfoCell{1 , 2}= FeatureSetFile;
 
 DataInfo=[InfoCell; DataInfo];
- 
- 
 
- function ParaStr=GetParaStr(ParaStruct)
- ParaStr=' ';
- 
- if isempty(ParaStruct)
-     return;
- end
- 
- FieldName=fieldnames(ParaStruct);
- for i=1:length(FieldName)
-     ParaStr=[ParaStr, FieldName{i}, '='];
-     
-     % Bettinelli
-     if islogical( isnumeric(ParaStruct.( FieldName{i})))
-         ParaStruct.( FieldName{i})=int16(ParaStruct.(FieldName{i}));
-     end
-     
-     if isnumeric(ParaStruct.( FieldName{i}))
-         FieldStr=num2str(ParaStruct.( FieldName{i}));
-     else
-         FieldStr=ParaStruct.(FieldName{i});
-     end
-     ParaStr=[ParaStr, FieldStr, '; '];
- end
- 
- 
 
- function SetListboxStatus(ListboxStatus,  NewStatusStr)
- OldStatusStr=get(ListboxStatus, 'String');
- NewStatusStr=[OldStatusStr; {NewStatusStr}];
- 
- set(ListboxStatus, 'String', NewStatusStr, 'Min', 0, 'Max', 1, 'Value', length(NewStatusStr));
- drawnow;
+
+function ParaStr=GetParaStr(ParaStruct)
+ParaStr=' ';
+
+if isempty(ParaStruct)
+    return;
+end
+
+FieldName=fieldnames(ParaStruct);
+for i=1:length(FieldName)
+    ParaStr=[ParaStr, FieldName{i}, '='];
+    
+    % Bettinelli
+    if islogical( isnumeric(ParaStruct.( FieldName{i})))
+        ParaStruct.( FieldName{i})=int16(ParaStruct.(FieldName{i}));
+    end
+    
+    if isnumeric(ParaStruct.( FieldName{i}))
+        FieldStr=num2str(ParaStruct.( FieldName{i}));
+    else
+        FieldStr=ParaStruct.(FieldName{i});
+    end
+    ParaStr=[ParaStr, FieldStr, '; '];
+end
+
+
+
+function SetListboxStatus(ListboxStatus,  NewStatusStr)
+OldStatusStr=get(ListboxStatus, 'String');
+NewStatusStr=[OldStatusStr; {NewStatusStr}];
+
+set(ListboxStatus, 'String', NewStatusStr, 'Min', 0, 'Max', 1, 'Value', length(NewStatusStr));
+drawnow;
 
 % --- Executes on button press in PushbuttonViewDataSet.
 function PushbuttonViewDataSet_Callback(hObject, eventdata, handles)
@@ -695,13 +714,13 @@ end
 
 contents = cellstr(get(ListboxDataSet,'String'));
 DataSetName=contents{get(ListboxDataSet,'Value')};
- 
+
 
 switch Mode
     case 'Data'
         DateSetFile=[handles.DataDir, '\', DataSetName];
     case 'Feature'
-        DateSetFile=[handles.FeatureDir, '\', DataSetName];        
+        DateSetFile=[handles.FeatureDir, '\', DataSetName];
 end
 
 
@@ -716,7 +735,7 @@ end
 
 contents = cellstr(get(ListboxDataSet,'String'));
 DataSetName=contents{get(ListboxDataSet,'Value')};
- 
+
 FigAll=findobj(0, 'Type', 'figure');
 set(FigAll, 'Pointer', 'watch');
 drawnow;
