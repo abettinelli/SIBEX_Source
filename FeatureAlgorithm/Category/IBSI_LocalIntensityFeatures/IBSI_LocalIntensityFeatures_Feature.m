@@ -96,10 +96,8 @@ switch modality
         CurrentMask=double(ParentInfo.ROIBWInfo.MaskData);
         CurrentImage_filter=ParentInfo.ROIImageInfo.FilterMask;
         
-        temp = CurrentImage(:).*CurrentMask(:);
-        maxval=max(temp);
-        idx_max = find(temp == maxval);
-        
+        temp = CurrentImage(logical(CurrentMask));
+        idx_max = find(CurrentImage(:) == max(temp) & logical(CurrentMask(:)));
         max_vect=CurrentImage_filter(idx_max);
         
         if ~isempty(max_vect)
