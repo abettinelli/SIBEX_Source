@@ -43,7 +43,6 @@ else
 end
 % End initialization code - DO NOT EDIT
 
-
 % --- Executes just before IBEXResult is made visible.
 function IBEXResult_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -122,7 +121,6 @@ set(handles.PushbuttonComputeResult, 'Enable', 'Off');
 
 set(handles.ListboxStatus, 'String', ' ');
 
-
 function DisplayListbox(DataDir, handles, Mode)
 FileList=GetFileList(DataDir);
 
@@ -141,7 +139,6 @@ else
     set(ListboxDataSet, 'String', FileList, 'Enable', 'off', 'Value', [], 'Min', 0, 'Max', 2, 'Listboxtop', 1, 'Enable', 'on');
 end
 
-
 function FileList=FilterFlistList(FileList, FilterStr)
 
 for i=length(FileList):-1:1
@@ -152,7 +149,6 @@ for i=length(FileList):-1:1
     end
 end
 
-
 % --- Outputs from this function are returned to the command line.
 function varargout = IBEXResult_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
@@ -162,7 +158,6 @@ function varargout = IBEXResult_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-
 
 % --- Executes on selection change in ListboxDataSet.
 function ListboxDataSet_Callback(hObject, eventdata, handles)
@@ -181,7 +176,6 @@ else
     set(handles.PushbuttonComputeResult, 'Enable', 'Off');
 end
 
-
 % --- Executes during object creation, after setting all properties.
 function ListboxDataSet_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ListboxDataSet (see GCBO)
@@ -193,7 +187,6 @@ function ListboxDataSet_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on selection change in ListboxFeatureSet.
 function ListboxFeatureSet_Callback(hObject, eventdata, handles)
@@ -224,7 +217,6 @@ function ListboxFeatureSet_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes on button press in PushbuttonComputeResult.
 function PushbuttonComputeResult_Callback(hObject, eventdata, handles)
@@ -293,56 +285,75 @@ HeaderCell=[{' '}, {' '}, {' '}, {' '}; {'Index'}, {'Image'}, {'ROI '}, {'MRN '}
 
 tic
 CategoryIndex = {};
-for i=1:length(FeatureSetsInfo)
-    CategoryName=FeatureSetsInfo(i).Category{1};
+for current_category=1:length(FeatureSetsInfo)
+    CategoryName=FeatureSetsInfo(current_category).Category{1};
     
-    FeatureName=(FeatureSetsInfo(i).Feature)';
+    FeatureName=(FeatureSetsInfo(current_category).Feature)';
     
-    TempStr=['F', num2str(i),'-', CategoryName];
+    TempStr=['F', num2str(current_category),'-', CategoryName];
     CategoryNameStr=repmat({TempStr}, 1, length(FeatureName));
-    CategoryIndex=[CategoryIndex repmat({['F' num2str(i)]}, 1, length(FeatureName))];
+    CategoryIndex=[CategoryIndex repmat({['F' num2str(current_category)]}, 1, length(FeatureName))];
     
     TempM=[CategoryNameStr; FeatureName];
     HeaderCell=[HeaderCell, TempM];
 end
 
-%3. Result file Middle
-InfoCategoryName = {};
-InfoCatAbbreviation = {};
-InfoCategoryID = {};
-InfoFeatureName = {};
-InfoFeatureID = {};
+% HEADER 2
+InfoID = [];
+for c=1:length(FeatureSetsInfo) % For each category
+    
+    % Current Structs Preprocessing, Category, Features
+    currPre=FeatureSetsInfo(c).PreprocessStore;
+    currCat=FeatureSetsInfo(c).CategoryStore;
+    currFeat=FeatureSetsInfo(c).FeatureStore;
+    
+    CategoryFuncH=str2func([currCat.Name, '_Category']);
+    ParentInfoID=CategoryFuncH([], 'InfoID', currCat.Value);
+    FeatureFuncH=str2func([currCat.Name, '_Feature']);
+    InfoID=[InfoID, FeatureFuncH(ParentInfoID, currFeat, 'InfoID')];
+end
 
-ResultCell=[];
+InfoCatAbbreviation = strrep(strcat({InfoID.CatAbbreviation}, {' ('}, {InfoID.AggregationMethod}, {')'}),{' ()'},'');
+InfoCategoryName    = strrep(strcat({InfoID.Category}, {' ('}, {InfoID.AggregationMethod}, {')'}),{' ()'},'');
+InfoCategoryID      = strcat({InfoID.CategoryID}, {' - '}, {InfoID.AggregationMethodID});
+InfoFeatureName     = {InfoID.FeatureName};
+InfoFeatureID       = {InfoID.FeatureID};
+
+%3. Result file Middle
+HeaderCellR = {};
+ResultCell={};
 counter = 0;
-for k=1:length(DataSetsInfo)
+for current_subject=1:length(DataSetsInfo) % For each subject
     
-    CDataSetInfo=DataSetsInfo(k);
+    CDataSetInfo=DataSetsInfo(current_subject);
     
-    StatusStrT=['D', num2str(k),'(', CDataSetInfo.DBName, '-', CDataSetInfo.ROIName, ')'];
-    ResultCCell=[{['D', num2str(k)]}, {CDataSetInfo.DBName}, {CDataSetInfo.ROIName}];
-    ResultCCell=[ResultCCell, {CDataSetInfo.MRN}];
+    StatusStrT=['D', num2str(current_subject),'(', CDataSetInfo.DBName, '-', CDataSetInfo.ROIName, ')'];
+    currHeaderRow=[{['D', num2str(current_subject)]}, {CDataSetInfo.DBName}, {CDataSetInfo.ROIName}];
+    currHeaderRow=[currHeaderRow, {CDataSetInfo.MRN}];
     
-    for i=1:length(FeatureSetsInfo)
+    cResultValue={};
+    for current_category=1:length(FeatureSetsInfo) % For each category
+        
+        % Update progress bar
         counter = counter+1;
-        CDataSetInfo=DataSetsInfo(k);
+        CDataSetInfo=DataSetsInfo(current_subject);
         percentage = counter/(length(FeatureSetsInfo)*length(DataSetsInfo));
         set(handles.figure1, 'CurrentAxes', handles.axes1);
-        
         delta = 610-30;
         x = [0 (delta)*percentage (delta)*percentage 0]+30;
         h= gca;
         h.Children(2).XData = x;
-
+        
         % Current Structs Preprocessing, Category, Features
-        TestStructPre=FeatureSetsInfo(i).PreprocessStore;
-        TestStructCat=FeatureSetsInfo(i).CategoryStore;
-        TestStructFeat=FeatureSetsInfo(i).FeatureStore;
-
+        TestStructPre=FeatureSetsInfo(current_category).PreprocessStore;
+        TestStructCat=FeatureSetsInfo(current_category).CategoryStore;
+        TestStructFeat=FeatureSetsInfo(current_category).FeatureStore;
+        
+        FeatureValue=cell(1,size(TestStructFeat,2));
         try
             % Update Status Preprocessing
-            CategoryName=FeatureSetsInfo(i).Category{1};
-            StatusStr=[datestr(now, 13), ': Preprocessing ', StatusStrT, ' & F', num2str(i),'(', CategoryName, ')...'];
+            CategoryName=FeatureSetsInfo(current_category).Category{1};
+            StatusStr=[datestr(now, 13), ': Preprocessing ', StatusStrT, ' & F', num2str(current_category),'(', CategoryName, ')...'];
             SetListboxStatus(handles.ListboxStatus, StatusStr);
             
             flag = 1;
@@ -357,7 +368,7 @@ for k=1:length(DataSetsInfo)
             ParentInfo=CategoryFuncH(CDataSetInfo, 'Child', TestStructCat.Value);
             
             % Update Status Category
-            StatusStr=[datestr(now, 13), ': Computing features on ', StatusStrT, ' & F', num2str(i),'(', CategoryName, ')...'];
+            StatusStr=[datestr(now, 13), ': Computing features on ', StatusStrT, ' & F', num2str(current_category),'(', CategoryName, ')...'];
             SetListboxStatus(handles.ListboxStatus,  StatusStr);
             
             flag = 3;
@@ -368,81 +379,46 @@ for k=1:length(DataSetsInfo)
         catch
             switch flag
                 case 1
-                    warning('Broken Preprocessing')
+                    warning(['Not able preprocess '  CDataSetInfo.DBName ' for ' TestStructCat.Name ])
                 case 2
-                    warning('Broken Parent Category')
+                    warning(['Not able to calculate parent data for ' TestStructCat.Name ' for ' CDataSetInfo.DBName ])
                 case 3
-                    warning('Broken Feature')
+                    warning(['Not able to calculate some features of ' TestStructCat.Name ' for ' CDataSetInfo.DBName ])
             end
             EmptyIndex=cellfun('isempty', FeatureValue);
             FeatureValue(~EmptyIndex)={[]};
         end
         
-        if k == 1 % solo per un paziente
-            InfoCatAbbreviation = [InfoCatAbbreviation erase(strcat({FeatureInfo.CatAbbreviation}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
-            InfoCategoryName    = [InfoCategoryName erase(strcat({FeatureInfo.Category}, {' ('}, {FeatureInfo.AggregationMethod}, {')'}),{' ()'})];
-            InfoCategoryID      = [InfoCategoryID strcat({FeatureInfo.CategoryID}, {' - '}, {FeatureInfo.AggregationMethodID})];
-            InfoFeatureName     = [InfoFeatureName {FeatureInfo.FeatureName}];
-            InfoFeatureID       = [InfoFeatureID {FeatureInfo.FeatureID}];
-        end
-        
         EmptyIndex=cellfun('isempty', FeatureValue);
         FeatureValue(EmptyIndex)={NaN};
         
-        for kkk=1:length(FeatureValue)
-            CurrentFeatureValue=FeatureValue{kkk};
-            
-            %Single Value return
-            if size(CurrentFeatureValue, 1) == 1 && size(CurrentFeatureValue, 2) == 1
-                ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue)];
-            end
-            
-            if isfield(FeatureInfo, 'FeatureValueParam') && ~isempty(FeatureInfo(kkk).FeatureValueParam)
-                % 1 column return: Histogram Percentile return [M1, M2; N1, N2]
-                if size(CurrentFeatureValue, 1) >= 1 && size(CurrentFeatureValue, 2) == 1
-                    %Extend the header cell
-                    if k < 2
-                        HeaderCell=ExtendResultHeaderCell(FeatureInfo, kkk, '1Column', HeaderCell, ResultCCell);
-                    end
-                    
-                    ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue')];
-                end
-                
-                % 2 or more column return: GLCM Feature Value return [M1, M2, M3...; N1, N2, N3....]
-                if size(CurrentFeatureValue, 1) >= 1 && size(CurrentFeatureValue, 2) > 1
-                    %Extend the header cell
-                    if k < 2
-                        HeaderCell=ExtendResultHeaderCell(FeatureInfo, kkk, '2MoreColumn', HeaderCell, ResultCCell);
-                    end
-                    
-                    for iii=2:size(CurrentFeatureValue, 2)
-                        ResultCCell=[ResultCCell, num2cell(CurrentFeatureValue(:, iii)')];
-                    end
-                end
-            end
-            
-        end
+        cResultValue=[cResultValue, FeatureValue];
         
     end
-    
-    ResultCell=[ResultCell; ResultCCell];
+    HeaderCellR=[HeaderCellR;currHeaderRow];
+    ResultCell=[ResultCell;cResultValue];
 end
 
+% CHECK MULTIPLE FEATURE VALUES
+% ResultCellb = ResultCell;
+% ResultCellb = cellfun(@(x)cat(1,x,x+1),ResultCellb,'UniformOutput',false);
+% [ResultCell2, InfoCatAbbreviation2, InfoCategoryName2, InfoCategoryID2, InfoFeatureName2,EInfoFeatureID2]=expandResult(ResultCellb, InfoCatAbbreviation, InfoCategoryName, InfoCategoryID, InfoFeatureName, InfoFeatureID);
+[ResultCell,InfoCatAbbreviation,InfoCategoryName,InfoCategoryID,InfoFeatureName,InfoFeatureID]=expandResult(ResultCell, InfoCatAbbreviation, InfoCategoryName, InfoCategoryID, InfoFeatureName, InfoFeatureID);
+
 % Update HeaderCell
-HeaderCell2 = HeaderCell;
-HeaderCell2(1, 5:end) = CategoryIndex;
-HeaderCell2(2, 5:end) = InfoCatAbbreviation;
-%  HeaderCell2(2, 5:end) = InfoCategoryName;
-HeaderCell2(3, 5:end) = InfoCategoryID;
-HeaderCell2(4, 5:end) = InfoFeatureName;
-HeaderCell2(5, 5:end) = InfoFeatureID;
-HeaderCell2(1:5,1:4)=[{' '}, {' '}, {' '}, {['Index ' char(8594)]};
+HeaderCellCol = HeaderCell;
+HeaderCellCol(1, 5:end) = CategoryIndex;
+HeaderCellCol(2, 5:end) = InfoCatAbbreviation;
+HeaderCellCol(3, 5:end) = InfoCategoryID;
+HeaderCellCol(4, 5:end) = InfoFeatureName;
+HeaderCellCol(5, 5:end) = InfoFeatureID;
+HeaderCellCol(1:5,1:4)=[{' '}, {' '}, {' '}, {['Index ' char(8594)]};
     {' '}, {' '}, {' '}, {['Family Name ' char(8594)]};
     {' '}, {' '}, {' '}, {['Family ID ' char(8594)]};
     {' '}, {' '}, {' '}, {['Feature Name ' char(8594)]};
     {['Index ' char(8595)]}, {['Image ' char(8595)]}, {['ROI ' char(8595)]}, {['MRN ' char(8595) ' \ Feature ID ' char(8594)]}];
 
-InfoCell=repmat([{' '}; {' '}; {' '}], 1, size(ResultCell, 2));
+InfoCell=repmat([{' '}; {' '}; {' '}], 1, size([HeaderCellR, ResultCell], 2));
 
 InfoCell{1 , 1}='DataSet File: ';
 InfoCell{1 , 2}= DataSetFile;
@@ -457,7 +433,7 @@ SetListboxStatus(handles.ListboxStatus, StatusStr);
 %Write result to file
 warning('OFF', 'MATLAB:xlswrite:AddSheet')
 
-ResutlInfo=[InfoCell; HeaderCell2; ResultCell];
+ResutlInfo=[InfoCell; HeaderCellCol; HeaderCellR, ResultCell];
 FileStatus=xlswrite([FilePath, '\', FileName], ResutlInfo, 'Result');
 
 if FileStatus < 1
@@ -531,7 +507,6 @@ for i=1:size(CellData, 1)
 end
 fclose(FID);
 
-
 function DeleteExcelDefaultSheet(FileName)
 sheetNames = {'Sheet', 'Foglio', 'Tabelle'};
 
@@ -555,9 +530,6 @@ objExcel.ActiveWorkbook.Save;
 objExcel.ActiveWorkbook.Close;
 objExcel.Quit;
 objExcel.delete;
-
-
-
 
 function DataInfo=GetDataSetInfo(DataSetsInfo, DataSetFile)
 DataInfo=[];
@@ -600,8 +572,6 @@ InfoCell{1 , 2}= DataSetFile;
 
 DataInfo=[InfoCell; TitleInfo; DataInfo];
 
-
-
 function DataInfo=GetFeatureSetInfo(FeatureSetsInfo, FeatureSetFile)
 
 DataInfo=[];
@@ -636,8 +606,6 @@ for i=1:length(FeatureSetsInfo)
     DataInfo=[DataInfo; FeatureItem; FeatureHeader; DataInfoT; repmat({' '}, 1, length(FeatureHeader))];
 end
 
-
-
 %HeaderInfo
 InfoCell=repmat([{' '}; {' '}], 1, size(DataInfo, 2));
 
@@ -646,10 +614,8 @@ InfoCell{1 , 2}= FeatureSetFile;
 
 DataInfo=[InfoCell; DataInfo];
 
-
-
 function ParaStr=GetParaStr(ParaStruct)
-ParaStr=' ';
+ParaStr='';
 
 if isempty(ParaStruct)
     return;
@@ -658,21 +624,21 @@ end
 FieldName=fieldnames(ParaStruct);
 for i=1:length(FieldName)
     ParaStr=[ParaStr, FieldName{i}, '='];
+    currentParameter = ParaStruct.(FieldName{i});
     
-    % Bettinelli
-    if islogical( isnumeric(ParaStruct.( FieldName{i})))
-        ParaStruct.( FieldName{i})=int16(ParaStruct.(FieldName{i}));
-    end
-    
-    if isnumeric(ParaStruct.( FieldName{i}))
-        FieldStr=num2str(ParaStruct.( FieldName{i}));
-    else
-        FieldStr=ParaStruct.(FieldName{i});
+    if isnumeric(currentParameter)
+        if length(currentParameter)>1
+            FieldStr=['[' num2str(currentParameter) ']'];
+        else
+            FieldStr=num2str(currentParameter);
+        end
+    elseif islogical(currentParameter)
+        FieldStr=num2str(double(currentParameter));
+    elseif ischar(currentParameter)
+        FieldStr=['''' currentParameter ''''];
     end
     ParaStr=[ParaStr, FieldStr, '; '];
 end
-
-
 
 function SetListboxStatus(ListboxStatus,  NewStatusStr)
 OldStatusStr=get(ListboxStatus, 'String');
@@ -697,12 +663,10 @@ function PushbuttonViewFeatureSet_Callback(hObject, eventdata, handles)
 
 DisplayDataSet(handles, 'Feature');
 
-
 function DataSetName=GetDataSetName(handles)
 contents = cellstr(get(handles.ListboxDataSet,'String'));
 DataSetName=contents{get(handles.ListboxDataSet,'Value')};
 [~, DataSetName]=fileparts(DataSetName);
-
 
 function DateSetFile=GetDateSetFile(handles, Mode)
 switch Mode
@@ -722,7 +686,6 @@ switch Mode
     case 'Feature'
         DateSetFile=[handles.FeatureDir, '\', DataSetName];
 end
-
 
 function DisplayDataSet(handles, Mode)
 
@@ -756,12 +719,12 @@ function ListboxStatus_Callback(hObject, eventdata, handles)
 % hObject    handle to ListboxStatus (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+%
 % Hints: contents = cellstr(get(hObject,'String')) returns ListboxStatus contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from ListboxStatus
-
-
+%
 % --- Executes during object creation, after setting all properties.
+
 function ListboxStatus_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to ListboxStatus (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -772,7 +735,6 @@ function ListboxStatus_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)

@@ -29,15 +29,10 @@ end
 FeaturePrefix=MFileName;
 
 for i=1:length(FeatureInfo)
-    if isequal(Mode, 'Review')
-        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
-        FeatureInfo(i).FeatureValue=FeatureValue;
-        FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
-    else
-        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);            
-        FeatureInfo(i).FeatureValue=nanmean(FeatureValue); % nanmean instead of mean
-        
+    if isequal(Mode, 'InfoID')
         % Family/Feature Infos
+        [~, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix, 'InfoID');
+        FeatureInfo(i).FeatureValue=[];
         FeatureInfo(i).CatAbbreviation = 'NGTDM';
         FeatureInfo(i).Category = 'Neighbourhood grey tone difference matrix';
         FeatureInfo(i).CategoryID = 'IPET';
@@ -54,73 +49,118 @@ for i=1:length(FeatureInfo)
                 FeatureInfo(i).AggregationMethod = '3D';
                 FeatureInfo(i).AggregationMethodID = 'KOBO';
         end
-    end         
+    elseif isequal(Mode, 'Review')
+        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        FeatureInfo(i).FeatureValue=FeatureValue;
+        FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
+    else
+        try
+            [FeatureValue, ~, ~]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        catch
+            FeatureValue=[];
+        end
+        FeatureInfo(i).FeatureValue=nanmean(FeatureValue); % nanmean instead of mean
+    end
 end
 
-function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix, modality)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value, modality);
 
 %----FEATURES
-function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Coarseness(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Coarseness(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
-% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Coarseness');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Coarseness';
-FeatureInfo.FeatureID   = 'QCDE';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Coarseness');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Coarseness';
+        FeatureInfo.FeatureID   = 'QCDE';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Contrast(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Contrast(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
-% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Contrast');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Contrast';
-FeatureInfo.FeatureID   = '65HE';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Contrast');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Contrast';
+        FeatureInfo.FeatureID   = '65HE';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Busyness(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Busyness(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
-% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Busyness');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Busyness';
-FeatureInfo.FeatureID   = 'NQ30';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Busyness');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Busyness';
+        FeatureInfo.FeatureID   = 'NQ30';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Complexity(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_Complexity(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
-% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Complexity');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Complexity';
-FeatureInfo.FeatureID   = 'HDEZ';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'Complexity');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Complexity';
+        FeatureInfo.FeatureID   = 'HDEZ';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_TextureStrength(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_NeighborIntensityDifference_Feature_TextureStrength(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
-% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+% Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 % December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'TextureStrength');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Strength';
-FeatureInfo.FeatureID   = '1X9X';
-
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeNIDFeature(ParentInfo, 'TextureStrength');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Strength';
+        FeatureInfo.FeatureID   = '1X9X';
+end
 
 function [FinalValue, ReviewInfo]=ComputeNIDFeature(ParentInfo, Mode)
 Epsilon= 1e-10;

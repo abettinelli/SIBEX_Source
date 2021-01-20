@@ -47,25 +47,30 @@ function ParentInfo=IBSI_GrayLevelCooccurenceMatrix_Category(CDataSetInfo, Mode,
 % Andrea Bettinelli
 %%%Doc Ends%%%
 
-% Pinnacle to IBSI
-CDataSetInfo = IBSI_waterCTnumber(CDataSetInfo);
-
-% Limiti opzionali (modificano ROI)
-[CDataSetInfo, Param] = IBSI_gl_rescale(CDataSetInfo, Param);
-
-%Code
-GLCMStruct=ComputeGLCM(CDataSetInfo, Param);
-
-switch Mode
-    case 'Review'
-        ReviewInfo=CDataSetInfo.ROIImageInfo;
-        ReviewInfo.GLCMStruct3=GLCMStruct;
-        ParentInfo=ReviewInfo;
-        
-    case 'Child'
-        CDataSetInfo.ROIImageInfo.GLCMStruct3=GLCMStruct;
-        CDataSetInfo.AggregationMethod = Param.AggregationMethod;
-        ParentInfo=CDataSetInfo;
+if isequal(Mode, 'InfoID')
+    CDataSetInfo.AggregationMethod = Param.AggregationMethod;
+    ParentInfo=CDataSetInfo;
+else
+    % Pinnacle to IBSI
+    CDataSetInfo = IBSI_waterCTnumber(CDataSetInfo);
+    
+    % Limiti opzionali (modificano ROI)
+    [CDataSetInfo, Param] = IBSI_gl_rescale(CDataSetInfo, Param);
+    
+    %Code
+    GLCMStruct=ComputeGLCM(CDataSetInfo, Param);
+    
+    switch Mode
+        case 'Review'
+            ReviewInfo=CDataSetInfo.ROIImageInfo;
+            ReviewInfo.GLCMStruct3=GLCMStruct;
+            ParentInfo=ReviewInfo;
+            
+        case 'Child'
+            CDataSetInfo.ROIImageInfo.GLCMStruct3=GLCMStruct;
+            CDataSetInfo.AggregationMethod = Param.AggregationMethod;
+            ParentInfo=CDataSetInfo;
+    end
 end
 
 function GLCMStructOut=ComputeGLCM(CDataSetInfo, Param)

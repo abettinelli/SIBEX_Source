@@ -29,27 +29,10 @@ end
 FeaturePrefix=MFileName;
 
 for i=1:length(FeatureInfo)
-    if isequal(Mode, 'Review')
-        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
-        FeatureInfo(i).FeatureValue=FeatureValue;
-        FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
-    else
-        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
-        
-        if length(FeatureValue) > 1
-            if size(FeatureValue,2) > 2
-                FeatureInfo(i).FeatureValueParam=-222;
-                FeatureInfo(i).FeatureValue= [FeatureValue(2:end, 1), nanmean(FeatureValue(2:end, 2:end),2)]; % nanmean instead of mean
-            else
-                FeatureInfo(i).FeatureValueParam=-333;
-                FeatureInfo(i).FeatureValue=[FeatureValue(2:end, 1), FeatureValue(2:end, 2)];
-            end
-            
-        else
-            FeatureInfo(i).FeatureValue=FeatureValue;
-        end
-        
+    if isequal(Mode, 'InfoID')
         % Family/Feature Infos
+        [~, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix, 'InfoID');
+        FeatureInfo(i).FeatureValue=[];
         FeatureInfo(i).CatAbbreviation = 'GLCM';
         FeatureInfo(i).Category = 'Grey level co-occurrence matrix';
         FeatureInfo(i).CategoryID = 'LFYI';
@@ -75,64 +58,117 @@ for i=1:length(FeatureInfo)
                 FeatureInfo(i).AggregationMethod = '3D:mrg';
                 FeatureInfo(i).AggregationMethodID = 'IAZD';
         end
+        
+    elseif isequal(Mode, 'Review')
+        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        FeatureInfo(i).FeatureValue=FeatureValue;
+        FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
+    else
+        try
+            [FeatureValue, ~, ~]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        catch
+            FeatureValue = [];
+        end
+        
+        if size(FeatureValue,2) > 1
+            FeatureInfo(i).FeatureValueParam='GLCM';
+            if size(FeatureValue,2) > 2
+                % FeatureInfo(i).FeatureValue= [FeatureValue(2:end, 1), nanmean(FeatureValue(2:end, 2:end),2)]; % nanmean instead of mean
+                FeatureInfo(i).FeatureValue= [FeatureValue(:, 1), nanmean(FeatureValue(:, 2:end),2)]; % nanmean instead of mean
+            else
+                % FeatureInfo(i).FeatureValue=[FeatureValue(2:end, 1), FeatureValue(2:end, 2)];
+                FeatureInfo(i).FeatureValue=[FeatureValue(:, 1), FeatureValue(:, 2)];
+            end
+            
+        else
+            FeatureInfo(i).FeatureValue=FeatureValue;
+        end
     end
 end
 
-function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix, modality)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value, modality);
 
 %----FEATURES
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointMaximum(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointMaximum(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointMaximum');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Joint maximum';
-FeatureInfo.FeatureID   = 'GYBY';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointMaximum');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Joint maximum';
+        FeatureInfo.FeatureID   = 'GYBY';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointAverage(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointAverage(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointAverage');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Joint average';
-FeatureInfo.FeatureID   = '60VM';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointAverage');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Joint average';
+        FeatureInfo.FeatureID   = '60VM';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointVariance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointVariance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Hugo J. W, Sara Cavalho, et al. Decoding tumour phenotype by noninvasive imaging using a quantitative radiomics approach.
 %   Nat. Commun. 2014; 5: 4006.
 %2. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointVariance');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Joint variance';
-FeatureInfo.FeatureID   = 'UR99';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointVariance');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Joint variance';
+        FeatureInfo.FeatureID   = 'UR99';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointEntropy(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_JointEntropy(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointEntropy');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Joint entropy';
-FeatureInfo.FeatureID   = 'TU9B';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'JointEntropy');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Joint entropy';
+        FeatureInfo.FeatureID   = 'TU9B';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_DifferenceAverage(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_DifferenceAverage(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -142,12 +178,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'DifferenceAverage');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Difference average';
-FeatureInfo.FeatureID   = 'TF7R';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'DifferenceAverage');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Difference average';
+        FeatureInfo.FeatureID   = 'TF7R';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_DifferenceVariance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_DifferenceVariance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -157,12 +200,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'DifferenceVariance');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Difference variance';
-FeatureInfo.FeatureID   = 'D3YU';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'DifferenceVariance');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Difference variance';
+        FeatureInfo.FeatureID   = 'D3YU';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_DifferenceEntropy(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_DifferenceEntropy(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -172,12 +222,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'DifferenceEntropy');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Difference entropy';
-FeatureInfo.FeatureID   = 'NTRS';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'DifferenceEntropy');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Difference entropy';
+        FeatureInfo.FeatureID   = 'NTRS';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_SumAverage(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_SumAverage(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -187,12 +244,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'SumAverage');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Sum average';
-FeatureInfo.FeatureID   = 'ZGXS';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'SumAverage');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Sum average';
+        FeatureInfo.FeatureID   = 'ZGXS';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_SumVariance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_SumVariance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -202,12 +266,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'SumVariance');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Sum variance';
-FeatureInfo.FeatureID   = 'OEEB';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'SumVariance');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Sum variance';
+        FeatureInfo.FeatureID   = 'OEEB';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_SumEntropy(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_SumEntropy(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -217,12 +288,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'SumEntropy');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Sum entropy';
-FeatureInfo.FeatureID   = 'P6QZ';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'SumEntropy');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Sum entropy';
+        FeatureInfo.FeatureID   = 'P6QZ';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_AngularSecondMoment(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_AngularSecondMoment(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Description:
 % For the feature description, refer to the documentation on MATLAB function "graycoprops".
@@ -232,12 +310,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %    IEEE Transactions on Systems, Man, and Cybernetics, Vol. SMC-3, 1973, pp. 610-621.
 %2.  Haralick, R.M., and L.G. Shapiro. Computer and Robot Vision: Vol. 1, Addison-Wesley, 1992, p. 459.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Energy');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Angular second moment';
-FeatureInfo.FeatureID   = '8ZQL';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Energy');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Angular second moment';
+        FeatureInfo.FeatureID   = '8ZQL';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_Contrast(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_Contrast(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Description:
 % For the feature description, refer to the documentation on MATLAB function "graycoprops".
@@ -247,23 +332,37 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %    IEEE Transactions on Systems, Man, and Cybernetics, Vol. SMC-3, 1973, pp. 610-621.
 %2.  Haralick, R.M., and L.G. Shapiro. Computer and Robot Vision: Vol. 1, Addison-Wesley, 1992, p. 459.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Contrast');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Contrast';
-FeatureInfo.FeatureID   = 'ACUI';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Contrast');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Contrast';
+        FeatureInfo.FeatureID   = 'ACUI';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_Dissimilarity(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_Dissimilarity(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Dissimilarity');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Dissimilarity';
-FeatureInfo.FeatureID   = '8S9J';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Dissimilarity');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Dissimilarity';
+        FeatureInfo.FeatureID   = '8S9J';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDifference(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDifference(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Description:
 % 1.   This feature is equivalent to Homogeneity1 in Hugo's paper.
@@ -277,12 +376,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Homogeneity');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Inverse difference';
-FeatureInfo.FeatureID   = 'IB1Z';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Homogeneity');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Inverse difference';
+        FeatureInfo.FeatureID   = 'IB1Z';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDiffNorm(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDiffNorm(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -292,12 +398,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseDiffNorm');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Normalised inverse difference';
-FeatureInfo.FeatureID   = 'NDRX';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseDiffNorm');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Normalised inverse difference';
+        FeatureInfo.FeatureID   = 'NDRX';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDiffMoment(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDiffMoment(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -307,12 +420,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseDiffMoment');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Inverse difference moment';
-FeatureInfo.FeatureID   = 'WF0Z';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseDiffMoment');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Inverse difference moment';
+        FeatureInfo.FeatureID   = 'WF0Z';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDiffMomentNorm(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseDiffMomentNorm(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -322,24 +442,38 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseDiffMomentNorm');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Normalised inverse difference moment';
-FeatureInfo.FeatureID   = '1QCO';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseDiffMomentNorm');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Normalised inverse difference moment';
+        FeatureInfo.FeatureID   = '1QCO';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseVariance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InverseVariance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Hugo J. W, Sara Cavalho, et al. Decoding tumour phenotype by noninvasive imaging using a quantitative radiomics approach.
 %   Nat. Commun. 2014; 5: 4006.
 %2. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseVariance');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Inverse variance';
-FeatureInfo.FeatureID   = 'E8JP';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InverseVariance');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Inverse variance';
+        FeatureInfo.FeatureID   = 'E8JP';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_Correlation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_Correlation(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Description:
 % For the feature description, refer to the documentation on MATLAB function "graycoprops".
@@ -349,56 +483,91 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %    IEEE Transactions on Systems, Man, and Cybernetics, Vol. SMC-3, 1973, pp. 610-621.
 %2.  Haralick, R.M., and L.G. Shapiro. Computer and Robot Vision: Vol. 1, Addison-Wesley, 1992, p. 459.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Correlation');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Correlation';
-FeatureInfo.FeatureID   = 'NI2N';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'Correlation');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Correlation';
+        FeatureInfo.FeatureID   = 'NI2N';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_AutoCorrelation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_AutoCorrelation(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'AutoCorrelation');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Autocorrelation';
-FeatureInfo.FeatureID   = 'QWB0';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'AutoCorrelation');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Autocorrelation';
+        FeatureInfo.FeatureID   = 'QWB0';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_ClusterTendendcy(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_ClusterTendendcy(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'ClusterTendency');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Cluster tendency';
-FeatureInfo.FeatureID   = 'DG8W';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'ClusterTendency');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Cluster tendency';
+        FeatureInfo.FeatureID   = 'DG8W';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_ClusterShade(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_ClusterShade(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'ClusterShade');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Cluster shade';
-FeatureInfo.FeatureID   = '7NFM';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'ClusterShade');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Cluster shade';
+        FeatureInfo.FeatureID   = '7NFM';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_ClusterProminence(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_ClusterProminence(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. L. Soh and C. Tsatsoulis. Texture analysis of sar sea ice imagery using gray level co-occurances matrices.
 %    IEEE Trans. on Geoscience and Remote Sensing, 37(2):780–795, 1999
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'ClusterProminence');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Cluster prominence';
-FeatureInfo.FeatureID   = 'AE86';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'ClusterProminence');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Cluster prominence';
+        FeatureInfo.FeatureID   = 'AE86';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InformationMeasureCor1(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InformationMeasureCor1(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -408,12 +577,19 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InformationMeasureCorr1');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Information correlation 1';
-FeatureInfo.FeatureID   = 'R8DG';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InformationMeasureCorr1');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Information correlation 1';
+        FeatureInfo.FeatureID   = 'R8DG';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InformationMeasureCor2(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Feature_InformationMeasureCor2(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %-Reference:
 %1. Haralick, R.M., K. Shanmugan, and I. Dinstein, "Textural Features for Image Classification",
@@ -423,10 +599,17 @@ function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelCooccurenceMatrix_Featur
 %   Nat. Commun. 2014; 5: 4006.
 %4. http://www.nature.com/ncomms/2014/140603/ncomms5006/extref/ncomms5006-s1.pdf
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InformationMeasureCorr2');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Information correlation 2';
-FeatureInfo.FeatureID   = 'JN9H';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, 'InformationMeasureCorr2');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Information correlation 2';
+        FeatureInfo.FeatureID   = 'JN9H';
+end
 
 function [Value, ReviewInfo]=ComputeGLCMFeature(ParentInfo, Mode)
 DirectionSliceNum=length(ParentInfo.ROIImageInfo.GLCMStruct3);
@@ -457,8 +640,8 @@ for i=1:DirectionSliceNum
             end
         end
         
-    % Use custom implemetation
-    else 
+        % Use custom implemetation
+    else
         
         % Over offsets
         for j=1:size(GLCM, 3)
@@ -473,7 +656,7 @@ for i=1:DirectionSliceNum
                 [c, r] = meshgrid(1:s(1),1:s(2));
                 r = r(:);
                 c = c(:);
-
+                
                 switch Mode
                     case 'JointAverage'
                         FinalValue = CalculateJointAverage(CGLCM, r);
@@ -533,7 +716,7 @@ ReviewInfo.Description=['GLCM ', Mode];
 Direction=cell2mat({ParentInfo.ROIImageInfo.GLCMStruct3.Direction});
 Direction=[0, Direction];
 
-Value=[Direction; Value];
+% Value=[Direction; Value];
 
 %----Utillites
 function glcm = NormalizeGLCM(glcm)

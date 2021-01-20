@@ -29,16 +29,11 @@ end
 FeaturePrefix=MFileName;
 
 for i=1:length(FeatureInfo)
-    if isequal(Mode, 'Review')
-        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
-        FeatureInfo(i).FeatureValue=mean(FeatureValue);
-        FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
-    else
-        [FeatureValue, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
-        FeatureValue=mean(FeatureValue);
-        FeatureInfo(i).FeatureValue=FeatureValue;
-        
+    
+    if isequal(Mode, 'InfoID')
         % Family/Feature Infos
+        [~, ~, Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix, 'InfoID');
+        FeatureInfo(i).FeatureValue=[];
         FeatureInfo(i).CatAbbreviation = 'GLRLM';
         FeatureInfo(i).Category = 'Grey level run length matrix';
         FeatureInfo(i).CategoryID = 'TP0I';
@@ -64,194 +59,317 @@ for i=1:length(FeatureInfo)
                 FeatureInfo(i).AggregationMethod = '3D:mrg';
                 FeatureInfo(i).AggregationMethodID = 'IAZD';
         end
-    end         
+    elseif isequal(Mode, 'Review')
+        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        FeatureInfo(i).FeatureValue=mean(FeatureValue);
+        FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
+    else
+        try
+        [FeatureValue, ~, ~]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        catch
+            FeatureValue=[];
+        end
+        FeatureValue=mean(FeatureValue);
+        FeatureInfo(i).FeatureValue=FeatureValue;
+    end
 end
 
-function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix, modality)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value, modality);
 
 %----FEATURES
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunEmphasis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunEmphasis(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Short runs emphasis';
-FeatureInfo.FeatureID   = '22OV';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Short runs emphasis';
+        FeatureInfo.FeatureID   = '22OV';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunEmphasis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunEmphasis(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Long runs emphasis';
-FeatureInfo.FeatureID   = 'W4KF';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Long runs emphasis';
+        FeatureInfo.FeatureID   = 'W4KF';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LowGLRunEmpha(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LowGLRunEmpha(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LowGrayLevelRunEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Low grey level run emphasis';
-FeatureInfo.FeatureID   = 'V3SW';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LowGrayLevelRunEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Low grey level run emphasis';
+        FeatureInfo.FeatureID   = 'V3SW';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_HighGLRunEmpha(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_HighGLRunEmpha(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'HighGrayLevelRunEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'High grey level run emphasis';
-FeatureInfo.FeatureID   = 'G3QZ';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'HighGrayLevelRunEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'High grey level run emphasis';
+        FeatureInfo.FeatureID   = 'G3QZ';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunLowGLEmpha(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunLowGLEmpha(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunLowGrayLevelEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Short run low grey level emphasis';
-FeatureInfo.FeatureID   = 'HTZT';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunLowGrayLevelEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Short run low grey level emphasis';
+        FeatureInfo.FeatureID   = 'HTZT';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunHighGLEmpha(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_ShortRunHighGLEmpha(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunHighGrayLevelEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Short run high grey level emphasis';
-FeatureInfo.FeatureID   = 'GD3A';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'ShortRunHighGrayLevelEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Short run high grey level emphasis';
+        FeatureInfo.FeatureID   = 'GD3A';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunLowGLEmpha(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunLowGLEmpha(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunLowGrayLevelEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Long run low grey level emphasis';
-FeatureInfo.FeatureID   = 'IVPO';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunLowGrayLevelEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Long run low grey level emphasis';
+        FeatureInfo.FeatureID   = 'IVPO';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunHighGLEmpha(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_LongRunHighGLEmpha(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunHighGrayLevelEmphasis');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Long run high grey level emphasis';
-FeatureInfo.FeatureID   = '3KUM';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'LongRunHighGrayLevelEmphasis');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Long run high grey level emphasis';
+        FeatureInfo.FeatureID   = '3KUM';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformity(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformity(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelNonuniformity');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Grey level non-uniformity';
-FeatureInfo.FeatureID   = 'R5YN';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelNonuniformity');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Grey level non-uniformity';
+        FeatureInfo.FeatureID   = 'R5YN';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformityNorm(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GLNonuniformityNorm(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelNonuniformityNorm');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Normalised grey level non-uniformity';
-FeatureInfo.FeatureID   = 'OVBL';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelNonuniformityNorm');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Normalised grey level non-uniformity';
+        FeatureInfo.FeatureID   = 'OVBL';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformity(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformity(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthNonuniformity');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Run length non-uniformity';
-FeatureInfo.FeatureID   = 'W92Y';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthNonuniformity');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Run length non-uniformity';
+        FeatureInfo.FeatureID   = 'W92Y';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformityNorm(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RLNonuniformityNorm(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthNonuniformityNorm');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Normalised run length non-uniformity';
-FeatureInfo.FeatureID   = 'IC23';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthNonuniformityNorm');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Normalised run length non-uniformity';
+        FeatureInfo.FeatureID   = 'IC23';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunPercentage(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunPercentage(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 %  "Xiaoou Tang. Texture information in run-length matrices.
 %  IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609."
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunPercentage');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Run percentage';
-FeatureInfo.FeatureID   = '9ZK5';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunPercentage');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Run percentage';
+        FeatureInfo.FeatureID   = '9ZK5';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GrayLevelVariance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_GrayLevelVariance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelVariance');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Grey level variance';
-FeatureInfo.FeatureID   = '8CE5';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'GrayLevelVariance');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Grey level variance';
+        FeatureInfo.FeatureID   = '8CE5';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunLengthVariance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunLengthVariance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthVariance');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Run length variance';
-FeatureInfo.FeatureID   = 'SXLW';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunLengthVariance');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Run length variance';
+        FeatureInfo.FeatureID   = 'SXLW';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunEntropy(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_GrayLevelRunLengthMatrix_Feature_RunEntropy(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %For the feature description, refer to the paper below.
 % 1. Xiaoou Tang. Texture information in run-length matrices. IEEE Transactions on Image Processing ,Volume 7 Issue 11, Page 1602-1609.
 % 2. Fave, X. et al. Impact of image preprocessing on the volume dependence and prognostic potential of radiomics features in non-small cell lung cancer. Translational Cancer Research 5, 349-363 (2016).
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunEntropy');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Run entropy';
-FeatureInfo.FeatureID   = 'HJ9O';
-
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, 'RunEntropy');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Run entropy';
+        FeatureInfo.FeatureID   = 'HJ9O';
+end
 
 function [Value, ReviewInfo]=ComputeGLRLMFeature(ParentInfo, Mode)
 Direction_Slice_Num=length(ParentInfo.ROIImageInfo.GLRLMStruct25);
@@ -261,23 +379,23 @@ FeatureValue=zeros(Direction_Slice_Num, 1);
 for i=1:Direction_Slice_Num
     CurrentItem=ParentInfo.ROIImageInfo.GLRLMStruct25(i);
     
-    GLRLM=CurrentItem.GLRLM;        
+    GLRLM=CurrentItem.GLRLM;
     [GrayLevelNum, RunLenLevelNum]= size(GLRLM);
     
-    RunLenVec2=(1:RunLenLevelNum).^2;    
+    RunLenVec2=(1:RunLenLevelNum).^2;
     GrayVec2=(1:GrayLevelNum)'.^2;
     
     Pij = GLRLM(:)/sum(GLRLM(:));
-        
+    
     switch Mode
         case 'ShortRunEmphasis'
-            TempMat=repmat(RunLenVec2, GrayLevelNum, 1);            
+            TempMat=repmat(RunLenVec2, GrayLevelNum, 1);
             TempMat=GLRLM./TempMat;
             
-            FinalValue=sum(TempMat(:))/sum(GLRLM(:));            
+            FinalValue=sum(TempMat(:))/sum(GLRLM(:));
             
         case 'LongRunEmphasis'
-            TempMat=repmat(RunLenVec2, GrayLevelNum, 1);            
+            TempMat=repmat(RunLenVec2, GrayLevelNum, 1);
             TempMat=GLRLM.*TempMat;
             
             FinalValue=sum(TempMat(:))/sum(GLRLM(:));
@@ -288,38 +406,38 @@ for i=1:Direction_Slice_Num
             
             FinalValue=sum(TempMat(:))/sum(GLRLM(:));
             
-        case 'HighGrayLevelRunEmphasis'                        
+        case 'HighGrayLevelRunEmphasis'
             TempMat=repmat(GrayVec2, 1, RunLenLevelNum);
             TempMat=GLRLM.*TempMat;
             
             FinalValue=sum(TempMat(:))/sum(GLRLM(:));
             
-        case 'ShortRunLowGrayLevelEmphasis'           
-            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);  
+        case 'ShortRunLowGrayLevelEmphasis'
+            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);
             TempMatGray=repmat(GrayVec2, 1, RunLenLevelNum);
             
             TempMat=GLRLM./TempMatRun./TempMatGray;
             
-            FinalValue=sum(TempMat(:))/sum(GLRLM(:));            
+            FinalValue=sum(TempMat(:))/sum(GLRLM(:));
             
-        case 'ShortRunHighGrayLevelEmphasis'          
-            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);     
+        case 'ShortRunHighGrayLevelEmphasis'
+            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);
             TempMatGray=repmat(GrayVec2, 1, RunLenLevelNum);
             
             TempMat=GLRLM.*TempMatGray./TempMatRun;
             
-            FinalValue=sum(TempMat(:))/sum(GLRLM(:));            
+            FinalValue=sum(TempMat(:))/sum(GLRLM(:));
             
-        case 'LongRunLowGrayLevelEmphasis'           
-            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);        
+        case 'LongRunLowGrayLevelEmphasis'
+            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);
             TempMatGray=repmat(GrayVec2, 1, RunLenLevelNum);
             
             TempMat=GLRLM.*TempMatRun./TempMatGray;
             
-            FinalValue=sum(TempMat(:))/sum(GLRLM(:));            
+            FinalValue=sum(TempMat(:))/sum(GLRLM(:));
             
         case 'LongRunHighGrayLevelEmphasis'
-            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);        
+            TempMatRun=repmat(RunLenVec2, GrayLevelNum, 1);
             TempMatGray=repmat(GrayVec2, 1, RunLenLevelNum);
             
             TempMat=GLRLM.*TempMatRun.*TempMatGray;
@@ -332,10 +450,10 @@ for i=1:Direction_Slice_Num
         case 'GrayLevelNonuniformityNorm'
             FinalValue=sum(sum(GLRLM, 2).^2)/(sum(GLRLM(:)).^2);
             
-        case 'RunLengthNonuniformity'     
+        case 'RunLengthNonuniformity'
             FinalValue=sum(sum(GLRLM, 1).^2)/sum(GLRLM(:));
-
-        case 'RunLengthNonuniformityNorm'     
+            
+        case 'RunLengthNonuniformityNorm'
             FinalValue=sum(sum(GLRLM, 1).^2)/(sum(GLRLM(:)).^2);
             
         case 'RunPercentage'
@@ -359,8 +477,8 @@ for i=1:Direction_Slice_Num
             idx_nz = Pij ~= 0;
             
             FinalValue=-sum(Pij(idx_nz).*log2(Pij(idx_nz)));
-    end           
-        
+    end
+    
     FeatureValue(i)=FinalValue;
 end
 

@@ -41,52 +41,57 @@ function ParentInfo=IBSI_GrayLevelRunLengthMatrix_Category(CDataSetInfo, Mode, P
 % Andrea Bettinelli
 %%%Doc Ends%%%
 
-% Pinnacle to IBSI
-CDataSetInfo = IBSI_waterCTnumber(CDataSetInfo);
-
-% Limiti opzionali (modificano ROI)
-[CDataSetInfo, Param] = IBSI_gl_rescale(CDataSetInfo, Param);
-
-%Check param
-if~ isfield(Param, 'GrayLimits')
-    Param.GrayLimits = [min(CDataSetInfo.ROIImageInfo.MaskData(CDataSetInfo.ROIBWInfo.MaskData == 1)) max(CDataSetInfo.ROIImageInfo.MaskData(CDataSetInfo.ROIBWInfo.MaskData == 1))];
-end
-
-ROIImageData=CDataSetInfo.ROIImageInfo.MaskData;
-ROIBWData=CDataSetInfo.ROIBWInfo.MaskData;
-
-% Remove empty slices above and below ROI
-[ROIImageData, ROIBWData] = IBSI_minimal_ROI(ROIImageData, ROIBWData);
-
-%Code
-if      isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg') ||...
-        isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg') ||...
-        isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25ddmrg') ||...
-        isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '25dvmrg')
-    if length(Param.Direction) > 4
-        error('For 2D extraction only 4 direction possible [0 1 2 3]')
-    end
-    GLRLMStruct=ComputeGLRLM2D(ROIImageData, ROIBWData, Param);
+if isequal(Mode, 'InfoID')
+    CDataSetInfo.AggregationMethod = Param.AggregationMethod;
+    ParentInfo=CDataSetInfo;
+else
+    % Pinnacle to IBSI
+    CDataSetInfo = IBSI_waterCTnumber(CDataSetInfo);
     
-end
-if      isequal(Param.AggregationMethod, 4) || isequal(lower(Param.AggregationMethod), '3davg') ||...
-        isequal(Param.AggregationMethod, 5) || isequal(lower(Param.AggregationMethod), '3dmrg')
-    if length(Param.Direction) > 13
-        error('For 3D extraction only 13 direction possible [0 1 2 3 4 5 6 7 8 9 10 11 12]')
+    % Limiti opzionali (modificano ROI)
+    [CDataSetInfo, Param] = IBSI_gl_rescale(CDataSetInfo, Param);
+    
+    %Check param
+    if~ isfield(Param, 'GrayLimits')
+        Param.GrayLimits = [min(CDataSetInfo.ROIImageInfo.MaskData(CDataSetInfo.ROIBWInfo.MaskData == 1)) max(CDataSetInfo.ROIImageInfo.MaskData(CDataSetInfo.ROIBWInfo.MaskData == 1))];
     end
-    GLRLMStruct=ComputeGLRLM3D(ROIImageData, ROIBWData, Param);
-end
-
-switch Mode
-    case 'Review'
-        ReviewInfo=CDataSetInfo.ROIImageInfo;
-        ReviewInfo.GLRLMStruct25=GLRLMStruct;
-        ParentInfo=ReviewInfo;
+    
+    ROIImageData=CDataSetInfo.ROIImageInfo.MaskData;
+    ROIBWData=CDataSetInfo.ROIBWInfo.MaskData;
+    
+    % Remove empty slices above and below ROI
+    [ROIImageData, ROIBWData] = IBSI_minimal_ROI(ROIImageData, ROIBWData);
+    
+    %Code
+    if      isequal(Param.AggregationMethod, 1) || isequal(lower(Param.AggregationMethod), '2davg') ||...
+            isequal(Param.AggregationMethod, 2) || isequal(lower(Param.AggregationMethod), '2dmrg') ||...
+            isequal(Param.AggregationMethod, 6) || isequal(lower(Param.AggregationMethod), '25ddmrg') ||...
+            isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '25dvmrg')
+        if length(Param.Direction) > 4
+            error('For 2D extraction only 4 direction possible [0 1 2 3]')
+        end
+        GLRLMStruct=ComputeGLRLM2D(ROIImageData, ROIBWData, Param);
         
-    case 'Child'
-        CDataSetInfo.ROIImageInfo.GLRLMStruct25=GLRLMStruct;
-        CDataSetInfo.AggregationMethod = Param.AggregationMethod;
-        ParentInfo=CDataSetInfo;
+    end
+    if      isequal(Param.AggregationMethod, 4) || isequal(lower(Param.AggregationMethod), '3davg') ||...
+            isequal(Param.AggregationMethod, 5) || isequal(lower(Param.AggregationMethod), '3dmrg')
+        if length(Param.Direction) > 13
+            error('For 3D extraction only 13 direction possible [0 1 2 3 4 5 6 7 8 9 10 11 12]')
+        end
+        GLRLMStruct=ComputeGLRLM3D(ROIImageData, ROIBWData, Param);
+    end
+    
+    switch Mode
+        case 'Review'
+            ReviewInfo=CDataSetInfo.ROIImageInfo;
+            ReviewInfo.GLRLMStruct25=GLRLMStruct;
+            ParentInfo=ReviewInfo;
+            
+        case 'Child'
+            CDataSetInfo.ROIImageInfo.GLRLMStruct25=GLRLMStruct;
+            CDataSetInfo.AggregationMethod = Param.AggregationMethod;
+            ParentInfo=CDataSetInfo;
+    end
 end
 
 function GLRLMStruct3=ComputeGLRLM3D(ROIImageData, ROIBWData, Param)
@@ -222,7 +227,7 @@ end
 if isequal(Param.AggregationMethod, 3) || isequal(lower(Param.AggregationMethod), '25dvmrg')
     
     GLRLMstruct2D = [];
-
+    
     % Merge all direction and slices
     dims = [0 0];
     for curr_slice = 1:N_slice

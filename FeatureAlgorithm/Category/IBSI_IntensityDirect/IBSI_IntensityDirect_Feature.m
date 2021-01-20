@@ -29,15 +29,32 @@ end
 FeaturePrefix=MFileName;
 
 for i=1:length(FeatureInfo)
-    if isequal(Mode, 'Review')
-        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);
+    if isequal(Mode, 'InfoID') 
+        % Family/Feature Infos
+        [~, ~,Info]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix, 'InfoID');
+        FeatureInfo(i).FeatureValue=[];
+        FeatureInfo(i).CatAbbreviation = 'IS';
+        FeatureInfo(i).Category = 'Intensity-based statistics';
+        FeatureInfo(i).CategoryID = 'UHIW';
+        FeatureInfo(i).FeatureName=Info.FeatureName;
+        FeatureInfo(i).FeatureID=Info.FeatureID;
+        FeatureInfo(i).AggregationMethod = '';
+        FeatureInfo(i).AggregationMethodID = 'DHQ4';
+    elseif isequal(Mode, 'Review')
+        % Review Info
+        [FeatureValue, FeatureReviewInfo]=GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
         FeatureInfo(i).FeatureValue=FeatureValue;
         FeatureInfo(i).FeatureReviewInfo=FeatureReviewInfo;
     else
-        [FeatureValue, ~, Info] =GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix);               
+        % Calculate FeatureValue
+        try
+            [FeatureValue, ~, ~] =GetFeatureValue(ParentInfo, FeatureInfo(i), FeaturePrefix,'Value');
+        catch
+            FeatureValue = [];
+        end
         
         %handle buffer data or not
-        if ~isstruct(FeatureValue)                    
+        if ~isstruct(FeatureValue)
             if length(FeatureValue) > 1
                 FeatureInfo(i).FeatureValueParam=FeatureValue(:, 1);
                 FeatureInfo(i).FeatureValue=FeatureValue(:, 2);
@@ -46,316 +63,422 @@ for i=1:length(FeatureInfo)
             end
         else
             %Handle a group of feature
-             FeatureInfo(i).FeatureValue=FeatureValue.Value;
-             ParentInfo.BufferData=FeatureValue.BufferData;
-             ParentInfo.BufferType=FeatureValue.BufferType;
+            FeatureInfo(i).FeatureValue=FeatureValue.Value;
+            ParentInfo.BufferData=FeatureValue.BufferData;
+            ParentInfo.BufferType=FeatureValue.BufferType;
         end
-        
-        % Family/Feature Infos
-        FeatureInfo(i).CatAbbreviation = 'IS';
-        FeatureInfo(i).Category = 'Intensity-based statistics';
-        FeatureInfo(i).CategoryID = 'UHIW';
-        FeatureInfo(i).FeatureName=Info.FeatureName;
-        FeatureInfo(i).FeatureID=Info.FeatureID;
-        FeatureInfo(i).AggregationMethod = '';
-        FeatureInfo(i).AggregationMethodID = 'DHQ4';
-    end         
+    end
 end
 
-function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix)
+function [FeatureValue, FeatureReviewInfo, FeatureInfo]=GetFeatureValue(ParentInfo, CurrentFeatureInfo,  FeaturePrefix, modality)
 FeatureName=CurrentFeatureInfo.Name;
 
 FuncName=[FeaturePrefix, '_', FeatureName];
 FuncHandle=str2func(FuncName);
 
-[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value);
+[FeatureValue, FeatureReviewInfo, FeatureInfo]=FuncHandle(ParentInfo, CurrentFeatureInfo.Value, modality);
 
 %----FEATURES
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Mean(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Mean(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The intensity mean among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= mean(double(MaskImageMat));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= mean(double(MaskImageMat));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Mean intensity';
+        FeatureInfo.FeatureID   = 'Q4LE';
 end
 
-FeatureInfo.FeatureName = 'Mean intensity';
-FeatureInfo.FeatureID   = 'Q4LE';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Variance(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Variance(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The intensity variance among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)
-    Value= var(double(MaskImageMat), 1); %MODIFICA BETTINELLI: ,1
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= var(double(MaskImageMat), 1); %MODIFICA BETTINELLI: ,1
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity variance';
+        FeatureInfo.FeatureID   = 'ECT3';
 end
 
-FeatureInfo.FeatureName = 'Intensity variance';
-FeatureInfo.FeatureID   = 'ECT3';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Skewness(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Skewness(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %Measure the  asymmetry of all the voxels' intensity.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value=skewness(double(MaskImageMat));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value=skewness(double(MaskImageMat));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity skewness';
+        FeatureInfo.FeatureID   = 'KE2A';
 end
 
-FeatureInfo.FeatureName = 'Intensity skewness';
-FeatureInfo.FeatureID   = 'KE2A';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Kurtosis(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Kurtosis(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %Measure the peakedness of all the voxels' intensity.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value=kurtosis(double(MaskImageMat))-3;
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value=kurtosis(double(MaskImageMat))-3;
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = '(Excess) intensity kurtosis';
+        FeatureInfo.FeatureID   = 'IPH6';
 end
 
-FeatureInfo.FeatureName = '(Excess) intensity kurtosis';
-FeatureInfo.FeatureID   = 'IPH6';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Median(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Median(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The intensity median among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= median(double(MaskImageMat));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= median(double(MaskImageMat));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Median intensity';
+        FeatureInfo.FeatureID   = 'Y12H';
 end
 
-FeatureInfo.FeatureName = 'Median intensity';
-FeatureInfo.FeatureID   = 'Y12H';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Min(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Min(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The intensity minimum among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= min(double(MaskImageMat));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= min(double(MaskImageMat));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Minimum intensity';
+        FeatureInfo.FeatureID   = '1GSF';
 end
 
-FeatureInfo.FeatureName = 'Minimum intensity';
-FeatureInfo.FeatureID   = '1GSF';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_10thPercentile(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_10thPercentile(ParentInfo, Param, modality)
 %%%Doc Starts%%%
-%-Description: 
+%-Description:
 %10th percentile of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, '10thPercentile');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = '10th intensity percentile';
-FeatureInfo.FeatureID   = 'QG58';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, '10thPercentile');
+    case 'InfoID'
+        FeatureInfo.FeatureName = '10th intensity percentile';
+        FeatureInfo.FeatureID   = 'QG58';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_90thPercentile(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_90thPercentile(ParentInfo, Param, modality)
 %%%Doc Starts%%%
-%-Description: 
+%-Description:
 %90th percentile of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, '90thPercentile');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = '90th intensity percentile';
-FeatureInfo.FeatureID   = '8DWT';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, '90thPercentile');
+    case 'InfoID'
+        FeatureInfo.FeatureName = '90th intensity percentile';
+        FeatureInfo.FeatureID   = '8DWT';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Max(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Max(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The intensity maximum among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= max(double(MaskImageMat));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= max(double(MaskImageMat));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Maximum intensity';
+        FeatureInfo.FeatureID   = '84IY';
 end
 
-FeatureInfo.FeatureName = 'Maximum intensity';
-FeatureInfo.FeatureID   = '84IY';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_InterQuartileRange(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_InterQuartileRange(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The interquartile range of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'InterQuartileRange');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Intensity interquartile range';
-FeatureInfo.FeatureID   = 'SALO';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'InterQuartileRange');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity interquartile range';
+        FeatureInfo.FeatureID   = 'SALO';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Range(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Range(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The intensity range(MaxValue-MinValue) among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= max(double(MaskImageMat))-min(double(MaskImageMat));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= max(double(MaskImageMat))-min(double(MaskImageMat));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity range';
+        FeatureInfo.FeatureID   = '2OJQ';
 end
 
-FeatureInfo.FeatureName = 'Intensity range';
-FeatureInfo.FeatureID   = '2OJQ';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_MeanAbsoluteDeviation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_MeanAbsoluteDeviation(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The mean absolute deviation of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'MeanAbsoluteDeviation');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Intensity-based mean absolute deviation';
-FeatureInfo.FeatureID   = '4FUA';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'MeanAbsoluteDeviation');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity-based mean absolute deviation';
+        FeatureInfo.FeatureID   = '4FUA';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_RobustMeanAbsoluteDeviation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_RobustMeanAbsoluteDeviation(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The robust mean absolute deviation of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'RobustMeanAbsoluteDeviation');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Intensity-based robust mean absolute deviation';
-FeatureInfo.FeatureID   = '1128';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'RobustMeanAbsoluteDeviation');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity-based robust mean absolute deviation';
+        FeatureInfo.FeatureID   = '1128';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_MedianAbsoluteDeviation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_MedianAbsoluteDeviation(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The median absolute deviation of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'MedianAbsoluteDeviation');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Intensity-based median absolute deviation';
-FeatureInfo.FeatureID   = 'N72L';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'MedianAbsoluteDeviation');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity-based median absolute deviation';
+        FeatureInfo.FeatureID   = 'N72L';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_CoefficientOfVariation(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_CoefficientOfVariation(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The coefficient of variation of the intensity values among all the voxels.
 %%%Doc Ends%%%
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'CoefficientOfVariation');
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-FeatureInfo.FeatureName = 'Intensity-based coefficient of variation';
-FeatureInfo.FeatureID   = '7TET';
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'CoefficientOfVariation');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity-based coefficient of variation';
+        FeatureInfo.FeatureID   = '7TET';
+end
 
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_QuartileCoefficientOfDispersion(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_QuartileCoefficientOfDispersion(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The quartile coefficient of dispersion of the intensity values among all the voxels.
 %%%Doc Ends%%%
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-[Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'QuartileCoefficientOfDispersion');
+switch modality
+    case 'Value'
+        [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'QuartileCoefficientOfDispersion');
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity-based quartile coefficient of dispersion';
+        FeatureInfo.FeatureID   = '9S40';
+end
 
-FeatureInfo.FeatureName = 'Intensity-based quartile coefficient of dispersion';
-FeatureInfo.FeatureID   = '9S40';
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Energy(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_Energy(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The energy of the intensity values among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= sum((double(MaskImageMat)).^2); %%the orig (voldep form)
-    %Value=  sum((double(MaskImageMat)).^2)/sum(BWInfo.MaskData(:)); %% XF volindep version(dividing by num of vox)
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= sum((double(MaskImageMat)).^2); %%the orig (voldep form)
+            %Value=  sum((double(MaskImageMat)).^2)/sum(BWInfo.MaskData(:)); %% XF volindep version(dividing by num of vox)
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Intensity-based energy';
+        FeatureInfo.FeatureID   = 'N8CA';
 end
 
-FeatureInfo.FeatureName = 'Intensity-based energy';
-FeatureInfo.FeatureID   = 'N8CA';
-
-ReviewInfo.MaskData=Value;
-
-function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_RootMeanSquare(ParentInfo, Param)
+function [Value, ReviewInfo, FeatureInfo]=IBSI_IntensityDirect_Feature_RootMeanSquare(ParentInfo, Param, modality)
 %%%Doc Starts%%%
 %The root mean square of the intensity values among all the voxels.
 %%%Doc Ends%%%
-ImageInfo=ParentInfo.ROIImageInfo;
-BWInfo= ParentInfo.ROIBWInfo;
+Value = [];
+ReviewInfo = [];
+FeatureInfo = [];
 
-MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
-MaskImageMat=MaskImageMat(:);
-
-if ~isempty(MaskImageMat)    
-    Value= sqrt(mean((double(MaskImageMat)).^2));
-else
-    Value=NaN;
+switch modality
+    case 'Value'
+        ImageInfo=ParentInfo.ROIImageInfo;
+        BWInfo= ParentInfo.ROIBWInfo;
+        
+        MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
+        MaskImageMat=MaskImageMat(:);
+        
+        if ~isempty(MaskImageMat)
+            Value= sqrt(mean((double(MaskImageMat)).^2));
+        else
+            Value=NaN;
+        end
+        ReviewInfo.MaskData=Value;
+    case 'InfoID'
+        FeatureInfo.FeatureName = 'Root mean square intensity';
+        FeatureInfo.FeatureID   = '5ZWQ';
 end
-
-FeatureInfo.FeatureName = 'Root mean square intensity';
-FeatureInfo.FeatureID   = '5ZWQ';
-
-ReviewInfo.MaskData=Value;
 
 
 function [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, Mode)
@@ -395,10 +518,10 @@ switch Mode
     case 'InterQuartileRange'
         Value = iqr(MaskImageMat);
         ReviewInfo.Value=Value;
-    case 'Percentile'        
-        Value = prctile(MaskImageMat, Param.Percentile');        
+    case 'Percentile'
+        Value = prctile(MaskImageMat, Param.Percentile');
         ReviewInfo.MaskData=[Param.Percentile', Value];
-        ReviewInfo.Description='Intensity Percentile';        
+        ReviewInfo.Description='Intensity Percentile';
         Value=[Param.Percentile', Value];
         ReviewInfo.Value=[];
     case '10thPercentile'
@@ -408,9 +531,9 @@ switch Mode
         Value = my_prctile(MaskImageMat, 90);
         ReviewInfo.Value=Value;
     case 'Quantile'
-        Value = quantile(MaskImageMat, Param.Quantile');        
+        Value = quantile(MaskImageMat, Param.Quantile');
         ReviewInfo.MaskData=[Param.Quantile', Value];
-        ReviewInfo.Description='Intensity Quantile';   
+        ReviewInfo.Description='Intensity Quantile';
         
         Value=[Param.Quantile', Value];
         ReviewInfo.Value=[];
@@ -419,7 +542,7 @@ switch Mode
         Den = my_prctile(MaskImageMat, 75) + my_prctile(MaskImageMat, 25);
         Value = Num/Den;
         ReviewInfo.Value=Value;
-end       
+end
 
 %--- Non IBSI features
 
@@ -429,38 +552,38 @@ end
 % %%%Doc Ends%%%
 % ImageInfo=ParentInfo.ROIImageInfo;
 % BWInfo= ParentInfo.ROIBWInfo;
-% 
+%
 % MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
 % MaskImageMat=MaskImageMat(:);
-% 
+%
 % if ~isempty(MaskImageMat)
 %     Value=std(double(MaskImageMat), 1); %MODIFICA BETTINELLI: ,1
 % else
 %     Value=NaN;
 % end
-% 
+%
 % ReviewInfo.MaskData=Value;
-% 
+%
 % function [Value, ReviewInfo]=IBSI_IntensityDirect_Feature_Percentile(ParentInfo, Param)
 % %%%Doc Starts%%%
-% %-Description: 
+% %-Description:
 % %Percentiles of the intensity values among all the voxels.
-% 
+%
 % %-Parameters:
 % %1.  Percentile: Percent values.
 % %%%Doc Ends%%%
 % [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'Percentile');
-% 
+%
 % function [Value, ReviewInfo]=IBSI_IntensityDirect_Feature_Quantile(ParentInfo, Param)
 % %%%Doc Starts%%%
-% %-Description: 
+% %-Description:
 % %Quantiles of the intensity values among all the voxels.
-% 
+%
 % %-Parameters:
 % %1.  Quantile: Cumulative probability values.
 % %%%Doc Ends%%%
 % [Value, ReviewInfo]=ComputeStatFeature(ParentInfo, Param, 'Quantile');
-% 
+%
 % function [Value, ReviewInfo]=IBSI_IntensityDirect_Feature_EnergyNorm(ParentInfo, Param)
 % %%%Doc Starts%%%
 % %--Reference:
@@ -471,16 +594,16 @@ end
 % %%%Doc Ends%%%
 % ImageInfo=ParentInfo.ROIImageInfo;
 % BWInfo= ParentInfo.ROIBWInfo;
-% 
+%
 % MaskImageMat=ImageInfo.MaskData(logical(BWInfo.MaskData));
 % MaskImageMat=MaskImageMat(:);
-% 
-% if ~isempty(MaskImageMat)    
+%
+% if ~isempty(MaskImageMat)
 %     %Value= sum((double(MaskImageMat)).^2); %%the orig (voldep form)
 %     Value=  sum((double(MaskImageMat)).^2)/sum(BWInfo.MaskData(:)); %% XF volindep version(dividing by num of vox)
 % else
 %     Value=NaN;
 % end
-% 
+%
 % ReviewInfo.MaskData=Value;
 
