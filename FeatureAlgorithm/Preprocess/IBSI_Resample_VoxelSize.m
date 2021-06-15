@@ -86,7 +86,6 @@ ROIImageInfoNew=GetDestinationFormat(DataItemInfo, Param);
 [ROIImageInfoNew, ROIBWInfoNew, CDataSetInfoNew]=IBSI_Resample_Wrapper(ROIImageInfo, ROIImageInfoNew, DataItemInfo, ROIBWInfo, Param.Method, Param.Alpha);
 
 %----Update fields MASK
-ROIImageInfoNew.CDataSetInfo=CDataSetInfoNew;
 fields = fieldnames(ROIBWInfo);
 fields_new = fieldnames(ROIBWInfoNew);
 missing_fields = setdiff(fields,fields_new);
