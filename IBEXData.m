@@ -22,7 +22,7 @@ function varargout = IBEXData(varargin)
 
 % Edit the above text to modify the response to help IBEXData
 
-% Last Modified by GUIDE v2.5 10-Jun-2015 23:18:21
+% Last Modified by GUIDE v2.5 16-Feb-2021 10:31:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -620,8 +620,7 @@ hFigAll=findobj(0, 'Type', 'figure');
 set(hFigAll, 'Pointer', 'arrow');
 drawnow;
 
-
-
-
-
-    
+% --- Executes on button press in PushbuttonCancel.
+function PushbuttonCancel_Callback(hObject, eventdata, handles)
+set(handles.ParentFig, 'Visible', 'on');
+delete(handles.figure1);
