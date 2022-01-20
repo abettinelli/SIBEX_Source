@@ -828,15 +828,23 @@ for i=1:ZDim
         InstanceNum=[InstanceNum; DCMFileList{i}.InstanceNumber];
     end
     
-    if isequal(DCMFileList{i}.Modality, 'PT')                 
-        %Method2: Use real SUV value
-        TScaleFactor=GetSUVScaleFactor(DCMFileList{i});
-        ScaleFactor=[ScaleFactor; TScaleFactor];
-        InstanceNum=[InstanceNum; DCMFileList{i}.InstanceNumber];
+    if isequal(DCMFileList{i}.Modality, 'PT')
         
+        InstanceNum=[InstanceNum; DCMFileList{i}.InstanceNumber];
         TempImageData=double(TempImageData)*RescaleSlope+RescaleIntercept;
-        TempImageData=single(TempImageData);    
-    end    
+%         TempImageData=single(TempImageData);
+            
+        if isequal(DCMFileList{i}.RescaleType, 'BQML') %Method2: Use real SUV value 'BW'
+           
+            ScaleFactor=[ScaleFactor; GetSUVScaleFactor(DCMFileList{i})];
+
+        elseif isequal(DCMFileList{i}.RescaleType, 'HU') % 3dslicer PET
+            
+            ScaleFactor=[ScaleFactor; 1];
+        else
+            warning('Non BQML not implemented yet')
+        end
+    end
     
     AxialImage=cat(3, AxialImage, TempImageData);
 end
@@ -846,15 +854,8 @@ clear('TempImageData');
 %Method 2: Real SUV value
 if isequal(DCMFileList{1}.Modality, 'PT')    
     
-    %NEED TO CHECK%
-    ScaleFactor=ScaleFactor(1);
-    
-%     AxialImage=AxialImage/ScaleFactor(1);
-    
-    MaxV=max(AxialImage(:));
-    ColorLUTScale=MaxV/4095;
-    
-    AxialImage=AxialImage/single(ColorLUTScale);
+    % Convert each slice to SUV with its specific Salefactor
+    AxialImage = single(bsxfun(@rdivide,AxialImage,reshape(ScaleFactor,1,1,[])));
 end
       
 %how many group in one series
@@ -1198,15 +1199,14 @@ for CurrentGroup=1:GroupNum
     TempStr={[]};
     
     %For PET modality, change ColorLUTScale and SUV
-    if isequal(DCMFileList{1}.Modality, 'PT')
-        %     ColorLUTScale=ColorLUTScale*100;
-        %     SUVScale=0.01;
-        
-        SUVScale=1/ScaleFactor(1);
-    else
-        ColorLUTScale=1;
-        SUVScale=1;
-    end
+%     if isequal(DCMFileList{1}.Modality, 'PT')
+% %         SUVScale=1/ScaleFactor(1);
+%         SUVScale=1;
+%         ColorLUTScale=1;
+%     else
+%         ColorLUTScale=1;
+%         SUVScale=1;
+%     end
     
     for i=1:length(DailyTablePos)
         
@@ -1224,8 +1224,8 @@ for CurrentGroup=1:GroupNum
             {['FrameUID = "', DCMFileList{1}.FrameOfReferenceUID, '";']};...
             {['ClassUID = "', DCMFileList{1}.SOPClassUID, '";']};...
             {['InstanceUID = "', InstanceUID{i}, '";']};...
-            {['SUVScale = ', num2str(SUVScale), ';']};...
-            {['ColorLUTScale = ', num2str(ColorLUTScale), ';']};...
+            {['SUVScale = ', num2str(1), ';']};...
+            {['ColorLUTScale = ', num2str(1), ';']};...
             {'};'}...
             ];
     end
@@ -1240,61 +1240,6 @@ for CurrentGroup=1:GroupNum
     end
     fclose(Fid);
 end
-
-
-%---------Get PinnPET scale facctor
-function ScaleFactor=GetSUVScaleFactor(info)
-
-try
-    p_Weight = info.PatientWeight;    
-    p_StartTime = info.RadiopharmaceuticalInformationSequence.Item_1.RadiopharmaceuticalStartTime;
-    p_TotalDose = info.RadiopharmaceuticalInformationSequence.Item_1.RadionuclideTotalDose;
-    p_HalfLife  = info.RadiopharmaceuticalInformationSequence.Item_1.RadionuclideHalfLife;
-    p_RefTime   = info.FrameReferenceTime/1000.0;
-    p_Number    = info.InstanceNumber;
-    p_Decay     = info.DecayCorrection;
-catch
-    ScaleFactor=1;
-    
-    return;
-    %%Example how to manually set admin. dose information
-%         if ~isempty(findstr(info.PatientName.FamilyName,'SNM'))
-%             p_Weight = 10.9; %kg
-%             p_StartTime = '120000.00';%145500.00
-%             p_TotalDose = 168000000;%428338976
-%             p_HalfLife  = 23414400; %6588
-%             p_RefTime   = info.FrameReferenceTime/1000.0; %366
-%             p_Number    = info.InstanceNumber; %100
-%             p_Decay     = info.DecayCorrection; %'START'
-%         end
-end
-
-if (strcmp(p_Decay, 'START'))
-    p_Time = info.AcquisitionTime;
-else
-    p_Time = info.SeriesTime;
-end;
-
-
-ka = length(p_StartTime);
-t1 = str2num(p_StartTime(1:2))*3600 + str2num(p_StartTime(3:4))*60.0 + str2num(p_StartTime(5:ka));
-
-ka = length(p_Time);
-t2 = str2num(p_Time(1:2))*3600 + str2num(p_Time(3:4))*60.0 + str2num(p_Time(5:ka));
-
-if (strcmp(p_Decay, 'NONE'))
-    diff_time = t2 - t1 + p_RefTime;
-    ScaleFactor = p_TotalDose * 0.5^(diff_time/p_HalfLife)/(p_Weight * 1000);
-else
-    if (strcmp(p_Decay, 'ADMIN'))
-        diff_time = 0.0;
-    else
-        diff_time = t2 - t1;
-    end;
-
-    ScaleFactor = p_TotalDose * 0.5^(diff_time/p_HalfLife)/(p_Weight * 1000);
-end
-
 
 %----------Get plan isocenter--------
 function IsocenterM=GetPlanIsocenter(CTInfo)
