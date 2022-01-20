@@ -22,16 +22,16 @@ function varargout = IBEXData(varargin)
 
 % Edit the above text to modify the response to help IBEXData
 
-% Last Modified by GUIDE v2.5 16-Feb-2021 10:31:42
+% Last Modified by GUIDE v2.5 06-Jul-2021 11:57:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
-                   'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @IBEXData_OpeningFcn, ...
-                   'gui_OutputFcn',  @IBEXData_OutputFcn, ...
-                   'gui_LayoutFcn',  [] , ...
-                   'gui_Callback',   []);
+    'gui_Singleton',  gui_Singleton, ...
+    'gui_OpeningFcn', @IBEXData_OpeningFcn, ...
+    'gui_OutputFcn',  @IBEXData_OutputFcn, ...
+    'gui_LayoutFcn',  [] , ...
+    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
@@ -42,7 +42,6 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
-
 
 % --- Executes just before IBEXData is made visible.
 function IBEXData_OpeningFcn(hObject, eventdata, handles, varargin)
@@ -78,11 +77,12 @@ if isempty(PatsInfo)
     set(handles.UITableImage, 'Data', '');
 else
     DisplayUITablePatient(PatsInfo, handles.UITablePatient);
-    set(handles.UITableImage, 'Data', '');    
+    set(handles.UITableImage, 'Data', '');
 end
 handles.PatsInfo=PatsInfo;
 
 set(handles.PushbuttonOpen, 'Enable', 'Off');
+set(handles.PushbuttonDelete, 'Enable', 'Off');
 set(handles.TextLocation, 'String', ['User: ', PHandles.CurrentUser, '; ', 'Site: ', PHandles.CurrentSite]);
 
 handles.ParentFig=PHandles.figure1;
@@ -113,9 +113,8 @@ guidata(handles.figure1, handles);
 % UIWAIT makes IBEXData wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
-
 % --- Outputs from this function are returned to the command line.
-function varargout = IBEXData_OutputFcn(hObject, eventdata, handles) 
+function varargout = IBEXData_OutputFcn(hObject, eventdata, handles)
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -124,20 +123,19 @@ function varargout = IBEXData_OutputFcn(hObject, eventdata, handles)
 % Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
 % --- Executes on button press in PushbuttonOpen.
 function PushbuttonOpen_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonOpen (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
-                    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
 
 %Patient Index
 TableData=get(handles.UITablePatient, 'Data');
 A=TableData(:, 1);
 PatIndex=strmatch(HighlightStr, A);
- 
+
 %Image Index
 TableData=get(handles.UITableImage, 'Data');
 A=TableData(:, 1);
@@ -158,10 +156,6 @@ SpecifyData(1, handles.figure1, handles.PatsParentDir,...
 set(handles.figure1, 'Pointer', 'arrow');
 drawnow;
 
-
-
-
-
 % --- Executes when entered data in editable cell(s) in UITablePatient.
 function UITablePatient_CellEditCallback(hObject, eventdata, handles)
 % hObject    handle to UITablePatient (see GCBO)
@@ -175,15 +169,13 @@ function UITablePatient_CellEditCallback(hObject, eventdata, handles)
 
 UITableEditComment(handles, eventdata, handles.UITablePatient);
 
-
-
 function UITableEditComment(handles, eventdata, TableHandle)
 RowIndex=eventdata.Indices(1);
 ColumnIndex=eventdata.Indices(2);
 
 %Comment
-if ColumnIndex == 5     
-        
+if ColumnIndex == 5
+    
     switch TableHandle
         case handles.UITablePatient
             TableData=get(handles.UITablePatient, 'Data');
@@ -191,9 +183,9 @@ if ColumnIndex == 5
             TableData=get(handles.UITableImage, 'Data');
     end
     
-    CurrentValue=TableData{RowIndex, ColumnIndex};       
+    CurrentValue=TableData{RowIndex, ColumnIndex};
     
-    TempIndex=strfind(CurrentValue, '>'); 
+    TempIndex=strfind(CurrentValue, '>');
     if ~isempty(TempIndex)
         CurrentValue=CurrentValue(TempIndex(end)+1:end);
     end
@@ -214,12 +206,12 @@ if ColumnIndex == 5
         if isequal(CurrentValue,OriValue)
             return;
         end
-    end    
-            
-    %Update display   
+    end
+    
+    %Update display
     ShiftHtml=[CurrentValue];
-        
-     switch TableHandle
+    
+    switch TableHandle
         case handles.UITablePatient
             %Update PatsInfo structure
             handles.PatsInfo(RowIndex).Comment=CurrentValue;
@@ -244,15 +236,14 @@ if ColumnIndex == 5
             TableData=get(handles.UITablePatient, 'Data');
             
             HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
-                    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
-                
-            PatRowIndex=strmatch(HighlightStr, TableData(:, 1));            
+                num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+            
+            PatRowIndex=strmatch(HighlightStr, TableData(:, 1));
             
             UpdateHeaderFileComment(handles.PatsInfo(PatRowIndex).Directory, handles, CurrentValue, handles.ImagesInfoID{RowIndex});
     end
     
 end
-
 
 % --- Executes when selected cell(s) is changed in UITablePatient.
 function UITablePatient_CellSelectionCallback(hObject, eventdata, handles)
@@ -262,7 +253,7 @@ function UITablePatient_CellSelectionCallback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 UITableSelectionMutexHighlight(handles, handles.UITablePatient, eventdata);
-
+EnableButtonDelete(handles);
 
 % --- Executes when entered data in editable cell(s) in UITableImage.
 function UITableImage_CellEditCallback(hObject, eventdata, handles)
@@ -279,7 +270,6 @@ if ~isempty(eventdata.Indices)
     UITableEditComment(handles, eventdata, handles.UITableImage);
 end
 
-
 % --- Executes when selected cell(s) is changed in UITableImage.
 function UITableImage_CellSelectionCallback(hObject, eventdata, handles)
 % hObject    handle to UITableImage (see GCBO)
@@ -293,7 +283,6 @@ if ~isempty(eventdata.Indices)
     EnableButtonOpen(handles);
 end
 
-
 %-----------------------------------------Helpers------------------------------%
 function EnableButtonOpen(handles)
 TableData=get(handles.UITableImage, 'Data');
@@ -304,8 +293,8 @@ end
 A=TableData(:, 1);
 
 HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
-                    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
-                
+    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+
 TempIndex=strmatch(HighlightStr, A);
 if isempty(TempIndex)
     set(handles.PushbuttonOpen, 'Enable', 'off');
@@ -313,6 +302,19 @@ else
     set(handles.PushbuttonOpen, 'Enable', 'on');
 end
 
+function EnableButtonDelete(handles)
+TableData=get(handles.UITableImage, 'Data');
+if isempty(TableData)
+    return;
+end
+
+A=TableData(:, 1);
+
+HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
+    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+
+TempIndex=strmatch(HighlightStr, A);
+set(handles.PushbuttonDelete, 'Enable', 'on');
 
 function DisplayUITablePatient(RawData, UITableData)
 
@@ -344,11 +346,8 @@ TableHeader=FormatTableHeader(TableHeader);
 TableHeader(1)=[];
 
 set(UITableData, 'Visible', 'on', 'Enable', 'on', 'Data', TableData, ...
-        'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
-        'ColumnEditable', TableEdit, 'ColumnWidth', TableColWidth); 
-    
-    
-
+    'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
+    'ColumnEditable', TableEdit, 'ColumnWidth', TableColWidth);
 
 % --- Executes when user attempts to close figure1.
 function figure1_CloseRequestFcn(hObject, eventdata, handles)
@@ -359,7 +358,6 @@ function figure1_CloseRequestFcn(hObject, eventdata, handles)
 % Hint: delete(hObject) closes the figure
 set(handles.ParentFig, 'Visible', 'on');
 delete(handles.figure1);
-
 
 function UpdatePatientFileComment(PatDir, handles, CurrentValue)
 if isequal(handles.DataFormat, 'Pinnacle')
@@ -380,7 +378,7 @@ if isequal(handles.DataFormat, 'Pinnacle')
     for i=1:length(PatientInfo)
         fprintf(FID, '%s\n', PatientInfo{i});
     end
-    fclose(FID);    
+    fclose(FID);
 end
 
 function UpdateHeaderFileComment(PatDir, handles, CurrentValue, ImageSetID)
@@ -388,7 +386,7 @@ if isequal(handles.DataFormat, 'Pinnacle')
     if ~exist([handles.PatsParentDir, '\', PatDir, '\Plan'], 'dir')
         PatPath=[handles.PatsParentDir, '\', PatDir];
     else
-        PatPath=[handles.PatsParentDir, '\', PatDir, '\Plan'];        
+        PatPath=[handles.PatsParentDir, '\', PatDir, '\Plan'];
     end
     
     PatientFile=[PatPath, '\ImageSet_', ImageSetID, '.header'];
@@ -402,9 +400,8 @@ if isequal(handles.DataFormat, 'Pinnacle')
     for i=1:length(PatientInfo)
         fprintf(FID, '%s\n', PatientInfo{i});
     end
-    fclose(FID);    
+    fclose(FID);
 end
-
 
 function UpdateTableImageSet(handles)
 
@@ -412,8 +409,8 @@ TableData=get(handles.UITablePatient, 'Data');
 A=TableData(:, 1);
 
 HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
-                    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
-                
+    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+
 TempIndex=strmatch(HighlightStr, A);
 if isempty(TempIndex)
     set(handles.UITableImage, 'Data', '');
@@ -431,7 +428,7 @@ if isequal(handles.DataFormat, 'Pinnacle')
     else
         PatPath=[handles.PatsParentDir, '\', PatDir, '\Plan'];
     end
-       
+    
     HeaderInfo=GetHeaderInfo(PatPath, 1);
     if isempty(HeaderInfo)
         set(handles.UITableImage, 'Data', '');
@@ -442,7 +439,7 @@ if isequal(handles.DataFormat, 'Pinnacle')
     for i=1:length(HeaderInfo)
         ImagesInfoID=[ImagesInfoID; cellstr(HeaderInfo(i).ID)];
     end
-        
+    
     RawData=rmfield(HeaderInfo, 'ID');
     RawData=rmfield(RawData, 'MRN');
     
@@ -450,7 +447,7 @@ if isequal(handles.DataFormat, 'Pinnacle')
     TableData=struct2cell(RawData);
     TableData=reshape(TableData, [size(TableData, 1), size(TableData, 3)]);
     TableData=TableData';
-        
+    
     TableEdit= repmat(false, 1,  size(TableData, 2));
     TempIndex=strmatch('Comment', TableHeader, 'exact');
     TableEdit(TempIndex)=true;
@@ -459,9 +456,9 @@ if isequal(handles.DataFormat, 'Pinnacle')
     TableHeader(1)=[];
     
     TableFormat=repmat({'char'}, 1,  size(TableData, 2));
-        
+    
     TableColWidth=[{60}, {180}, {160}, {50}, {90}, {210}];
-        
+    
     set(handles.UITableImage, 'Visible', 'on', 'Enable', 'on', 'Data', TableData, ...
         'ColumnName', TableHeader, 'ColumnFormat', TableFormat, ...
         'ColumnEditable', TableEdit, 'ColumnWidth', TableColWidth);
@@ -471,78 +468,80 @@ if isequal(handles.DataFormat, 'Pinnacle')
     guidata(handles.figure1, handles);
 end
 
-
-
-
 function UITableSelectionMutexHighlight(handles, TableHandle, eventdata)
 
-RowIndex=eventdata.Indices(1);
-ColumnIndex=eventdata.Indices(2);
+try
+    RowIndex=eventdata.Indices(1);
+catch
+    RowIndex=1;
+end
+% ColumnIndex=eventdata.Indices(2);
 
 %Current Selection
 TableData=get(TableHandle, 'Data');
 TableCol=size(TableData, 2);
 
-switch TableHandle
-    case handles.UITablePatient
-        FieldName=fieldnames(handles.PatsInfo);
-    case handles.UITableImage
-        FieldName=fieldnames(handles.ImagesInfo);
-end
-
-HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
-                    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
-   
-%Dehightlight old selection                
-A=TableData(:, 1);                
+if ~isempty(TableData)
+    switch TableHandle
+        case handles.UITablePatient
+            FieldName=fieldnames(handles.PatsInfo);
+        case handles.UITableImage
+            FieldName=fieldnames(handles.ImagesInfo);
+    end
+    
+    HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
+        num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+    
+    %Dehightlight old selection
+    A=TableData(:, 1);
+    
+    TempIndex=strmatch(HighlightStr, A);
+    
+    if ~isempty(TempIndex)
+        for i=1:length(TempIndex)
+            for j=1:TableCol
+                CTempIndex=TempIndex(i);
                 
-TempIndex=strmatch(HighlightStr, A);
-
-if ~isempty(TempIndex)   
-    for i=1:length(TempIndex)
-        for j=1:TableCol
-            CTempIndex=TempIndex(i);
-            
-            switch TableHandle
-                case handles.UITablePatient
-                    TempStr=getfield(handles.PatsInfo(CTempIndex), FieldName{j});
-                case handles.UITableImage
-                   TempStr=getfield(handles.ImagesInfo(CTempIndex), FieldName{j});
-            end            
-                       
-            if rem(TempIndex, 2) == 0
-                ShiftHtml=['<html><body bgcolor="' 'rgb(204, 204, 204)', '">', TempStr];
-            else
-                ShiftHtml=['<html><body bgcolor="' 'rgb(255, 255, 255)', '">', TempStr];
+                switch TableHandle
+                    case handles.UITablePatient
+                        TempStr=getfield(handles.PatsInfo(CTempIndex), FieldName{j});
+                    case handles.UITableImage
+                        TempStr=getfield(handles.ImagesInfo(CTempIndex), FieldName{j});
+                end
+                
+                if rem(TempIndex, 2) == 0
+                    ShiftHtml=['<html><body bgcolor="' 'rgb(204, 204, 204)', '">', TempStr];
+                else
+                    ShiftHtml=['<html><body bgcolor="' 'rgb(255, 255, 255)', '">', TempStr];
+                end
+                
+                switch TableHandle
+                    case handles.UITablePatient
+                        handles.jUITablePatient.setValueAt(ShiftHtml, CTempIndex-1, j-1);
+                    case handles.UITableImage
+                        handles.jUITableImage.setValueAt(ShiftHtml, CTempIndex-1, j-1);
+                end
+                pause(handles.TableSetValuePause);
             end
             
-            switch TableHandle
-                case handles.UITablePatient
-                    handles.jUITablePatient.setValueAt(ShiftHtml, CTempIndex-1, j-1);
-                case handles.UITableImage
-                  handles.jUITableImage.setValueAt(ShiftHtml, CTempIndex-1, j-1);
-            end                  
-            pause(handles.TableSetValuePause);            
         end
-      
     end
 end
-
 
 %highlight new selection
 if ~isequal(TempIndex, RowIndex)
     for j=1:TableCol
-         switch TableHandle
-             case handles.UITablePatient
-                 TempStr=getfield(handles.PatsInfo(RowIndex), FieldName{j});
-                 ShiftHtml=[HighlightStr, TempStr];
-                 handles.jUITablePatient.setValueAt(ShiftHtml, RowIndex-1, j-1);
-                 
-             case handles.UITableImage
-                 TempStr=getfield(handles.ImagesInfo(RowIndex), FieldName{j});
-                 ShiftHtml=[HighlightStr, TempStr];
-                 handles.jUITableImage.setValueAt(ShiftHtml, RowIndex-1, j-1);
-         end
+        switch TableHandle
+            case handles.UITablePatient
+                TempStr=getfield(handles.PatsInfo(RowIndex), FieldName{j});
+                ShiftHtml=[HighlightStr, TempStr];
+                handles.jUITablePatient.setValueAt(ShiftHtml, RowIndex-1, j-1);
+                
+            case handles.UITableImage
+                TempStr=getfield(handles.ImagesInfo(RowIndex), FieldName{j});
+                ShiftHtml=[HighlightStr, TempStr];
+                handles.jUITableImage.setValueAt(ShiftHtml, RowIndex-1, j-1);
+        end
         pause(handles.TableSetValuePause);
         
     end
@@ -557,10 +556,6 @@ if isequal(TableHandle, handles.UITablePatient)
     EnableButtonOpen(handles)
 end
 
-
-    
-
-
 % --- Executes on button press in PushbuttonAnonymize.
 function PushbuttonAnonymize_Callback(hObject, eventdata, handles)
 % hObject    handle to PushbuttonAnonymize (see GCBO)
@@ -571,7 +566,7 @@ Answer = QuestdlgIFOA('All patients under this site will be anonymized! Continue
 if ~isequal(Answer, 'Continue')
     return;
 end
-    
+
 %Status
 hFigAll=findobj(0, 'Type', 'figure');
 set(hFigAll, 'Pointer', 'watch');
@@ -589,19 +584,19 @@ for i=1:size(handles.PatsInfo, 2)
     set(hText, 'String', ['Anonymizing patients (', num2str(i), '/', num2str(size(handles.PatsInfo, 2)), ') ...']);
     drawnow;
     
-    CurrentDir=[handles.PatsParentDir, '\', handles.PatsInfo(i).Directory];    
+    CurrentDir=[handles.PatsParentDir, '\', handles.PatsInfo(i).Directory];
     
     PatInfo=AnonymizePatient(CurrentDir, num2str(i));
     
     handles.PatsInfo(i).LastName=PatInfo.LastName;
     handles.PatsInfo(i).FirstName=PatInfo.FirstName;
     handles.PatsInfo(i).MiddleName=PatInfo.MiddleName;
-    handles.PatsInfo(i).MRN=PatInfo.MRN;    
+    handles.PatsInfo(i).MRN=PatInfo.MRN;
     handles.PatsInfo(i).Directory=PatInfo.Directory;
 end
 
 guidata(handles.figure1, handles);
-    
+
 %Update display
 if isempty(handles.PatsInfo)
     set(handles.UITablePatient, 'Data', '');
@@ -612,6 +607,7 @@ else
 end
 
 set(handles.PushbuttonOpen, 'Enable', 'Off');
+set(handles.PushbuttonDelete, 'Enable', 'Off');
 
 %Status
 delete(hStatus);
@@ -624,3 +620,53 @@ drawnow;
 function PushbuttonCancel_Callback(hObject, eventdata, handles)
 set(handles.ParentFig, 'Visible', 'on');
 delete(handles.figure1);
+
+% --- Executes on button press in PushbuttonDelete.
+function PushbuttonDelete_Callback(hObject, eventdata, handles)
+% hObject    handle to PushbuttonDelete (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+HighlightStr=['<html><body bgcolor="' 'rgb(', num2str(handles.HightColor(1)), ', ', ...
+    num2str(handles.HightColor(2)), ', ', num2str(handles.HightColor(3)), ')', '">'];
+
+%Patient Index
+TableData=get(handles.UITablePatient, 'Data');
+A=TableData(:, 1);
+PatIndex=strmatch(HighlightStr, A);
+
+PatInfo=handles.PatsInfo(PatIndex);
+
+Answer = QuestdlgIFOA('Do you want to delete the selected patient?', 'Confirm','Continue','Cancel', 'Cancel');
+if ~isequal(Answer, 'Continue')
+    return;
+else
+    rmdir(fullfile(handles.PatsParentDir, PatInfo.Directory), 's')
+    %    UpdateTableImageSet(handles)
+    IBEXData_UpdateFcn(hObject, eventdata, handles)
+end
+
+function IBEXData_UpdateFcn(hObject, eventdata, handles)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to IBEXData (see VARARGIN)
+
+%Create common folder
+CreateSiteFolder(handles.PatsParentDir);
+
+%Display Patient information
+PatsInfo=ReadPatsInfo(handles);
+if isempty(PatsInfo)
+    set(handles.UITablePatient, 'Data', '');
+    set(handles.UITableImage, 'Data', '');
+else
+    DisplayUITablePatient(PatsInfo, handles.UITablePatient);
+    set(handles.UITableImage, 'Data', '');
+end
+handles.PatsInfo=PatsInfo;
+
+set(handles.PushbuttonDelete, 'Enable', 'Off');
+
+% Update handles structure
+guidata(handles.figure1, handles);
