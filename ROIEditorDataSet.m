@@ -861,7 +861,12 @@ if  isequal(DataFormat.Modality, 'PT')
     TempData=TempData*DataFormat.ColorLUTScale*DataFormat.SUVScale;
 end
 
-if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'MR') && ~isequal(DataFormat.Modality, 'PT')
+if  isequal(DataFormat.Modality, 'CS') 
+    [TempData, Count]=fread(fid, DataFormat.XDim*DataFormat.YDim*length(DataFormat.TablePos), '*single');
+    TempData=single(TempData);
+end
+
+if ~isequal(DataFormat.Modality, 'CT') && ~isequal(DataFormat.Modality, 'MR') && ~isequal(DataFormat.Modality, 'PT') && ~isequal(DataFormat.Modality, 'CS')
     [TempData, Count]=fread(fid, DataFormat.XDim*DataFormat.YDim*length(DataFormat.TablePos), '*int16');
     TempData=uint16(TempData);
 end
