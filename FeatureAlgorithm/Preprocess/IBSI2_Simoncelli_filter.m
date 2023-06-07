@@ -41,12 +41,14 @@ DataItemInfo.ROIImageInfo.MaskData = flip(DataItemInfo.ROIImageInfo.MaskData,3);
 %///////////////////////////////////////////////////////////////////////////%
 
 %---Sanity Check
-if ~isfield(Param, 'padding') || ~isfield(Param, 'type') || ~isfield(Param, 'level')
+if  ~isfield(Param, 'type') || ~isfield(Param, 'level') %~isfield(Param, 'padding')
     ImageInfo_InROIBox=[];
     BinaryMaskInfo_InROIBox=[];
     return;
 end
 
+% No padding needed when filtering in the Fourier Domain
+Param.padding = 'mirror';
 if isnumeric(Param.padding)
     C = Param.padding;
     Param.padding = 'constant';
@@ -92,9 +94,10 @@ BinaryMaskInfo_InROIBox=ROIBWInfo;
 
 function [MaskData_filtered] = simoncelli_filtering(MaskData, Param)
 
-N=max(size(MaskData));
+% % Image_padding to sqaure/cube
+NF_prior_padding=size(MaskData);
 
-% Image_padding
+N=max(size(MaskData));
 pad_square = N-size(MaskData);
 N_pad = ceil((N+1)/2)-1;
 pad_pre=ceil(pad_square/2) + N_pad;
@@ -103,34 +106,46 @@ pad_post=floor(pad_square/2) + N_pad;
 % pad_post = pad_post+(1-mod(size(MaskData)+pad_pre+pad_post,2))*1;
 MaskData_pad = padarray(MaskData, pad_pre, Param.padding, 'pre');
 MaskData_pad = padarray(MaskData_pad, pad_post, Param.padding, 'post');
-
-NF=max(size(MaskData_pad));
+MaskData = MaskData_pad;
 
 %Fourier space
 switch Param.type
     case '2D'
-        f_IMG=MaskData_pad;
-        parfor i = 1:size(MaskData_pad,3)
-            f_IMG(:,:,i)= fftn(squeeze(MaskData_pad(:,:,i)));
+        f_IMG=MaskData;
+        parfor i = 1:size(MaskData,3)
+            f_IMG(:,:,i)= fftn(squeeze(MaskData(:,:,i)));
         end
     case '3D'
-        f_IMG = fftn(MaskData_pad);   
+        f_IMG = fftn(MaskData);   
 end
 
-idx_k = (1:NF)-(floor(NF/2)+1); % +1 to get most frequencies on the right part
+% idx_k = (1:NF)-(floor(NF/2)+1); % +1 to get most frequencies on the right part
 % idx_k = idx_k./max(abs(idx_k)).*pi;
 
+NF=size(MaskData);
 switch Param.type
     case '2D'
-        [K1, K2] = meshgrid(idx_k, idx_k);
+        vb = (max(NF_prior_padding)-1)/2;
+        
+        idx_k1 = ((-(NF(1)-1)/2):((NF(1)-1)/2))./vb;
+        idx_k2 = ((-(NF(2)-1)/2):((NF(2)-1)/2))./vb;
+        
+        [K1, K2] = meshgrid(idx_k2, idx_k1);
         modFreq = sqrt(K1.^2+K2.^2);
     case '3D'
-        [K1, K2, K3] = meshgrid(idx_k, idx_k, idx_k);
+        
+        vb = (max(NF_prior_padding)-1)/2;
+        
+        idx_k1 = ((-(NF(1)-1)/2):((NF(1)-1)/2))./vb;
+        idx_k2 = ((-(NF(2)-1)/2):((NF(2)-1)/2))./vb;
+        idx_k3 = ((-(NF(3)-1)/2):((NF(3)-1)/2))./vb;
+        
+        [K1, K2, K3] = meshgrid(idx_k2, idx_k1, idx_k3);
         modFreq = sqrt(K1.^2+K2.^2+K3.^2);
 end
 
 % Create Simoncelli filter
-vB=max(abs(idx_k))/(2.^(Param.level-1));
+vB=1/(2.^(Param.level-1));
 filter = cos(pi/2*log2(2*modFreq/vB)).*(modFreq>=vB/4 & modFreq<vB);
 flag=(modFreq>=vB/4 & modFreq<vB);
 filter(flag==0) = 0;
@@ -148,5 +163,7 @@ switch Param.type
         MaskData_filtered=ifftn(f_IMG.*filter);
 end
 
-% Delete Padding
+MaskData_filtered = real(MaskData_filtered);
+
+% % Delete Padding
 MaskData_filtered=MaskData_filtered((pad_pre(1)+1):end-pad_post(1),(pad_pre(2)+1):end-pad_post(2),(pad_pre(3)+1):end-pad_post(3));

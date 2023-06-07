@@ -1,29 +1,51 @@
 function ROIImageInfo = IBSI2_separable_wavelets(ROIImageInfo, Param, wavelet_type)
 
-for l=1:Param.level
+% Filtering
+switch Param.type
     
-    [MonoFilterBank, FilterKernel]=get_separable_filter(Param, l, wavelet_type);
-    
-    % Filtering
-    switch Param.type
-        case '2D' % Slice by slice
-            par_Image = ROIImageInfo.MaskData;
-            parfor i=1:ROIImageInfo.ZDim
+    case '2D' % Slice by slice
+        % Initialization
+        level = Param.level;
+        ROIImageData = ROIImageInfo.MaskData;
+        
+        % For each slice
+        parfor i=1:ROIImageInfo.ZDim
+            FilteredSlice = squeeze(ROIImageData(:, :, i));
+            
+            for l=1:level
+                [MonoFilterBank, FilterKernel]=get_separable_filter(Param, l, wavelet_type);
+                
                 if ~Param.rotation_invariance
-                    par_FilteredData(:, :, i)=imfilter(par_Image(:, :, i), FilterKernel, Param.padding, 'same', 'conv');
+                    FilteredSlice=imfilter(FilteredSlice, FilterKernel, Param.padding, 'same', 'conv');
                 else
-                    par_FilteredData(:, :, i)=IBSI2_imfilter_ri(par_Image(:, :, i), MonoFilterBank, Param.padding, Param.pooling);
+                    if l < Param.level
+                        FilteredSlice=IBSI2_imfilter_ri(FilteredSlice, MonoFilterBank, Param.padding);
+                    elseif l == Param.level
+                        FilteredSlice=IBSI2_imfilter_ri(FilteredSlice, MonoFilterBank, Param.padding, Param.pooling);
+                    end
                 end
             end
-            ROIImageInfo.MaskData = par_FilteredData;
-        case '3D' % All volume at once
+            ROIImageData(:, :, i) = FilteredSlice;
+        end
+        ROIImageInfo.MaskData = ROIImageData;
+        
+        
+    case '3D' % All volume at once
+        FilteredData = ROIImageInfo.MaskData;
+        
+        for l=1:Param.level
+            [MonoFilterBank, FilterKernel]=get_separable_filter(Param, l, wavelet_type);
             if ~Param.rotation_invariance
                 FilteredData=imfilter(ROIImageInfo.MaskData, FilterKernel, Param.padding, 'same', 'conv');
             else
-                FilteredData=IBSI2_imfilter_ri(ROIImageInfo.MaskData, MonoFilterBank, Param.padding, Param.pooling);
+                if l < Param.level
+                    FilteredData=IBSI2_imfilter_ri(FilteredData, MonoFilterBank, Param.padding);
+                elseif l == Param.level
+                    FilteredData=IBSI2_imfilter_ri(FilteredData, MonoFilterBank, Param.padding, Param.pooling);
+                end
             end
-    end
-    ROIImageInfo.MaskData=FilteredData;
+        end
+        ROIImageInfo.MaskData=FilteredData;
 end
 
 function [monoFilterBank, FilterKernel] = get_separable_filter(Param, curr_l, wavelet_type)
@@ -64,8 +86,8 @@ if isequal(wavelet_type, 'daub')
     end
 elseif isequal(wavelet_type, 'coif')
     if Param.number == 1
-        L = [-0.01565572813546454 -0.0727326195128539 0.38486484686420286 0.8525720202122554 0.3378976624578092 -0.0727326195128539 0];
-        H = [0.0727326195128539 0.3378976624578092 -0.8525720202122554 0.38486484686420286 0.0727326195128539 -0.01565572813546454 0];
+        L = [-0.01565572813546454 -0.0727326195128539 0.38486484686420286 0.8525720202122554 0.3378976624578092 -0.0727326195128539];
+        H = [0.0727326195128539 0.3378976624578092 -0.8525720202122554 0.38486484686420286 0.0727326195128539 -0.01565572813546454];
     elseif Param.number == 2
         L = [-0.0007205494453645122 -0.0018232088707029932 0.0056114348193944995 0.023680171946334084 -0.0594344186464569 -0.0764885990783064 0.41700518442169254 0.8127236354455423 0.3861100668211622 -0.06737255472196302 -0.04146493678175915 0.016387336463522112];
         H = [-0.016387336463522112 -0.04146493678175915 0.06737255472196302 0.3861100668211622 -0.8127236354455423 0.41700518442169254 0.0764885990783064 -0.0594344186464569 -0.023680171946334084 0.0056114348193944995 0.0018232088707029932 -0.0007205494453645122];
@@ -80,9 +102,8 @@ elseif isequal(wavelet_type, 'coif')
         H = [0.000212080839803798,0.000358589687895738,-0.00217823635810902,-0.00415935878138605,0.0101311175198498,0.0234081567858392,-0.0281680289709364,-0.0919200105596962,0.0520431631762438,0.421566206690852,-0.774289603652956,0.437991626171837,0.0620359639629036,-0.105574208703339,-0.0412892087501817,0.0326835742671118,0.0197617789425726,-0.00916423116248185,-0.00676418544805308,0.00243337321265767,0.00166286370201308,-0.000638131343045111,-0.000302259581813063,0.000140541149702034,4.13404322725125e-05,-2.13150268099558e-05,-3.73465517514140e-06,2.06376185136468e-06,1.67442885768230e-07,-9.51765727381917e-08];
     end
 elseif isequal(wavelet_type, 'haar')
-    L = [1 1]./sqrt(2);
-    H = [-1 1]./sqrt(2);
-    
+    L = [0.7071067811865476 0.7071067811865476]; %[1 1]./sqrt(2);
+    H = [-0.7071067811865476 0.7071067811865476]; %[-1 1]./sqrt(2);
 end
 
 if curr_l < desired_level
@@ -97,7 +118,6 @@ else
         switch f_type
             case 'H'
                 monoFilterBank{i,1} = H;
-                
             case 'L'
                 monoFilterBank{i,1} = L;
         end

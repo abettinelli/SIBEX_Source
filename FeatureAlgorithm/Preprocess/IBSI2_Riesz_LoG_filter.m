@@ -115,10 +115,10 @@ ROIImageInfo.MaskData = double(ROIImageInfo.MaskData);
 %----Binary Mask
 ROIBWInfo=DataItemInfo.ROIBWInfo;
 
-%----Apply Riesz Filtering
+%----Get Riesz Filter
 filter_riesz_freq=IBSI2_get_riesz_filter(ROIImageInfo.MaskData, Param);
 
-%----Apply Simoncelli Filtering
+%----Get LoG Filter
 filter_LoG_freq=LoG_filter(ROIImageInfo.MaskData, Param, sigma);
 
 % Apply_filters
