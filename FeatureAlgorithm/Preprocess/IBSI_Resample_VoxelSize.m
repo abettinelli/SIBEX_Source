@@ -1,33 +1,33 @@
 function [ImageInfo_InROIBox, BinaryMaskInfo_InROIBox]=IBSI_Resample_VoxelSize(DataItemInfo, Param)
 %%%Doc Starts%%%
 % 1. Interpolation algorithms translate image intensities from the original image grid to an interpolation grid.
-% 
+%
 % -Parameters:
-% 1. XPixDim: Pixel size in X dimension. 
+% 1. XPixDim: Pixel size in X dimension.
 % 2. YPixDim: Pixel size in Y dimension.
 % 3. ZPixDim: Pixel size in Z dimension.
 % 4. Method:
 %       'linear':, Bilinear/trilinear interpolation.
 %       'nearest': Nearest neighborhood interpolation.
 %       'cubic': Bicubic/tricubic interpolation.
-%       'spline': Spline interpolation using not-a-knot end conditions. 
+%       'spline': Spline interpolation using not-a-knot end conditions.
 %       'makima': Modified Akima cubic Hermite interpolation.
 % 5. NoZDim:
 %       0: Resample the ZPixSize as requested (3D interpolation).
-%       1: Keep the original ZPixSize (slice by slice interpolation). 
+%       1: Keep the original ZPixSize (slice by slice interpolation).
 % 6. GridAlignment:
 %       0: align grid centers
 %       1: align grid origins
 %       2: fit to original grid
 % 7. Alpha: Threshold to binarise intesnity fractions of the ROI mask.
-% 
+%
 % -References:
-% 1. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative. 
+% 1. Zwanenburg A, Leger S, Vallières M, Löck S. Image biomarker standardisation initiative.
 %    December 2016. http://arxiv.org/abs/1612.07003. Accessed May 21, 2019.
 %
 % -Revision:
 % 2019-07-10: The method is implemented.
-% 
+%
 % -Authors:
 % Andrea Bettinelli
 %%%Doc Ends%%%
@@ -69,41 +69,54 @@ end
 ROIImageInfo=DataItemInfo.ROIImageInfo;
 ROIBWInfo=DataItemInfo.ROIBWInfo;
 
+% Check if S-IBEX voxel-size parameters are "equal" (perc. diff < 10E-4) to
+% the ones of the DICOM header
+if EqualRelativeX(ROIImageInfo.XPixDim, Param.XPixDim)
+    Param.XPixDim = ROIImageInfo.XPixDim;
+end
+if EqualRelativeX(ROIImageInfo.YPixDim, Param.YPixDim)
+    Param.YPixDim = ROIImageInfo.YPixDim;
+end
+if EqualRelativeZ(ROIImageInfo.ZPixDim, Param.ZPixDim)
+    Param.ZPixDim = ROIImageInfo.ZPixDim;
+end
+
 %----To see if there is need to resample
 if EqualRelativeX(ROIImageInfo.XPixDim, Param.XPixDim) > 0 && ...
         EqualRelativeX(ROIImageInfo.YPixDim, Param.YPixDim) > 0 && ...
         (EqualRelativeZ(ROIImageInfo.ZPixDim, Param.ZPixDim) > 0 || Param.NoZDim )
-    
+    % No need to resample
     ImageInfo_InROIBox=ROIImageInfo;
-    BinaryMaskInfo_InROIBox=ROIBWInfo;    
-    return;
+    BinaryMaskInfo_InROIBox=ROIBWInfo;
+else 
+    % Need to resample
+    %----New Coordinate Format
+    ROIImageInfoNew=GetDestinationFormat(DataItemInfo, Param);
+    
+    %----Resampling
+    [ROIImageInfoNew, ROIBWInfoNew, CDataSetInfoNew]=IBSI_Resample_Wrapper(ROIImageInfo, ROIImageInfoNew, DataItemInfo, ROIBWInfo, Param.Method, Param.Alpha);
+    
+    %----Update fields MASK
+    fields = fieldnames(ROIBWInfo);
+    fields_new = fieldnames(ROIBWInfoNew);
+    missing_fields = setdiff(fields,fields_new);
+    for i = 1:length(missing_fields)
+        ROIBWInfoNew.(missing_fields{i}) = ROIBWInfo.(missing_fields{i});
+    end
+    
+    %----Update fields IMAGE IBSIv2
+    ROIImageInfoNew.CDataSetInfo=CDataSetInfoNew;
+    fields = fieldnames(ROIImageInfo);
+    fields_new = fieldnames(ROIImageInfoNew);
+    missing_fields = setdiff(fields,fields_new);
+    for i = 1:length(missing_fields)
+        ROIImageInfoNew.(missing_fields{i}) = ROIImageInfo.(missing_fields{i});
+    end
+    
+    ROIImageInfo = ROIImageInfoNew;
+    ROIBWInfo = ROIBWInfoNew;
+    
 end
-
-%----New Coordinate Format
-ROIImageInfoNew=GetDestinationFormat(DataItemInfo, Param);
-
-%----Resampling
-[ROIImageInfoNew, ROIBWInfoNew, CDataSetInfoNew]=IBSI_Resample_Wrapper(ROIImageInfo, ROIImageInfoNew, DataItemInfo, ROIBWInfo, Param.Method, Param.Alpha);
-
-%----Update fields MASK
-fields = fieldnames(ROIBWInfo);
-fields_new = fieldnames(ROIBWInfoNew);
-missing_fields = setdiff(fields,fields_new);
-for i = 1:length(missing_fields)
-   ROIBWInfoNew.(missing_fields{i}) = ROIBWInfo.(missing_fields{i});
-end
-
-%----Update fields IMAGE IBSIv2
-ROIImageInfoNew.CDataSetInfo=CDataSetInfoNew;
-fields = fieldnames(ROIImageInfo);
-fields_new = fieldnames(ROIImageInfoNew);
-missing_fields = setdiff(fields,fields_new);
-for i = 1:length(missing_fields)
-   ROIImageInfoNew.(missing_fields{i}) = ROIImageInfo.(missing_fields{i});
-end
-
-ROIImageInfo = ROIImageInfoNew;
-ROIBWInfo = ROIBWInfoNew;
 
 %---Summary
 Summary.Type = 'ResampleVoxelSize';
@@ -146,13 +159,13 @@ if Param.GridAlignment == 0 || Param.GridAlignment == 1
     FULL_ImageInfoNew.XGrid = FULL_ImageInfoNew.XStart+(0:FULL_ImageInfoNew.XDim-1)*FULL_ImageInfoNew.XPixDim;
     FULL_ImageInfoNew.YGrid = FULL_ImageInfoNew.YStart+(0:FULL_ImageInfoNew.YDim-1)*FULL_ImageInfoNew.YPixDim;
     FULL_ImageInfoNew.ZGrid = FULL_ImageInfoNew.ZStart+(0:FULL_ImageInfoNew.ZDim-1)*FULL_ImageInfoNew.ZPixDim;
-
+    
     % ROI old
     ROI_ImageInfo=CDataSetInfo.IBSI_info.BoundingBox;
     ROI_ImageInfo.XPixDim=CDataSetInfo.XPixDim;
     ROI_ImageInfo.YPixDim=CDataSetInfo.YPixDim;
     ROI_ImageInfo.ZPixDim=CDataSetInfo.ZPixDim;
-
+    
     % ROI new
     ROI_ImageInfoNew.XPixDim=Param.XPixDim;
     ROI_ImageInfoNew.YPixDim=Param.YPixDim;
@@ -183,7 +196,7 @@ elseif Param.GridAlignment == 2
     ROI_ImageInfo.XPixDim=CDataSetInfo.XPixDim;
     ROI_ImageInfo.YPixDim=CDataSetInfo.YPixDim;
     ROI_ImageInfo.ZPixDim=CDataSetInfo.ZPixDim;
-
+    
     % ROI new
     ROI_ImageInfoNew.XPixDim=FULL_ImageInfoNew.XPixDim;
     ROI_ImageInfoNew.YPixDim=FULL_ImageInfoNew.YPixDim;
