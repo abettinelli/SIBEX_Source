@@ -22,7 +22,7 @@ function varargout = SIBEXMain(varargin)
 
 % Edit the above text to modify the response to help SIBEXMain
 
-% Last Modified by GUIDE v2.5 19-Dec-2020 00:09:31
+% Last Modified by GUIDE v2.5 24-May-2023 15:53:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -35,6 +35,8 @@ gui_State = struct('gui_Name',       mfilename, ...
 if nargin && ischar(varargin{1})
     gui_State.gui_Callback = str2func(varargin{1});
 end
+
+warning('off', 'MATLAB:ui:javaframe:PropertyToBeRemoved')   % Andrea
 
 if nargout
     [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
@@ -62,7 +64,7 @@ disp('Starting S-IBEX...');
 handles.ProgramPath=ProgramPath;
 
 %Release Date
-ReleaseDate=[2017 08 15 00 00 00];
+ReleaseDate=[2023 05 24 00 00 00];
 set(handles.TextReleaseDate, 'String', ['Release Date: ', num2str(ReleaseDate(1)), '-', num2str(ReleaseDate(2)), '-', num2str(ReleaseDate(3))]);
 
 %Code is too old 
@@ -213,6 +215,7 @@ figure(handles.figure1);
 
 SetWebLink(handles, 0);
 SetWebLink(handles, 1);
+SetWebLink(handles, 3);
 % SetWebLink(handles, 2); % request support
 
 disp('S-IBEX is ready to use.');
@@ -295,9 +298,13 @@ switch Mode
     case 1
         LabelStr= '<html><left><a href="">Medical Physics, 42, 1341-1353 (2015)';        
         set(handles.PushbuttonWebLink, 'string', LabelStr);
+    case 3
+        LabelStr= '<html><left><a href="">Medical Physics, 47, 1167-1173 (2020)';        
+        set(handles.PushbuttonWebLink3, 'string', LabelStr);
     case 2
         LabelStr= '<html><left><a href="">Report Bugs/Feedback';
         set(handles.PushbuttonFeedback, 'string', LabelStr);
+
 end
 
 switch Mode
@@ -307,6 +314,8 @@ switch Mode
         JButton=findjobj(handles.PushbuttonWebLink);
     case 2
         JButton=findjobj(handles.PushbuttonFeedback);
+    case 3
+        JButton=findjobj(handles.PushbuttonWebLink3);
 end
 JButton.setCursor(java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 JButton.setContentAreaFilled(0); 
@@ -409,22 +418,45 @@ ylim([0 569])
 set(gca,'XTick', [], 'YTick', []);
 set(gca,'Visible','off')
 
+% 3D LOGO
 set(handles.figure1, 'CurrentAxes', handles.AxesImage);
 % imshow(PrefaceImage);
 load('Pic\FV.mat')
 plot3(V(:,1),V(:,2),V(:,3),'.','Markersize',16,'color', [0 0.4470 0.7410])
 hold on
+axis vis3d
 
-for i = 1:size(F,1)
-    idx = F(i,:);
-    idx = idx(:,[1 2 3]);
-    plot3(V(idx,1),V(idx,2),V(idx,3),'--','color', [0.5 0.5 0.5])
+% for i = 1:size(F,1)
+%     idx = F(i,:);
+%     idx = idx(:,[1 2 3]);
+%     plot3(V(idx,1),V(idx,2),V(idx,3),'--','color', [0.5 0.5 0.5])
+% end
+
+EE = [];
+for e = 1:length(F)
+    EE = [EE; F(e,1) F(e,2); F(e,2) F(e,3); F(e,1) F(e,3)];
 end
+[~,b,~]=unique(sort(EE')','rows');
+EE = EE(sort(b),:);
+
+for i = 1:size(EE,1)
+    idx1 = EE(i,1);
+    idx2 = EE(i,2);
+    V1 = V(idx1,:);
+    V2 = V(idx2,:);
+    plot3([V1(1); V2(1)],[V1(2); V2(2)],[V1(3); V2(3)],'--','color', [0.5 0.5 0.5])
+    hold on
+end
+
 axis equal
 rotate3d(gca,'on')
 set(gca,'XTick', [], 'YTick', []);
 set(gca,'Visible','off')
-view(-25,20)
+view(-45,5)
+zoom(1.4)
+ax = gca;
+ax.ClippingStyle = 'rectangle';
+ax.Clipping = 'off';
 
 hManager = uigetmodemanager(gcf);
 hManager.CurrentMode.ModeStateData.textState = 0;
@@ -514,6 +546,8 @@ try
 catch
 end
 
+warning('on', 'MATLAB:ui:javaframe:PropertyToBeRemoved')
+
 warning('off','MATLAB:rmpath:DirNotFound')
 RemoveModulePath(handles.ProgramPath, 'Import');
 RemoveModulePath(handles.ProgramPath, 'Export');
@@ -564,6 +598,13 @@ function PushbuttonWebLink_Callback(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 
 web('http://dx.doi.org/10.1118/1.4908210');
+
+function PushbuttonWebLink3_Callback(hObject, eventdata, handles)
+% hObject    handle to PushbuttonWebLink (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+web('https://doi.org/10.1002/mp.13956');
 
 % --- If Enable == 'on', executes on mouse press in 5 pixel border.
 % --- Otherwise, executes on mouse press in 5 pixel border or over text10.
