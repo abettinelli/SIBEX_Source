@@ -236,7 +236,7 @@ end
 
 %---RS
 if ~isequal(ROISetInfo, {[]})
-    for i=1:size(ROISetInfo)
+    for i=1:size(ROISetInfo,1)
         ROISetInfo{i, 3}=[ROISetInfo{i, 3}; {' '}];
         ROISetInfo{i, 3}=[ROISetInfo{i, 3}; {'[Relation]'}];
 
